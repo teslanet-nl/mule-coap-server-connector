@@ -1,7 +1,9 @@
 package nl.teslanet.mule.connectors.coap.server;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.resource.spi.work.WorkException;
@@ -13,6 +15,7 @@ import org.mule.api.MuleContext;
 import org.mule.api.annotations.Config;
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.Connector;
+import org.mule.api.annotations.Processor;
 import org.mule.api.annotations.Source;
 import org.mule.api.annotations.SourceThreadingModel;
 import org.mule.api.annotations.lifecycle.OnException;
@@ -31,14 +34,15 @@ import nl.teslanet.mule.connectors.coap.server.error.ErrorHandler;
 @OnException(handler= ErrorHandler.class)
 public class CoapServerConnector
 {
-
     @Config
     private ServerConfig config;
 
     @Configurable
-    private List< Resource > resources;
+    private List< Resource > resources; 
 
     private CoapServer server= null;
+
+    private HashMap< String, ServedResource > servedResources;
 
     @Inject
     private MuleContext context;
@@ -52,11 +56,22 @@ public class CoapServerConnector
         {
             throw new ConnectionException( ConnectionExceptionCode.UNKNOWN, "coap resources not defined", null );
         }
+        if ( servedResources == null )
+        {
+            servedResources= new HashMap< String, ServedResource >();
+        }
+        else
+        {
+            servedResources.clear();
+        }
+
         // binds on UDP port 5683
         server= new CoapServer();
         for ( Resource resource : resources )
         {
-            server.add( new ServedResource( this, resource ));
+            ServedResource toserve= new ServedResource( this, resource );
+            servedResources.put( toserve.getURI(), toserve );
+            server.add( toserve );
         }
         //System.getSecurityManager().checkAccept( "localhost", 5683 );
         //server.addEndpoint(new CoapEndpoint(new InetSocketAddress("0.0.0.0", 5683)));
@@ -83,6 +98,16 @@ public class CoapServerConnector
     public void listen( SourceCallback callback )
     {
         setCallback( callback );
+    }
+
+    @Processor
+    public void notifyObservers( String resourceUri )
+    {
+        ServedResource resource= servedResources.get( resourceUri );
+        if ( resource != null )
+        {
+            resource.changed();
+        };
     }
 
     public ServerConfig getConfig()

@@ -2,22 +2,23 @@ package nl.teslanet.mule.connectors.coap.server;
 
 public class Resource
 {
-    private String path= null;
+    private String name= null;
     private boolean get= true;
     private boolean post= false;
     private boolean put= false;
-    private boolean sendAccept= false;
+    private boolean delayedResponse= false;
+    private boolean observable= false;
 
 
 
-    public String getPath()
+    public String getName()
     {
-        return path;
+        return name;
     }
 
-    public void setPath( String path )
+    public void setName( String name )
     {
-        this.path = path;
+        this.name = name;
     }
 
     /**
@@ -68,16 +69,28 @@ public class Resource
         this.put= put;
     }
 
-    public boolean isSendAccept()
+    public boolean isDelayedResponse()
     {
-        // TODO Auto-generated method stub
-        return this.sendAccept;
+        return this.delayedResponse;
     }
     /**
-     * @param sendAccept the sendAccept to set
+     * @param delayedResponse set to true when processing requests takes more than a few seconds
      */
-    public void setSendAccept( boolean sendAccept )
+    public void setDelayedResponse( boolean delayedResponse )
     {
-        this.sendAccept= sendAccept;
+        this.delayedResponse= delayedResponse;
+    }
+
+    /**
+     * @param observable the observable to set
+     */
+    public void setObservable( boolean observable )
+    {
+        this.observable= observable;
+    }
+
+    public boolean isObservable()
+    {
+        return this.observable;
     }
 }
