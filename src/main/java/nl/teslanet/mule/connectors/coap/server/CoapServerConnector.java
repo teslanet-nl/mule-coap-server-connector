@@ -3,7 +3,6 @@ package nl.teslanet.mule.connectors.coap.server;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.resource.spi.work.WorkException;
@@ -13,16 +12,15 @@ import org.mule.api.ConnectionException;
 import org.mule.api.ConnectionExceptionCode;
 import org.mule.api.MuleContext;
 import org.mule.api.annotations.Config;
-import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.Processor;
 import org.mule.api.annotations.Source;
-import org.mule.api.annotations.SourceThreadingModel;
 import org.mule.api.annotations.lifecycle.OnException;
 import org.mule.api.annotations.lifecycle.Start;
 import org.mule.api.annotations.lifecycle.Stop;
 import org.mule.api.callback.SourceCallback;
 
+import nl.teslanet.mule.connectors.coap.server.config.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.server.config.ServerConfig;
 import nl.teslanet.mule.connectors.coap.server.error.ErrorHandler;
 
@@ -34,11 +32,10 @@ import nl.teslanet.mule.connectors.coap.server.error.ErrorHandler;
 @OnException(handler= ErrorHandler.class)
 public class CoapServerConnector
 {
+    private static final String COAP_URI_WILDCARD= "*";
+
     @Config
     private ServerConfig config;
-
-    @Configurable
-    private List< Resource > resources; 
 
     private CoapServer server= null;
 
@@ -47,12 +44,12 @@ public class CoapServerConnector
     @Inject
     private MuleContext context;
 
-    private SourceCallback callback;
+    private SourceCallback callback= null;
 
     @Start
     public void startServer() throws ConnectionException, WorkException
     {
-        if ( resources == null || resources.isEmpty() )
+        if ( config.getResources() == null || config.getResources().isEmpty() )
         {
             throw new ConnectionException( ConnectionExceptionCode.UNKNOWN, "coap resources not defined", null );
         }
@@ -67,15 +64,34 @@ public class CoapServerConnector
 
         // binds on UDP port 5683
         server= new CoapServer();
-        for ( Resource resource : resources )
-        {
-            ServedResource toserve= new ServedResource( this, resource );
-            servedResources.put( toserve.getURI(), toserve );
-            server.add( toserve );
-        }
+
+        addResources( server, config.getResources() );
+
         //System.getSecurityManager().checkAccept( "localhost", 5683 );
         //server.addEndpoint(new CoapEndpoint(new InetSocketAddress("0.0.0.0", 5683)));
         server.start();
+    }
+
+    private void addResources( CoapServer server, List< ResourceConfig > resourceConfigs )
+    {
+        for ( ResourceConfig resourceConfig : resourceConfigs )
+        {
+            ServedResource toserve= new ServedResource( this, resourceConfig );
+            server.add( toserve );
+            servedResources.put( toserve.getURI(), toserve );
+            addChildren( toserve );
+        }
+    }
+
+    private void addChildren( ServedResource parent )
+    {
+        for ( ResourceConfig resourceConfig : parent.getConfiguredResource().getResources() )
+        {
+            ServedResource toserve= new ServedResource( this, resourceConfig );
+            parent.add( toserve );
+            servedResources.put( toserve.getURI(), toserve );
+            addChildren( toserve );
+        }
     }
 
     // A class with @Connector must contain exactly one method annotated with
@@ -95,19 +111,68 @@ public class CoapServerConnector
      *  @throws Exception error produced while processing the payload
      */
     @Source( /* threadingModel=SourceThreadingModel.NONE */)
-    public void listen( SourceCallback callback )
+    public void listen( SourceCallback callback, String uri ) throws Exception
     {
-        setCallback( callback );
+        //TODO add option to listen on specific resource
+        if ( uri.equals( COAP_URI_WILDCARD ) )
+        {
+            //set general callback
+            if ( this.callback == null )
+            {
+                this.callback= callback;
+            }
+            else
+            {
+                //TODO improve
+                throw new Exception( "CoAP URI wildcard can be listened on only once." );
+            }
+        }
+        else
+        {
+            // set resource specific callback
+            ServedResource toListenOn= servedResources.get( uri );
+            if ( toListenOn != null && !toListenOn.hasOwnCallback() )
+            {
+                toListenOn.setCallback( callback );
+            }
+            else
+            {
+                //TODO improve
+                throw new Exception( "CoAP URI cannot be listened on." );
+            }
+        }
     }
 
     @Processor
-    public void notifyObservers( String resourceUri )
+    public void resourceChanged( String uri ) throws Exception
     {
-        ServedResource resource= servedResources.get( resourceUri );
-        if ( resource != null )
+        if ( uri == null )
         {
-            resource.changed();
-        };
+            throw new Exception( "CoAP URI cannot be null." );
+        }
+
+        if ( uri.equals( COAP_URI_WILDCARD ) )
+        {
+            // all resources are to be considered changed
+            for ( ServedResource resource : servedResources.values() )
+            {
+                resource.changed();
+            }
+        }
+        else
+        {
+            ServedResource resource= servedResources.get( uri );
+
+            if ( resource != null )
+            {
+                //specified resource has changed
+                resource.changed();
+            }
+            else
+            {
+                throw new Exception( "CoAP URI is not a resource." );
+            }
+        }
     }
 
     public ServerConfig getConfig()
@@ -125,16 +190,6 @@ public class CoapServerConnector
         this.context= context;
     }
 
-    public List< Resource > getResources()
-    {
-        return resources;
-    }
-
-    public void setResources( List< Resource > resourcedefs )
-    {
-        this.resources= resourcedefs;
-    }
-
     public SourceCallback getCallback()
     {
         return callback;
@@ -146,7 +201,7 @@ public class CoapServerConnector
     }
 
     /**
-     * @return the context
+     * @return the Mule context
      */
     public MuleContext getContext()
     {

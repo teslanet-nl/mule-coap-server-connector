@@ -2,6 +2,7 @@ package nl.teslanet.mule.connectors.coap.server;
 
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.californium.core.CoapResource;
@@ -16,23 +17,29 @@ import org.mule.MessageExchangePattern;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
+import org.mule.api.callback.SourceCallback;
 import org.mule.security.oauth.processor.AbstractListeningMessageProcessor;
+
+import nl.teslanet.mule.connectors.coap.server.config.ResourceConfig;
 
 
 public class ServedResource extends CoapResource
 {
-    private static final Object PROPNAME_COAP_RESPONSE_CODE= "coap.response.code";
+    private static final String PROPNAME_COAP_RESPONSE_CODE= "coap.response.code";
 
     private CoapServerConnector connector;
 
-    private Resource configuredresource;
+    private ResourceConfig configuredResource;
 
-    public ServedResource( CoapServerConnector coapServerConnector, Resource resource )
+    private SourceCallback callback= null;
+
+
+    public ServedResource( CoapServerConnector coapServerConnector, ResourceConfig resourceConfig )
     {
-        super( resource.getName() );
+        super( resourceConfig.getName() );
         connector= coapServerConnector;
-        configuredresource= resource;
-        setObservable( configuredresource.isObservable() );
+        configuredResource= resourceConfig;
+        setObservable( configuredResource.isObservable() );
 
         // set display name
         getAttributes().setTitle( "Mule CoAP Resource" );
@@ -41,7 +48,7 @@ public class ServedResource extends CoapResource
     @Override
     public void handleGET( CoapExchange exchange )
     {
-        if ( !configuredresource.isGet() )
+        if ( !configuredResource.isGet() )
         {
             //default implementation is METHOD_NOT_ALLOWED
             super.handleGET( exchange );
@@ -51,7 +58,7 @@ public class ServedResource extends CoapResource
             Object outboundPayload= null;
             ResponseCode responseCode= ResponseCode.CONTENT;
 
-            if ( configuredresource.isDelayedResponse() )
+            if ( configuredResource.isDelayedResponse() )
             {
                 exchange.accept();
             }
@@ -98,7 +105,7 @@ public class ServedResource extends CoapResource
     @Override
     public void handlePUT( CoapExchange exchange )
     {
-        if ( !configuredresource.isPut() )
+        if ( !configuredResource.isPut() )
         {
             //default implementation is METHOD_NOT_ALLOWED
             super.handlePUT( exchange );
@@ -107,7 +114,7 @@ public class ServedResource extends CoapResource
         {
             Object response= null;
             ResponseCode responseCode= ResponseCode.CREATED;
-            if ( configuredresource.isDelayedResponse() )
+            if ( configuredResource.isDelayedResponse() )
             {
                 exchange.accept();
             }
@@ -144,7 +151,7 @@ public class ServedResource extends CoapResource
     @Override
     public void handlePOST( CoapExchange exchange )
     {
-        if ( !configuredresource.isPost() )
+        if ( !configuredResource.isPost() )
         {
             //default implementation is METHOD_NOT_ALLOWED
             super.handlePOST( exchange );
@@ -153,7 +160,7 @@ public class ServedResource extends CoapResource
         {
             Object response= null;
             ResponseCode responseCode= ResponseCode.CHANGED;
-            if ( configuredresource.isDelayedResponse() )
+            if ( configuredResource.isDelayedResponse() )
             {
                 exchange.accept();
             }
@@ -216,7 +223,7 @@ public class ServedResource extends CoapResource
     {
         Object response= null;
         //TODO make safe:
-        AbstractListeningMessageProcessor processor= (AbstractListeningMessageProcessor) connector.getCallback();
+        AbstractListeningMessageProcessor processor= (AbstractListeningMessageProcessor) getCallback();
         MuleMessage muleMessage;
         muleMessage= new DefaultMuleMessage( requestPayload, inboundProperties, null, null, processor.getMuleContext() );
         MuleEvent muleEvent;
@@ -234,5 +241,41 @@ public class ServedResource extends CoapResource
         }
         return response;
     };
+    /**
+     * @return the configured Resource
+     */
+    public ResourceConfig getConfiguredResource()
+    {
+        return configuredResource;
+    }
+
+    /**
+     * set the resource specific callback
+     */    public void setCallback( SourceCallback callback )
+    {
+        this.callback= callback;
+    }
+
+    /**
+     * @return the callback
+     */
+    public SourceCallback getCallback()
+    {
+        if ( callback != null )
+        {
+            // use resource specific callback
+            return callback;
+        }
+        else
+        {
+            // use general callback
+            return connector.getCallback();
+        }
+    }
+
+    public boolean hasOwnCallback()
+    {
+        return ( callback != null );
+    }
 
 }

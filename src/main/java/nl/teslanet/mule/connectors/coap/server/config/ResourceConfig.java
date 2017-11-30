@@ -1,14 +1,32 @@
-package nl.teslanet.mule.connectors.coap.server;
+package nl.teslanet.mule.connectors.coap.server.config;
 
-public class Resource
+import java.util.ArrayList;
+import java.util.List;
+
+import org.mule.api.annotations.Configurable;
+import org.mule.api.annotations.display.FriendlyName;
+import org.mule.api.annotations.display.Placement;
+import org.mule.api.annotations.param.Optional;
+
+public class ResourceConfig
 {
     private String name= null;
+    @Placement(group = "Methods")
     private boolean get= true;
+    @Placement(group = "Methods")
     private boolean post= false;
+    @Placement(group = "Methods")
     private boolean put= false;
+    @Placement(group = "Methods")
     private boolean delayedResponse= false;
+    @Placement(group = "Methods")
     private boolean observable= false;
 
+    
+    @Optional
+    @Placement(group = "Children")
+    @FriendlyName(value = "Resource")
+    private List< ResourceConfig > resourceConfigs= new ArrayList< ResourceConfig >(); 
 
 
     public String getName()
@@ -93,4 +111,22 @@ public class Resource
     {
         return this.observable;
     }
+
+    /**
+     * @return the child resources
+     */
+    public List< ResourceConfig > getResources()
+    {
+        return resourceConfigs;
+    }
+
+    /**
+     * @param resourceConfigs the child resources to set
+     */
+    public void setResources( List< ResourceConfig > resourceConfigs )
+    {
+        this.resourceConfigs= resourceConfigs;
+    }
+
+
 }

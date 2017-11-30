@@ -1,56 +1,26 @@
 package nl.teslanet.mule.connectors.coap.server.config;
 
 import org.mule.api.annotations.components.Configuration;
+
+import java.util.List;
+
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.param.Default;
 
-@Configuration(friendlyName = "Configuration")
-public class ServerConfig {
+@Configuration(friendlyName = "CoAP Server Connector configuration")
+public class ServerConfig 
+{
 
-    /**
-     * Greeting message
-     */
-    @Configurable
-    @Default("Hello")
-    private String greeting;
+    private List< ResourceConfig > resourceConfigs;
 
-    /**
-     * Reply message
-     */
-    @Configurable
-    @Default("How are you?")
-    private String reply;
-
-    /**
-     * Set greeting message
-     *
-     * @param greeting the greeting message
-     */
-    public void setGreeting(String greeting) {
-        this.greeting = greeting;
+    public List< ResourceConfig > getResources()
+    {
+        return resourceConfigs;
     }
 
-    /**
-     * Get greeting message
-     */
-    public String getGreeting() {
-        return this.greeting;
-    }
-
-    /**
-     * Set reply
-     *
-     * @param reply the reply
-     */
-    public void setReply(String reply) {
-        this.reply = reply;
-    }
-
-    /**
-     * Get reply
-     */
-    public String getReply() {
-        return this.reply;
+    public void setResources( List< ResourceConfig > resourceConfigs )
+    {
+        this.resourceConfigs = resourceConfigs;
     }
 
 }
