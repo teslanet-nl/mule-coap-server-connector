@@ -2,13 +2,11 @@ package nl.teslanet.mule.connectors.coap.server;
 
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.californium.core.CoapResource;
-import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
-import org.eclipse.californium.core.coap.OptionSet;
 import org.eclipse.californium.core.coap.Response;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.mule.DefaultMuleEvent;
@@ -20,6 +18,7 @@ import org.mule.api.MuleMessage;
 import org.mule.api.callback.SourceCallback;
 import org.mule.security.oauth.processor.AbstractListeningMessageProcessor;
 
+import nl.teslanet.mule.connectors.coap.options.OptionSet;
 import nl.teslanet.mule.connectors.coap.server.config.ResourceConfig;
 
 
@@ -32,7 +31,6 @@ public class ServedResource extends CoapResource
     private ResourceConfig configuredResource;
 
     private SourceCallback callback= null;
-
 
     public ServedResource( CoapServerConnector coapServerConnector, ResourceConfig resourceConfig )
     {
@@ -50,56 +48,13 @@ public class ServedResource extends CoapResource
     {
         if ( !configuredResource.isGet() )
         {
-            //default implementation is METHOD_NOT_ALLOWED
+            //default implementation is to respond METHOD_NOT_ALLOWED
             super.handleGET( exchange );
         }
         else
         {
-            Object outboundPayload= null;
-            ResponseCode responseCode= ResponseCode.CONTENT;
-
-            if ( configuredResource.isDelayedResponse() )
-            {
-                exchange.accept();
-            }
-            
-            String requestPayload= exchange.getRequestText();
-            Map< String, Object > inboundProperties= createInboundProperties( exchange );
-            Map< String, Object > outboundProperties= new HashMap< String, Object >();
-
-            try
-            {
-                
-                outboundPayload= processMuleFlow( inboundProperties, requestPayload, outboundProperties );
-
-                if ( outboundProperties.containsKey( PROPNAME_COAP_RESPONSE_CODE ) )
-                {
-                    responseCode= ResponseCode.valueOf( outboundProperties.get( PROPNAME_COAP_RESPONSE_CODE ).toString() );
-                }
-                Response resp= Response.createResponse(exchange.advanced().getRequest(), responseCode );
-                if ( exchange.advanced().getRelation() != null )
-                {
-                    resp.setConfirmable( true );
-                }
-                if ( outboundPayload == null )
-                {
-                    //TODO is this adequate?
-                    exchange.respond( resp );
-                }
-                else
-                {
-                    resp.setPayload( outboundPayload.toString() );
-                    exchange.respond( resp );
-
-                } ;
-            }
-            catch ( Exception e )
-            {
-                //TODO make adequate ERROR!
-                exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR );
-            }
-
-        } ;
+            handleRequest( exchange, ResponseCode.CONTENT );
+        }
     }
 
     @Override
@@ -107,45 +62,13 @@ public class ServedResource extends CoapResource
     {
         if ( !configuredResource.isPut() )
         {
-            //default implementation is METHOD_NOT_ALLOWED
+            //default implementation is to respond METHOD_NOT_ALLOWED
             super.handlePUT( exchange );
         }
         else
         {
-            Object response= null;
-            ResponseCode responseCode= ResponseCode.CREATED;
-            if ( configuredResource.isDelayedResponse() )
-            {
-                exchange.accept();
-            }
-            String requestPayload= exchange.getRequestText();
-            Map< String, Object > inboundProperties= createInboundProperties( exchange );
-            Map< String, Object > outboundProperties= new HashMap< String, Object >();
-
-            try
-            {
-                response= processMuleFlow( inboundProperties, requestPayload, outboundProperties );
-                if ( outboundProperties.containsKey( PROPNAME_COAP_RESPONSE_CODE ) )
-                {
-                    responseCode= ResponseCode.valueOf( outboundProperties.get( PROPNAME_COAP_RESPONSE_CODE ).toString() );
-                }
-                if ( response == null )
-                {
-                    //TODO is this adequate?
-                    exchange.respond( responseCode, "" );
-                }
-                else
-                {
-                    exchange.respond( responseCode, response.toString() );
-                } ;
-            }
-            catch ( Exception e )
-            {
-                //TODO make adequate ERROR!
-                exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR );
-            }
-
-        } ;
+            handleRequest( exchange, ResponseCode.CREATED );
+        }
     }
 
     @Override
@@ -153,45 +76,60 @@ public class ServedResource extends CoapResource
     {
         if ( !configuredResource.isPost() )
         {
-            //default implementation is METHOD_NOT_ALLOWED
+            //default implementation is to respond METHOD_NOT_ALLOWED
             super.handlePOST( exchange );
         }
         else
         {
-            Object response= null;
-            ResponseCode responseCode= ResponseCode.CHANGED;
-            if ( configuredResource.isDelayedResponse() )
-            {
-                exchange.accept();
-            }
-            String requestPayload= exchange.getRequestText();
-            Map< String, Object > inboundProperties= createInboundProperties( exchange );
-            Map< String, Object > outboundProperties= new HashMap< String, Object >();
+            handleRequest( exchange, ResponseCode.CHANGED );
+        }
+    }
 
-            try
-            {
-                response= processMuleFlow( inboundProperties, requestPayload, outboundProperties );
-                if ( outboundProperties.containsKey( PROPNAME_COAP_RESPONSE_CODE ) )
-                {
-                    responseCode= ResponseCode.valueOf( outboundProperties.get( PROPNAME_COAP_RESPONSE_CODE ).toString() );
-                }
-                if ( response == null )
-                {
-                    //TODO is this adequate?
-                    exchange.respond( responseCode, "" );
-                }
-                else
-                {
-                    exchange.respond( responseCode, response.toString() );
-                } ;
-            }
-            catch ( Exception e )
-            {
-                //TODO make adequate ERROR!
-                exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR );
-            }
+    private void handleRequest( CoapExchange exchange, ResponseCode defaultResponseCode )
+    {
+        Object outboundPayload= null;
+        ResponseCode responseCode= defaultResponseCode;
 
-        } ;
+        if ( configuredResource.isDelayedResponse() )
+        {
+            exchange.accept();
+        }
+        //TODO reconsider payload type: string/byte[]
+        String requestPayload= exchange.getRequestText();
+        Map< String, Object > inboundProperties= createInboundProperties( exchange );
+        Map< String, Object > outboundProperties= new HashMap< String, Object >();
+
+        try
+        {
+            outboundPayload= processMuleFlow( inboundProperties, requestPayload, outboundProperties );
+            if ( outboundProperties.containsKey( PROPNAME_COAP_RESPONSE_CODE ) )
+            {
+                responseCode= ResponseCode.valueOf( outboundProperties.get( PROPNAME_COAP_RESPONSE_CODE ).toString() );
+            }
+            Response response= new Response( responseCode );
+            OptionSet options= new OptionSet( outboundProperties );
+            response.setOptions( options );
+
+            //if ( exchange.advanced().getRelation() != null  )
+            //{
+            // is an observe response
+            //}
+            //TODO check responsecode allows for content
+            if ( byte[].class.isInstance( outboundPayload ) )
+            {
+                response.setPayload( (byte[]) outboundPayload );
+            }
+            else if ( outboundPayload != null )
+            {
+                response.setPayload( outboundPayload.toString() );
+            };
+            exchange.respond( response );
+        }
+        catch ( Exception e )
+        {
+            //TODO make adequate ERROR!
+            exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR );
+        }
     }
 
     private Map< String, Object > createInboundProperties( CoapExchange exchange )
@@ -206,15 +144,7 @@ public class ServedResource extends CoapResource
         props.put( "coap.request.source.host", exchange.getSourceAddress() );
         props.put( "coap.request.source.port", exchange.getSourcePort() );
 
-        OptionSet options= exchange.getRequestOptions();
-        props.put( "coap.request.options.locationpath", options.getLocationPathString() );
-        props.put( "coap.request.options.locationquery", options.getLocationQueryString() );
-        props.put( "coap.request.options.location", options.getLocationString() );
-        props.put( "coap.request.options.observe", options.getObserve() );
-        props.put( "coap.request.options.maxage", options.getMaxAge() );
-        props.put( "coap.request.options.others", options.getOthers() );
-        props.put( "coap.request.options.contentformat", options.getContentFormat() );
-        props.put( "coap.request.options.accept", options.getAccept() );
+        OptionSet.fillProperties( exchange.getRequestOptions(), props );
 
         return props;
     }
@@ -241,6 +171,7 @@ public class ServedResource extends CoapResource
         }
         return response;
     };
+
     /**
      * @return the configured Resource
      */
@@ -251,7 +182,8 @@ public class ServedResource extends CoapResource
 
     /**
      * set the resource specific callback
-     */    public void setCallback( SourceCallback callback )
+     */
+    public void setCallback( SourceCallback callback )
     {
         this.callback= callback;
     }
@@ -275,7 +207,7 @@ public class ServedResource extends CoapResource
 
     public boolean hasOwnCallback()
     {
-        return ( callback != null );
+        return( callback != null );
     }
 
 }

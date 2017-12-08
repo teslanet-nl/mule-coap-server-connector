@@ -8,10 +8,12 @@ import javax.inject.Inject;
 import javax.resource.spi.work.WorkException;
 
 import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.mule.api.ConnectionException;
 import org.mule.api.ConnectionExceptionCode;
 import org.mule.api.MuleContext;
 import org.mule.api.annotations.Config;
+import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.Processor;
 import org.mule.api.annotations.Source;
@@ -37,7 +39,21 @@ public class CoapServerConnector
     @Config
     private ServerConfig config;
 
-    private CoapServer server= null;
+    @Configurable
+    //@Optional
+    //@Placement(group = "Children")
+    //@FriendlyName(value = "Resources")
+    private List< ResourceConfig > resourceConfigs;
+
+    public List< ResourceConfig > getResourceConfigs()
+    {
+        return resourceConfigs;
+    }
+
+    public void setResourceConfigs( List< ResourceConfig > resourceConfigs )
+    {
+        this.resourceConfigs = resourceConfigs;
+    }    private CoapServer server= null;
 
     private HashMap< String, ServedResource > servedResources;
 
@@ -46,10 +62,12 @@ public class CoapServerConnector
 
     private SourceCallback callback= null;
 
+    private NetworkConfig networkConfig;
+
     @Start
     public void startServer() throws ConnectionException, WorkException
     {
-        if ( config.getResources() == null || config.getResources().isEmpty() )
+        if ( getResourceConfigs() == null || getResourceConfigs().isEmpty() )
         {
             throw new ConnectionException( ConnectionExceptionCode.UNKNOWN, "coap resources not defined", null );
         }
@@ -61,11 +79,12 @@ public class CoapServerConnector
         {
             servedResources.clear();
         }
-
+        networkConfig= NetworkConfig.createStandardWithoutFile();
+        networkConfig.setLong(NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_TIME, 60 * 1000); // ms., value )
         // binds on UDP port 5683
-        server= new CoapServer();
+        server= new CoapServer(  networkConfig );
 
-        addResources( server, config.getResources() );
+        addResources( server, getResourceConfigs() );
 
         //System.getSecurityManager().checkAccept( "localhost", 5683 );
         //server.addEndpoint(new CoapEndpoint(new InetSocketAddress("0.0.0.0", 5683)));
@@ -76,21 +95,21 @@ public class CoapServerConnector
     {
         for ( ResourceConfig resourceConfig : resourceConfigs )
         {
-            ServedResource toserve= new ServedResource( this, resourceConfig );
-            server.add( toserve );
-            servedResources.put( toserve.getURI(), toserve );
-            addChildren( toserve );
+            ServedResource toServe= new ServedResource( this, resourceConfig );
+            server.add( toServe );
+            servedResources.put( toServe.getURI(), toServe );
+            addChildren( toServe );
         }
     }
 
     private void addChildren( ServedResource parent )
     {
-        for ( ResourceConfig resourceConfig : parent.getConfiguredResource().getResources() )
+        for ( ResourceConfig childResourceConfig : parent.getConfiguredResource().getResourceCollection() )
         {
-            ServedResource toserve= new ServedResource( this, resourceConfig );
-            parent.add( toserve );
-            servedResources.put( toserve.getURI(), toserve );
-            addChildren( toserve );
+            ServedResource childToServe= new ServedResource( this, childResourceConfig );
+            parent.add( childToServe );
+            servedResources.put( childToServe.getURI(), childToServe );
+            addChildren( childToServe );
         }
     }
 

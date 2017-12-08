@@ -1,6 +1,8 @@
 package nl.teslanet.mule.connectors.coap.server.config;
 
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.mule.api.annotations.Configurable;
@@ -8,26 +10,29 @@ import org.mule.api.annotations.display.FriendlyName;
 import org.mule.api.annotations.display.Placement;
 import org.mule.api.annotations.param.Optional;
 
+
 public class ResourceConfig
 {
     private String name= null;
-    @Placement(group = "Methods")
+
+    @Placement(group= "Methods")
     private boolean get= true;
-    @Placement(group = "Methods")
+
+    @Placement(group= "Methods")
     private boolean post= false;
-    @Placement(group = "Methods")
+
+    @Placement(group= "Methods")
     private boolean put= false;
-    @Placement(group = "Methods")
+
+    @Placement(group= "Methods")
     private boolean delayedResponse= false;
-    @Placement(group = "Methods")
+
+    @Placement(group= "Methods")
     private boolean observable= false;
 
-    
+    @Configurable
     @Optional
-    @Placement(group = "Children")
-    @FriendlyName(value = "Resource")
-    private List< ResourceConfig > resourceConfigs= new ArrayList< ResourceConfig >(); 
-
+    private List< ResourceConfig > resourceConfigs;
 
     public String getName()
     {
@@ -36,7 +41,7 @@ public class ResourceConfig
 
     public void setName( String name )
     {
-        this.name = name;
+        this.name= name;
     }
 
     /**
@@ -91,6 +96,7 @@ public class ResourceConfig
     {
         return this.delayedResponse;
     }
+
     /**
      * @param delayedResponse set to true when processing requests takes more than a few seconds
      */
@@ -115,7 +121,7 @@ public class ResourceConfig
     /**
      * @return the child resources
      */
-    public List< ResourceConfig > getResources()
+    public List< ResourceConfig > getResourceConfigs()
     {
         return resourceConfigs;
     }
@@ -123,10 +129,24 @@ public class ResourceConfig
     /**
      * @param resourceConfigs the child resources to set
      */
-    public void setResources( List< ResourceConfig > resourceConfigs )
+    public void setResourceConfigs( List< ResourceConfig > resourceConfigs )
     {
         this.resourceConfigs= resourceConfigs;
     }
-
+    
+    /**
+     * @return the child resources or empty collection when not configured
+     */
+    public Collection< ResourceConfig > getResourceCollection()
+    {
+        if ( resourceConfigs != null )
+        {
+            return resourceConfigs;
+        }
+        else
+        {
+            return new ArrayList< ResourceConfig >();
+        }
+    }
 
 }
