@@ -25,10 +25,13 @@ public class ResourceConfig
     private boolean put= false;
 
     @Placement(group= "Methods")
-    private boolean delayedResponse= false;
+    private boolean delete= false;
 
     @Placement(group= "Methods")
     private boolean observable= false;
+
+    @Placement(group= "Methods")
+    private boolean delayedResponse= false;
 
     @Configurable
     @Optional
@@ -92,6 +95,22 @@ public class ResourceConfig
         this.put= put;
     }
 
+    /**
+     * @return the delete
+     */
+    public boolean isDelete()
+    {
+        return delete;
+    }
+
+    /**
+     * @param delete the delete to set
+     */
+    public void setDelete( boolean delete )
+    {
+        this.delete= delete;
+    }
+
     public boolean isDelayedResponse()
     {
         return this.delayedResponse;
@@ -148,5 +167,18 @@ public class ResourceConfig
             return new ArrayList< ResourceConfig >();
         }
     }
+    /**
+     * @return the child resources or empty collection when not configured
+     */
+    public void addResource( ResourceConfig resource )
+    {
+        if ( resourceConfigs == null )
+        {
+            resourceConfigs= new ArrayList< ResourceConfig >();
+        }
+        resourceConfigs.add( resource );
+    }
+
+
 
 }

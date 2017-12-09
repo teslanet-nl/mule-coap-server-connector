@@ -9,6 +9,7 @@ import javax.resource.spi.work.WorkException;
 
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.core.server.resources.Resource;
 import org.mule.api.ConnectionException;
 import org.mule.api.ConnectionExceptionCode;
 import org.mule.api.MuleContext;
@@ -17,9 +18,12 @@ import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.Processor;
 import org.mule.api.annotations.Source;
+import org.mule.api.annotations.display.Placement;
 import org.mule.api.annotations.lifecycle.OnException;
 import org.mule.api.annotations.lifecycle.Start;
 import org.mule.api.annotations.lifecycle.Stop;
+import org.mule.api.annotations.param.Default;
+import org.mule.api.annotations.param.Optional;
 import org.mule.api.callback.SourceCallback;
 
 import nl.teslanet.mule.connectors.coap.server.config.ResourceConfig;
@@ -37,11 +41,12 @@ public class CoapServerConnector
     private static final String COAP_URI_WILDCARD= "*";
 
     @Config
+    @Placement(group= "Server")
     private ServerConfig config;
 
     @Configurable
-    //@Optional
-    //@Placement(group = "Children")
+    @Optional
+    @Placement(group= "Server")
     //@FriendlyName(value = "Resources")
     private List< ResourceConfig > resourceConfigs;
 
@@ -52,8 +57,10 @@ public class CoapServerConnector
 
     public void setResourceConfigs( List< ResourceConfig > resourceConfigs )
     {
-        this.resourceConfigs = resourceConfigs;
-    }    private CoapServer server= null;
+        this.resourceConfigs= resourceConfigs;
+    }
+
+    private CoapServer server= null;
 
     private HashMap< String, ServedResource > servedResources;
 
@@ -80,9 +87,9 @@ public class CoapServerConnector
             servedResources.clear();
         }
         networkConfig= NetworkConfig.createStandardWithoutFile();
-        networkConfig.setLong(NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_TIME, 60 * 1000); // ms., value )
+        networkConfig.setLong( NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_TIME, 60 * 1000 ); // ms., value )
         // binds on UDP port 5683
-        server= new CoapServer(  networkConfig );
+        server= new CoapServer( networkConfig );
 
         addResources( server, getResourceConfigs() );
 
@@ -194,6 +201,103 @@ public class CoapServerConnector
         }
     }
 
+    @Processor
+    public void addResource( String uri, @Default( "false" ) Boolean get, @Default( "false" ) Boolean put, @Default( "false" ) boolean post, @Default( "false" ) boolean delete, @Default( "false" ) boolean observable, @Default( "false" ) boolean delayedResponse ) throws Exception
+    {
+        String parentUri;
+        String name;
+        if ( uri == null )
+        {
+            throw new Exception( "CoAP URI cannot be null." );
+        }
+        try
+        {
+            int index= uri.lastIndexOf( "/" );
+            parentUri= uri.substring( 0, index );
+            name= uri.substring( index + 1 );
+        }
+        catch ( IndexOutOfBoundsException e )
+        {
+            throw new Exception( "CoAP URI should be absolute (starting with '/' )" );
+        }
+        if ( name.length() <= 0 ) throw new Exception( "CoAP resource name is empty" );
+
+        ResourceConfig resourceConfig= new ResourceConfig();
+        resourceConfig.setName( name );
+        resourceConfig.setGet( get );
+        resourceConfig.setPost( post );
+        resourceConfig.setPut( put );
+        resourceConfig.setDelete( put );
+        resourceConfig.setObservable( observable );
+        resourceConfig.setDelayedResponse( delayedResponse );
+
+        if ( parentUri.length() > 0 )
+        {
+            ServedResource parent= servedResources.get( parentUri );
+            if ( parent == null )
+            {
+                throw new Exception( "CoAP parent resource not found." );
+            }
+            synchronized ( servedResources )
+            {
+                //TODO add try catch to repair when failure 
+                parent.getConfiguredResource().addResource( resourceConfig );
+                ServedResource childToServe= new ServedResource( this, resourceConfig );
+                parent.add( childToServe );
+                servedResources.put( childToServe.getURI(), childToServe );
+            }
+        }
+        else
+        {
+            synchronized ( servedResources )
+            {
+                //is a root resource
+                //TODO add try catch to repair when failure 
+                ServedResource toServe= new ServedResource( this, resourceConfig );
+                server.add( toServe );
+                servedResources.put( toServe.getURI(), toServe );
+            }
+        }
+    }
+    
+    @Processor
+    public void deleteResource( String uri ) throws Exception
+    {
+        if ( uri == null )
+        {
+            throw new Exception( "CoAP URI cannot be null." );
+        }
+
+        //dangerous
+//        if ( uri.equals( COAP_URI_WILDCARD ) )
+//        {
+//            // all resources are to be considered changed
+//            for ( ServedResource resource : servedResources.values() )
+//            {
+//                resource.changed();
+//            }
+//        }
+//        else
+        {
+            ServedResource resource= servedResources.get( uri );
+
+            if ( resource != null )
+            {
+                //delete specified resource
+                synchronized ( servedResources )
+                {
+                    servedResources.remove( resource.getURI());
+                    resource.delete();
+                }
+            }
+            else
+            {
+                throw new Exception( "CoAP URI is not a resource." );
+            }
+        }
+    }
+
+
     public ServerConfig getConfig()
     {
         return config;
@@ -225,6 +329,11 @@ public class CoapServerConnector
     public MuleContext getContext()
     {
         return context;
+    }
+
+    public boolean isRootResource( Resource resource )
+    {
+        return server.getRoot().equals( resource );
     }
 
 }

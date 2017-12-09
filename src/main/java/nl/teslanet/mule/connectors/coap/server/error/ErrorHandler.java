@@ -9,7 +9,7 @@ public class ErrorHandler {
 
     @Handle
     public void handle(Exception ex) throws Exception {
-    	//TODO Process the exception
+    	ex.printStackTrace( System.err );
     }
 
 }

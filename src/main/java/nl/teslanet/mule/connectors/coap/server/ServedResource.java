@@ -3,12 +3,12 @@ package nl.teslanet.mule.connectors.coap.server;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.Response;
 import org.eclipse.californium.core.server.resources.CoapExchange;
+import org.eclipse.californium.core.server.resources.Resource;
 import org.mule.DefaultMuleEvent;
 import org.mule.DefaultMuleMessage;
 import org.mule.MessageExchangePattern;
@@ -85,6 +85,20 @@ public class ServedResource extends CoapResource
         }
     }
 
+    @Override
+    public void handleDELETE( CoapExchange exchange )
+    {
+        if ( !configuredResource.isDelete() )
+        {
+            //default implementation is to respond METHOD_NOT_ALLOWED
+            super.handleDELETE( exchange );
+        }
+        else
+        {
+            handleRequest( exchange, ResponseCode.DELETED );
+        }
+    }
+    
     private void handleRequest( CoapExchange exchange, ResponseCode defaultResponseCode )
     {
         Object outboundPayload= null;
@@ -122,7 +136,7 @@ public class ServedResource extends CoapResource
             else if ( outboundPayload != null )
             {
                 response.setPayload( outboundPayload.toString() );
-            };
+            } ;
             exchange.respond( response );
         }
         catch ( Exception e )
@@ -171,6 +185,22 @@ public class ServedResource extends CoapResource
         }
         return response;
     };
+
+    /**
+     * @return get the parent resource
+     */
+    public ServedResource getParent()
+    {
+        Resource parent= super.getParent();
+        if ( connector.isRootResource( parent ) )
+        {
+            return null;
+        }
+        else
+        {
+            return (ServedResource) parent;
+        }
+    }
 
     /**
      * @return the configured Resource
