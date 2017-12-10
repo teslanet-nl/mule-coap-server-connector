@@ -103,6 +103,10 @@ public class ServedResource extends CoapResource
     {
         Object outboundPayload= null;
         ResponseCode responseCode= defaultResponseCode;
+        if ( !hasCallback())
+        {
+            exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "NO LISTENER" );
+        }
 
         if ( configuredResource.isDelayedResponse() )
         {
@@ -223,19 +227,10 @@ public class ServedResource extends CoapResource
      */
     public SourceCallback getCallback()
     {
-        if ( callback != null )
-        {
-            // use resource specific callback
-            return callback;
-        }
-        else
-        {
-            // use general callback
-            return connector.getCallback();
-        }
+        return callback;
     }
 
-    public boolean hasOwnCallback()
+    public boolean hasCallback()
     {
         return( callback != null );
     }

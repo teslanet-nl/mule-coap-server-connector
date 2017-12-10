@@ -38,7 +38,6 @@ import nl.teslanet.mule.connectors.coap.server.error.ErrorHandler;
 @OnException(handler= ErrorHandler.class)
 public class CoapServerConnector
 {
-    private static final String COAP_URI_WILDCARD= "*";
 
     @Config
     @Placement(group= "Server")
@@ -62,60 +61,61 @@ public class CoapServerConnector
 
     private CoapServer server= null;
 
-    private HashMap< String, ServedResource > servedResources;
+    //private HashMap< String, ServedResource > servedResources;
+    private ResourceRegistry registry= null;
 
     @Inject
     private MuleContext context;
-
-    private SourceCallback callback= null;
 
     private NetworkConfig networkConfig;
 
     @Start
     public void startServer() throws ConnectionException, WorkException
     {
+        
         if ( getResourceConfigs() == null || getResourceConfigs().isEmpty() )
         {
             throw new ConnectionException( ConnectionExceptionCode.UNKNOWN, "coap resources not defined", null );
         }
-        if ( servedResources == null )
-        {
-            servedResources= new HashMap< String, ServedResource >();
-        }
-        else
-        {
-            servedResources.clear();
-        }
+
         networkConfig= NetworkConfig.createStandardWithoutFile();
         networkConfig.setLong( NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_TIME, 60 * 1000 ); // ms., value )
         // binds on UDP port 5683
         server= new CoapServer( networkConfig );
+        registry= new ResourceRegistry( server.getRoot());
 
-        addResources( server, getResourceConfigs() );
+        try
+        {
+            addResources( server, getResourceConfigs() );
+        }
+        catch ( Exception e )
+        {
+            throw new ConnectionException( null, null, "CoAP configuration error", e );
+        }
 
         //System.getSecurityManager().checkAccept( "localhost", 5683 );
         //server.addEndpoint(new CoapEndpoint(new InetSocketAddress("0.0.0.0", 5683)));
         server.start();
     }
 
-    private void addResources( CoapServer server, List< ResourceConfig > resourceConfigs )
+    private void addResources( CoapServer server, List< ResourceConfig > resourceConfigs ) throws Exception
     {
         for ( ResourceConfig resourceConfig : resourceConfigs )
         {
-            ServedResource toServe= new ServedResource( this, resourceConfig );
-            server.add( toServe );
-            servedResources.put( toServe.getURI(), toServe );
+            ServedResource toServe= new ServedResource( this, resourceConfig );           
+            registry.add( null, toServe );            
             addChildren( toServe );
         }
     }
 
-    private void addChildren( ServedResource parent )
+    private void addChildren( ServedResource parent ) throws Exception
     {
         for ( ResourceConfig childResourceConfig : parent.getConfiguredResource().getResourceCollection() )
         {
             ServedResource childToServe= new ServedResource( this, childResourceConfig );
-            parent.add( childToServe );
-            servedResources.put( childToServe.getURI(), childToServe );
+            
+            registry.add( parent, childToServe );
+            //servedResources.put( childToServe.getURI(), childToServe );
             addChildren( childToServe );
         }
     }
@@ -139,34 +139,8 @@ public class CoapServerConnector
     @Source( /* threadingModel=SourceThreadingModel.NONE */)
     public void listen( SourceCallback callback, String uri ) throws Exception
     {
-        //TODO add option to listen on specific resource
-        if ( uri.equals( COAP_URI_WILDCARD ) )
-        {
-            //set general callback
-            if ( this.callback == null )
-            {
-                this.callback= callback;
-            }
-            else
-            {
-                //TODO improve
-                throw new Exception( "CoAP URI wildcard can be listened on only once." );
-            }
-        }
-        else
-        {
-            // set resource specific callback
-            ServedResource toListenOn= servedResources.get( uri );
-            if ( toListenOn != null && !toListenOn.hasOwnCallback() )
-            {
-                toListenOn.setCallback( callback );
-            }
-            else
-            {
-                //TODO improve
-                throw new Exception( "CoAP URI cannot be listened on." );
-            }
-        }
+        registry.add(  new Listener( uri, callback ) );
+
     }
 
     @Processor
@@ -176,50 +150,23 @@ public class CoapServerConnector
         {
             throw new Exception( "CoAP URI cannot be null." );
         }
-
-        if ( uri.equals( COAP_URI_WILDCARD ) )
+        
+        for ( ServedResource resource : registry.findResources( uri ))
         {
-            // all resources are to be considered changed
-            for ( ServedResource resource : servedResources.values() )
-            {
-                resource.changed();
-            }
-        }
-        else
-        {
-            ServedResource resource= servedResources.get( uri );
-
-            if ( resource != null )
-            {
-                //specified resource has changed
-                resource.changed();
-            }
-            else
-            {
-                throw new Exception( "CoAP URI is not a resource." );
-            }
+            resource.changed();
         }
     }
 
     @Processor
     public void addResource( String uri, @Default( "false" ) Boolean get, @Default( "false" ) Boolean put, @Default( "false" ) boolean post, @Default( "false" ) boolean delete, @Default( "false" ) boolean observable, @Default( "false" ) boolean delayedResponse ) throws Exception
     {
-        String parentUri;
-        String name;
         if ( uri == null )
         {
             throw new Exception( "CoAP URI cannot be null." );
         }
-        try
-        {
-            int index= uri.lastIndexOf( "/" );
-            parentUri= uri.substring( 0, index );
-            name= uri.substring( index + 1 );
-        }
-        catch ( IndexOutOfBoundsException e )
-        {
-            throw new Exception( "CoAP URI should be absolute (starting with '/' )" );
-        }
+        String parentUri= ResourceRegistry.getParentUri( uri );
+        ServedResource parent= null;
+        String name= ResourceRegistry.getUriResourceName( uri );
         if ( name.length() <= 0 ) throw new Exception( "CoAP resource name is empty" );
 
         ResourceConfig resourceConfig= new ResourceConfig();
@@ -230,34 +177,11 @@ public class CoapServerConnector
         resourceConfig.setDelete( put );
         resourceConfig.setObservable( observable );
         resourceConfig.setDelayedResponse( delayedResponse );
-
-        if ( parentUri.length() > 0 )
-        {
-            ServedResource parent= servedResources.get( parentUri );
-            if ( parent == null )
-            {
-                throw new Exception( "CoAP parent resource not found." );
-            }
-            synchronized ( servedResources )
-            {
-                //TODO add try catch to repair when failure 
-                parent.getConfiguredResource().addResource( resourceConfig );
-                ServedResource childToServe= new ServedResource( this, resourceConfig );
-                parent.add( childToServe );
-                servedResources.put( childToServe.getURI(), childToServe );
-            }
-        }
-        else
-        {
-            synchronized ( servedResources )
-            {
-                //is a root resource
-                //TODO add try catch to repair when failure 
-                ServedResource toServe= new ServedResource( this, resourceConfig );
-                server.add( toServe );
-                servedResources.put( toServe.getURI(), toServe );
-            }
-        }
+ 
+        ServedResource toServe= new ServedResource( this, resourceConfig );
+        parent= registry.getResource( parentUri );
+        registry.add( parent, toServe );
+        
     }
     
     @Processor
@@ -268,33 +192,10 @@ public class CoapServerConnector
             throw new Exception( "CoAP URI cannot be null." );
         }
 
-        //dangerous
-//        if ( uri.equals( COAP_URI_WILDCARD ) )
-//        {
-//            // all resources are to be considered changed
-//            for ( ServedResource resource : servedResources.values() )
-//            {
-//                resource.changed();
-//            }
-//        }
-//        else
+        for ( ServedResource resource : registry.findResources( uri ))
         {
-            ServedResource resource= servedResources.get( uri );
-
-            if ( resource != null )
-            {
-                //delete specified resource
-                synchronized ( servedResources )
-                {
-                    servedResources.remove( resource.getURI());
-                    resource.delete();
-                }
-            }
-            else
-            {
-                throw new Exception( "CoAP URI is not a resource." );
-            }
-        }
+            registry.remove( resource );       
+        }      
     }
 
 
@@ -311,16 +212,6 @@ public class CoapServerConnector
     public void setContext( MuleContext context )
     {
         this.context= context;
-    }
-
-    public SourceCallback getCallback()
-    {
-        return callback;
-    }
-
-    public void setCallback( SourceCallback callback )
-    {
-        this.callback= callback;
     }
 
     /**
