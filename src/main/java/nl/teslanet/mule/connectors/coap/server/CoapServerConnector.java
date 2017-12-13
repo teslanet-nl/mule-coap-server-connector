@@ -174,7 +174,7 @@ public class CoapServerConnector
         resourceConfig.setGet( get );
         resourceConfig.setPost( post );
         resourceConfig.setPut( put );
-        resourceConfig.setDelete( put );
+        resourceConfig.setDelete( delete );
         resourceConfig.setObservable( observable );
         resourceConfig.setDelayedResponse( delayedResponse );
  

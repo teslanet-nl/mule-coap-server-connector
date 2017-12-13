@@ -60,20 +60,7 @@ public class ResourceRegistry
     {
         for ( Entry< String, ServedResource > e : servedResources.entrySet() )
         {
-            String resourceUri= e.getKey();
-            ServedResource resource= e.getValue();
-            Listener bestListener= null;
-            int maxMatchlevel= 0;
-            for ( Listener listener : listeners )
-            {
-                int matchLevel= matchUri( listener.getUri(), resourceUri );
-                if ( matchLevel > maxMatchlevel )
-                {
-                    maxMatchlevel= matchLevel;
-                    bestListener= listener;
-                }
-            }
-            resource.setCallback( bestListener.getCallback() );
+            setResourceCallBack( e.getValue());
         }
 
     }
@@ -149,7 +136,7 @@ public class ResourceRegistry
     {
         int count;
         int index;
-        for ( count= 0, index= uri.indexOf( Defs.COAP_URI_PATHSEP, 0 ); index >= 0; index= uri.indexOf( Defs.COAP_URI_PATHSEP, index ), count++ );
+        for ( count= 0, index= uri.indexOf( Defs.COAP_URI_PATHSEP, 0 ); index >= 0; index= uri.indexOf( Defs.COAP_URI_PATHSEP, index + 1 ), count++ );
         return count;
     }
 
@@ -158,7 +145,7 @@ public class ResourceRegistry
         int lastPathSep= uri.lastIndexOf( Defs.COAP_URI_PATHSEP );
         if ( lastPathSep >= 0 )
         {
-            return uri.substring( 0, lastPathSep );
+            return uri.substring( 0, lastPathSep + 1 );
         }
         else
         {
@@ -190,7 +177,7 @@ public class ResourceRegistry
         int lastPathSep= uri.lastIndexOf( Defs.COAP_URI_PATHSEP );
         if ( lastPathSep > 0 )
         {
-            return uri.substring( 0, lastPathSep - 1 );
+            return uri.substring( 0, lastPathSep );
         }
         else
         {
