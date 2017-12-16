@@ -4,35 +4,59 @@ import org.mule.api.annotations.components.Configuration;
 import org.mule.api.annotations.display.FriendlyName;
 import org.mule.api.annotations.display.Placement;
 
+import java.net.InetSocketAddress;
 import java.util.List;
 
+import org.eclipse.californium.core.coap.CoAP;
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.param.Default;
 import org.mule.api.annotations.param.Optional;
 
-@Configuration(friendlyName = "CoAP Server Configuration")
-public class ServerConfig 
+@Configuration(friendlyName = "Configuration")
+public class ServerConfig extends EndpointConfig
 {
     @Configurable
-    @Default(value= "60000")
-    int notificationConfirmPeriod;
-    
+    @Default( value= "false")
+    @Placement(tab= "General", group= "Server")
+    //@FriendlyName(value = false)
+    private boolean secure= false;
 
-
-    /**
-     * @return the notificationConfirmPeriod
-     */
-    public int getNotificationConfirmPeriod()
+    public InetSocketAddress getInetSocketAddress()
     {
-        return notificationConfirmPeriod;
+        int port;
+       
+        if ( secure )
+        {
+            port = ( getCoapSecurePort() != null ? Integer.parseInt( getCoapSecurePort()) : CoAP.DEFAULT_COAP_SECURE_PORT );
+        }
+        else
+        {
+            port = ( getCoapPort() != null ? Integer.parseInt( getCoapPort()) : CoAP.DEFAULT_COAP_PORT );
+        }
+        if ( getBindToHost() != null )
+        {
+            
+            return new InetSocketAddress( getBindToHost(), port );            
+        }
+        else
+        {
+            return new InetSocketAddress( port );            
+        }
     }
 
     /**
-     * @param notificationConfirmPeriod the notificationConfirmPeriod to set
+     * @return the secure
      */
-    public void setNotificationConfirmPeriod( int notificationConfirmPeriod )
+    public boolean isSecure()
     {
-        this.notificationConfirmPeriod= notificationConfirmPeriod;
+        return secure;
     }
 
+    /**
+     * @param secure the secure to set
+     */
+    public void setSecure( boolean secure )
+    {
+        this.secure= secure;
+    }
 }

@@ -35,7 +35,7 @@ public class ResourceConfig
 
     @Configurable
     @Optional
-    private List< ResourceConfig > resourceConfigs;
+    private List< ResourceConfig > resources;
 
     public String getName()
     {
@@ -140,17 +140,17 @@ public class ResourceConfig
     /**
      * @return the child resources
      */
-    public List< ResourceConfig > getResourceConfigs()
+    public List< ResourceConfig > getResources()
     {
-        return resourceConfigs;
+        return resources;
     }
 
     /**
      * @param resourceConfigs the child resources to set
      */
-    public void setResourceConfigs( List< ResourceConfig > resourceConfigs )
+    public void setResources( List< ResourceConfig > resourceConfigs )
     {
-        this.resourceConfigs= resourceConfigs;
+        this.resources= resourceConfigs;
     }
     
     /**
@@ -158,9 +158,9 @@ public class ResourceConfig
      */
     public Collection< ResourceConfig > getResourceCollection()
     {
-        if ( resourceConfigs != null )
+        if ( resources != null )
         {
-            return resourceConfigs;
+            return resources;
         }
         else
         {
@@ -172,11 +172,11 @@ public class ResourceConfig
      */
     public void addResource( ResourceConfig resource )
     {
-        if ( resourceConfigs == null )
+        if ( resources == null )
         {
-            resourceConfigs= new ArrayList< ResourceConfig >();
+            resources= new ArrayList< ResourceConfig >();
         }
-        resourceConfigs.add( resource );
+        resources.add( resource );
     }
 
 
