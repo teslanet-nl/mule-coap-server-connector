@@ -78,10 +78,8 @@ public class CoapServerConnector
             throw new ConnectionException( ConnectionExceptionCode.UNKNOWN, "coap resources not defined", null );
         }
 
-        networkConfig= NetworkConfig.createStandardWithoutFile();
-        networkConfig.setLong( NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_TIME, 60 * 1000 ); // ms., value )
         // binds on UDP port 5683
-        server= new CoapServer( networkConfig );
+        server= new CoapServer( NetworkConfig.createStandardWithoutFile() );
         registry= new ResourceRegistry( server.getRoot() );
 
         try

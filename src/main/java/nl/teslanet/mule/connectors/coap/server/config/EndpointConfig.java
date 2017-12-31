@@ -1,14 +1,8 @@
 package nl.teslanet.mule.connectors.coap.server.config;
 
 
-import java.net.InetSocketAddress;
-
-import org.eclipse.californium.core.coap.CoAP;
-import org.eclipse.californium.core.network.Endpoint;
 import org.eclipse.californium.core.network.config.NetworkConfig;
-import org.eclipse.californium.elements.UDPConnector;
 import org.mule.api.annotations.Configurable;
-import org.mule.api.annotations.components.Configuration;
 import org.mule.api.annotations.display.Placement;
 import org.mule.api.annotations.param.Default;
 import org.mule.api.annotations.param.Optional;
@@ -23,12 +17,12 @@ public class EndpointConfig
     @Configurable
     @Optional
     @Placement(tab= "Endpoint")
-    private String coapPort= null;
+    private String bindToPort= null;
 
     @Configurable
     @Optional
     @Placement(tab= "Endpoint")
-    private String coapSecurePort= null;
+    private String bindToSecurePort= null;
 
     //---------------    
     @Configurable
@@ -261,33 +255,33 @@ public class EndpointConfig
     /**
      * @return the coapPort
      */
-    public String getCoapPort()
+    public String getBindToPort()
     {
-        return coapPort;
+        return this.bindToPort;
     }
 
     /**
      * @param coapPort the coapPort to set
      */
-    public void setCoapPort( String coapPort )
+    public void setBindToPort( String coapPort )
     {
-        this.coapPort= coapPort;
+        this.bindToPort= coapPort;
     }
 
     /**
      * @return the coapSecurePort
      */
-    public String getCoapSecurePort()
+    public String getBindToSecurePort()
     {
-        return coapSecurePort;
+        return bindToSecurePort;
     }
 
     /**
      * @param coapSecurePort the coapSecurePort to set
      */
-    public void setCoapSecurePort( String coapSecurePort )
+    public void setBindToSecurePort( String coapSecurePort )
     {
-        this.coapSecurePort= coapSecurePort;
+        this.bindToSecurePort= coapSecurePort;
     }
 
     /**
@@ -934,8 +928,8 @@ public class EndpointConfig
     {
         NetworkConfig config= new NetworkConfig();
                
-        if ( this.coapPort != null ) config.setInt(NetworkConfig.Keys.COAP_PORT, Integer.valueOf( this.coapPort )); // CoAP.DEFAULT_COAP_PORT);
-        if ( this.coapSecurePort != null ) config.setInt(NetworkConfig.Keys.COAP_SECURE_PORT, Integer.valueOf( this.coapSecurePort )); // CoAP.DEFAULT_COAP_SECURE_PORT);
+        if ( this.bindToPort != null ) config.setInt(NetworkConfig.Keys.COAP_PORT, Integer.valueOf( this.bindToPort )); // CoAP.DEFAULT_COAP_PORT);
+        if ( this.bindToSecurePort != null ) config.setInt(NetworkConfig.Keys.COAP_SECURE_PORT, Integer.valueOf( this.bindToSecurePort )); // CoAP.DEFAULT_COAP_SECURE_PORT);
                 
         if ( this.ackTimeout != null ) config.setInt(NetworkConfig.Keys.ACK_TIMEOUT, Integer.valueOf( this.ackTimeout )); // 2000);
         if ( this.ackRandomFactor != null ) config.setFloat(NetworkConfig.Keys.ACK_RANDOM_FACTOR, Float.valueOf( this.ackRandomFactor )); // 1.5f); Float.va

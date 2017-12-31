@@ -19,12 +19,12 @@ import org.mule.api.callback.SourceCallback;
 import org.mule.security.oauth.processor.AbstractListeningMessageProcessor;
 
 import nl.teslanet.mule.connectors.coap.options.OptionSet;
+import nl.teslanet.mule.connectors.coap.options.PropertyNames;
 import nl.teslanet.mule.connectors.coap.server.config.ResourceConfig;
 
 
 public class ServedResource extends CoapResource
 {
-    private static final String PROPNAME_COAP_RESPONSE_CODE= "coap.response.code";
 
     private CoapServerConnector connector;
 
@@ -120,9 +120,9 @@ public class ServedResource extends CoapResource
         try
         {
             outboundPayload= processMuleFlow( inboundProperties, requestPayload, outboundProperties );
-            if ( outboundProperties.containsKey( PROPNAME_COAP_RESPONSE_CODE ) )
+            if ( outboundProperties.containsKey( PropertyNames.COAP_RESPONSE_CODE ) )
             {
-                responseCode= ResponseCode.valueOf( outboundProperties.get( PROPNAME_COAP_RESPONSE_CODE ).toString() );
+                responseCode= ResponseCode.valueOf( outboundProperties.get( PropertyNames.COAP_RESPONSE_CODE ).toString() );
             }
             Response response= new Response( responseCode );
             OptionSet options= new OptionSet( outboundProperties );
