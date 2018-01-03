@@ -31,7 +31,7 @@ public class ResourceConfig
     private boolean observable= false;
 
     @Placement(group= "Methods")
-    private boolean delayedResponse= false;
+    private boolean earlyAck= false;
 
     @Configurable
     @Optional
@@ -111,17 +111,21 @@ public class ResourceConfig
         this.delete= delete;
     }
 
-    public boolean isDelayedResponse()
+    /**
+     * @return true when accept flag is set on the resource. 
+     * When accept flag is set, client requests on the resource are acknowledged before processing it.
+     */
+    public boolean isEarlyAck()
     {
-        return this.delayedResponse;
+        return this.earlyAck;
     }
 
     /**
-     * @param delayedResponse set to true when processing requests takes more than a few seconds
+     * @param accept set to true when processing requests takes more than a few seconds
      */
-    public void setDelayedResponse( boolean delayedResponse )
+    public void setEarlyAck( boolean earlyAck )
     {
-        this.delayedResponse= delayedResponse;
+        this.earlyAck= earlyAck;
     }
 
     /**

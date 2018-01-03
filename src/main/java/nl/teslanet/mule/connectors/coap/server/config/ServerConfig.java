@@ -27,11 +27,11 @@ public class ServerConfig extends EndpointConfig
        
         if ( secure )
         {
-            port = ( getCoapSecurePort() != null ? Integer.parseInt( getCoapSecurePort()) : CoAP.DEFAULT_COAP_SECURE_PORT );
+            port = ( getBindToSecurePort() != null ? Integer.parseInt( getBindToSecurePort()) : CoAP.DEFAULT_COAP_SECURE_PORT );
         }
         else
         {
-            port = ( getCoapPort() != null ? Integer.parseInt( getCoapPort()) : CoAP.DEFAULT_COAP_PORT );
+            port = ( getBindToPort() != null ? Integer.parseInt( getBindToPort()) : CoAP.DEFAULT_COAP_PORT );
         }
         if ( getBindToHost() != null )
         {

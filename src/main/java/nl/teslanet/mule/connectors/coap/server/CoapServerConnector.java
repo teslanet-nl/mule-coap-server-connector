@@ -67,15 +67,13 @@ public class CoapServerConnector
     @Inject
     private MuleContext context;
 
-    private NetworkConfig networkConfig;
-
     @Start
     public void startServer() throws ConnectionException, WorkException
     {
 
         if ( getResources() == null || getResources().isEmpty() )
         {
-            throw new ConnectionException( ConnectionExceptionCode.UNKNOWN, "coap resources not defined", null );
+            throw new ConnectionException( ConnectionExceptionCode.UNKNOWN, "coap no resources configured", null );
         }
 
         // binds on UDP port 5683
@@ -127,7 +125,6 @@ public class CoapServerConnector
             ServedResource childToServe= new ServedResource( this, childResourceConfig );
 
             registry.add( parent, childToServe );
-            //servedResources.put( childToServe.getURI(), childToServe );
             addChildren( childToServe );
         }
     }
@@ -139,7 +136,10 @@ public class CoapServerConnector
         if ( server != null )
         {
             server.stop();
+            server.destroy();
+            server= null;
         }
+        registry= null;
     }
 
     /**
@@ -172,12 +172,12 @@ public class CoapServerConnector
     @Processor
     public void addResource(
         String uri,
-        @Default("false") Boolean get,
-        @Default("false") Boolean put,
+        @Default("false") boolean get,
+        @Default("false") boolean put,
         @Default("false") boolean post,
         @Default("false") boolean delete,
         @Default("false") boolean observable,
-        @Default("false") boolean delayedResponse ) throws Exception
+        @Default("false") boolean earlyAck ) throws Exception
     {
         if ( uri == null )
         {
@@ -195,7 +195,7 @@ public class CoapServerConnector
         resourceConfig.setPut( put );
         resourceConfig.setDelete( delete );
         resourceConfig.setObservable( observable );
-        resourceConfig.setDelayedResponse( delayedResponse );
+        resourceConfig.setEarlyAck( earlyAck );
 
         ServedResource toServe= new ServedResource( this, resourceConfig );
         parent= registry.getResource( parentUri );

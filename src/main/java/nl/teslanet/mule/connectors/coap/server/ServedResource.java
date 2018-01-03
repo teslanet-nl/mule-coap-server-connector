@@ -40,7 +40,10 @@ public class ServedResource extends CoapResource
         setObservable( configuredResource.isObservable() );
 
         // set display name
-        getAttributes().setTitle( "Mule CoAP Resource" );
+        //TODO make title attribute in resourceconfig
+        //TODO add more attributes (e.g. types)
+        getAttributes().setTitle( "Mule CoAP Resource" + getName());
+        if ( configuredResource.isObservable()) getAttributes().setObservable();
     }
 
     @Override
@@ -108,7 +111,7 @@ public class ServedResource extends CoapResource
             exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "NO LISTENER" );
         }
 
-        if ( configuredResource.isDelayedResponse() )
+        if ( configuredResource.isEarlyAck() )
         {
             exchange.accept();
         }
