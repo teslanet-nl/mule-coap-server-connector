@@ -28,14 +28,21 @@ public class ResourceConfig
     private boolean delete= false;
 
     @Placement(group= "Methods")
-    private boolean observable= false;
+    private boolean observe= false;
 
-    @Placement(group= "Methods")
     private boolean earlyAck= false;
+
+    @Optional
+    private String size;
+
+    @Optional
+    private String type;
+
 
     @Configurable
     @Optional
     private List< ResourceConfig > resources;
+
 
     public String getName()
     {
@@ -129,16 +136,16 @@ public class ResourceConfig
     }
 
     /**
-     * @param observable the observable to set
+     * @param observe the observe flag to set
      */
-    public void setObservable( boolean observable )
+    public void setObserve( boolean observable )
     {
-        this.observable= observable;
+        this.observe= observable;
     }
 
-    public boolean isObservable()
+    public boolean isObserve()
     {
-        return this.observable;
+        return this.observe;
     }
 
     /**
@@ -183,6 +190,33 @@ public class ResourceConfig
         resources.add( resource );
     }
 
+    public String getSize()
+    {
+        // TODO Auto-generated method stub
+        return this.size;
+    }
+    /**
+     * @param sizeEstimate the sizeEstimate to set
+     */
+    public void setSize( String sizeEstimate )
+    {
+        this.size= sizeEstimate;
+    }
 
+    /**
+     * @return the contentType
+     */
+    public String getType()
+    {
+        return type;
+    }
+
+    /**
+     * @param contentType the contentType to set
+     */
+    public void setType( String contentType )
+    {
+        this.type= contentType;
+    }
 
 }

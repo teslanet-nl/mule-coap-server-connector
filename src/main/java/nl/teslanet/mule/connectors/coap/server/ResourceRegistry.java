@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import nl.teslanet.mule.connectors.coap.options.Defs;
+import nl.teslanet.mule.connectors.coap.Defs;
 
 
 public class ResourceRegistry

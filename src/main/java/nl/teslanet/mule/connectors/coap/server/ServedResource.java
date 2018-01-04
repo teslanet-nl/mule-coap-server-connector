@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
+import org.eclipse.californium.core.coap.LinkFormat;
+import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.eclipse.californium.core.coap.Response;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.eclipse.californium.core.server.resources.Resource;
@@ -17,18 +19,18 @@ import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.callback.SourceCallback;
 import org.mule.security.oauth.processor.AbstractListeningMessageProcessor;
+import org.mule.transformer.types.DataTypeFactory;
 
-import nl.teslanet.mule.connectors.coap.options.OptionSet;
+import nl.teslanet.mule.connectors.coap.options.Options;
 import nl.teslanet.mule.connectors.coap.options.PropertyNames;
 import nl.teslanet.mule.connectors.coap.server.config.ResourceConfig;
 
 
 public class ServedResource extends CoapResource
 {
-
     private CoapServerConnector connector;
 
-    private ResourceConfig configuredResource;
+    private ResourceConfig config;
 
     private SourceCallback callback= null;
 
@@ -36,20 +38,29 @@ public class ServedResource extends CoapResource
     {
         super( resourceConfig.getName() );
         connector= coapServerConnector;
-        configuredResource= resourceConfig;
-        setObservable( configuredResource.isObservable() );
+        config= resourceConfig;
+        setObservable( config.isObserve() );
 
+        //TODO make use of visible/invisible?
         // set display name
         //TODO make title attribute in resourceconfig
         //TODO add more attributes (e.g. types)
-        getAttributes().setTitle( "Mule CoAP Resource" + getName());
-        if ( configuredResource.isObservable()) getAttributes().setObservable();
+        getAttributes().setTitle( "Mule CoAP Resource " + getName() );
+        if ( config.getType() != null )
+        {
+            getAttributes().setAttribute( LinkFormat.CONTENT_TYPE, MediaTypeRegistry.toString( MediaTypeRegistry.parse( config.getType() ) ) );
+        }
+        if ( config.getSize() != null )
+        {
+            getAttributes().setMaximumSizeEstimate( config.getSize() );
+        }
+        if ( config.isObserve() ) getAttributes().setObservable();
     }
 
     @Override
     public void handleGET( CoapExchange exchange )
     {
-        if ( !configuredResource.isGet() )
+        if ( !config.isGet() )
         {
             //default implementation is to respond METHOD_NOT_ALLOWED
             super.handleGET( exchange );
@@ -63,7 +74,7 @@ public class ServedResource extends CoapResource
     @Override
     public void handlePUT( CoapExchange exchange )
     {
-        if ( !configuredResource.isPut() )
+        if ( !config.isPut() )
         {
             //default implementation is to respond METHOD_NOT_ALLOWED
             super.handlePUT( exchange );
@@ -77,7 +88,7 @@ public class ServedResource extends CoapResource
     @Override
     public void handlePOST( CoapExchange exchange )
     {
-        if ( !configuredResource.isPost() )
+        if ( !config.isPost() )
         {
             //default implementation is to respond METHOD_NOT_ALLOWED
             super.handlePOST( exchange );
@@ -91,7 +102,7 @@ public class ServedResource extends CoapResource
     @Override
     public void handleDELETE( CoapExchange exchange )
     {
-        if ( !configuredResource.isDelete() )
+        if ( !config.isDelete() )
         {
             //default implementation is to respond METHOD_NOT_ALLOWED
             super.handleDELETE( exchange );
@@ -101,34 +112,34 @@ public class ServedResource extends CoapResource
             handleRequest( exchange, ResponseCode.DELETED );
         }
     }
-    
+
     private void handleRequest( CoapExchange exchange, ResponseCode defaultResponseCode )
     {
         Object outboundPayload= null;
         ResponseCode responseCode= defaultResponseCode;
-        if ( !hasCallback())
+        if ( !hasCallback() )
         {
             exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "NO LISTENER" );
         }
 
-        if ( configuredResource.isEarlyAck() )
+        if ( config.isEarlyAck() )
         {
             exchange.accept();
         }
-        //TODO reconsider payload type: string/byte[]
-        String requestPayload= exchange.getRequestText();
+        byte[] requestPayload= exchange.getRequestPayload();
+        int requestContentFormat= exchange.getRequestOptions().getContentFormat();
+
         Map< String, Object > inboundProperties= createInboundProperties( exchange );
         Map< String, Object > outboundProperties= new HashMap< String, Object >();
-
         try
         {
-            outboundPayload= processMuleFlow( inboundProperties, requestPayload, outboundProperties );
+            outboundPayload= processMuleFlow( requestPayload, requestContentFormat, inboundProperties, outboundProperties );
             if ( outboundProperties.containsKey( PropertyNames.COAP_RESPONSE_CODE ) )
             {
                 responseCode= ResponseCode.valueOf( outboundProperties.get( PropertyNames.COAP_RESPONSE_CODE ).toString() );
             }
             Response response= new Response( responseCode );
-            OptionSet options= new OptionSet( outboundProperties );
+            Options options= new Options( outboundProperties );
             response.setOptions( options );
 
             //if ( exchange.advanced().getRelation() != null  )
@@ -165,31 +176,56 @@ public class ServedResource extends CoapResource
         props.put( "coap.request.source.host", exchange.getSourceAddress() );
         props.put( "coap.request.source.port", exchange.getSourcePort() );
 
-        OptionSet.fillProperties( exchange.getRequestOptions(), props );
+        Options.fillProperties( exchange.getRequestOptions(), props );
 
         return props;
     }
 
-    private Object processMuleFlow( Map< String, Object > inboundProperties, Object requestPayload, Map< String, Object > outboundProperties ) throws MuleException
+    private Object processMuleFlow( Object requestPayload, int requestContentFormat, Map< String, Object > inboundProperties, Map< String, Object > outboundProperties )
+        throws MuleException
     {
         Object response= null;
-        //TODO make safe:
-        AbstractListeningMessageProcessor processor= (AbstractListeningMessageProcessor) getCallback();
-        MuleMessage muleMessage;
-        muleMessage= new DefaultMuleMessage( requestPayload, inboundProperties, null, null, processor.getMuleContext() );
-        MuleEvent muleEvent;
-        muleEvent= new DefaultMuleEvent( muleMessage, MessageExchangePattern.REQUEST_RESPONSE, processor.getFlowConstruct() );
 
-        MuleEvent responseEvent;
-        responseEvent= processor.processEvent( muleEvent );
-        if ( ( responseEvent != null ) && ( responseEvent.getMessage() != null ) )
+        AbstractListeningMessageProcessor processor= (AbstractListeningMessageProcessor) getCallback();
+
+        //TODO make safe:
+        MuleMessage muleMessage;
+        if ( requestContentFormat == MediaTypeRegistry.UNDEFINED )
         {
-            response= responseEvent.getMessage().getPayload();
-            for ( String propName : responseEvent.getMessage().getOutboundPropertyNames() )
+            muleMessage= new DefaultMuleMessage( requestPayload, inboundProperties, null, null, processor.getMuleContext() );
+        }
+        else
+        {
+            muleMessage= new DefaultMuleMessage(
+                requestPayload,
+                inboundProperties,
+                null,
+                null,
+                processor.getMuleContext(),
+                DataTypeFactory.create( requestPayload.getClass(), MediaTypeRegistry.toString( requestContentFormat ) ) );
+        }
+        MuleEvent muleEvent= new DefaultMuleEvent( muleMessage, MessageExchangePattern.REQUEST_RESPONSE, processor.getFlowConstruct() );
+
+        MuleEvent responseEvent= processor.processEvent( muleEvent );
+        if ( ( responseEvent != null ) )
+        {
+            MuleMessage responseMessage= responseEvent.getMessage();
+            if ( responseMessage != null )
             {
-                outboundProperties.put( propName, responseEvent.getMessage().getOutboundProperty( propName ) );
+                response= responseMessage.getPayload();
+                for ( String propName : responseEvent.getMessage().getOutboundPropertyNames() )
+                {
+                    outboundProperties.put( propName, responseEvent.getMessage().getOutboundProperty( propName ) );
+                } ;
+
+                if ( !outboundProperties.containsKey( PropertyNames.COAP_OPT_CONTENTFORMAT ) )
+                {
+                    String mimeType= responseMessage.getDataType().getMimeType();
+                    outboundProperties.put( PropertyNames.COAP_OPT_CONTENTFORMAT, MediaTypeRegistry.parse( mimeType ) );
+                }
             } ;
         }
+
         return response;
     };
 
@@ -214,7 +250,7 @@ public class ServedResource extends CoapResource
      */
     public ResourceConfig getConfiguredResource()
     {
-        return configuredResource;
+        return config;
     }
 
     /**

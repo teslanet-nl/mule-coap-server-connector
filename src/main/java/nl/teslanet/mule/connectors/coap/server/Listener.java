@@ -3,7 +3,7 @@ package nl.teslanet.mule.connectors.coap.server;
 
 import org.mule.api.callback.SourceCallback;
 
-import nl.teslanet.mule.connectors.coap.options.Defs;
+import nl.teslanet.mule.connectors.coap.Defs;
 
 
 public class Listener

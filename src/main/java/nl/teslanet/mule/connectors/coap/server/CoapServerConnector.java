@@ -1,7 +1,6 @@
 package nl.teslanet.mule.connectors.coap.server;
 
 
-import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -9,7 +8,6 @@ import javax.resource.spi.work.WorkException;
 
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.network.CoapEndpoint;
-import org.eclipse.californium.core.network.Endpoint;
 import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.californium.core.server.resources.Resource;
 import org.mule.api.ConnectionException;
@@ -20,7 +18,6 @@ import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.Processor;
 import org.mule.api.annotations.Source;
-import org.mule.api.annotations.display.FriendlyName;
 import org.mule.api.annotations.display.Placement;
 import org.mule.api.annotations.lifecycle.OnException;
 import org.mule.api.annotations.lifecycle.Start;
@@ -29,7 +26,6 @@ import org.mule.api.annotations.param.Default;
 import org.mule.api.annotations.param.Optional;
 import org.mule.api.callback.SourceCallback;
 
-import nl.teslanet.mule.connectors.coap.server.config.EndpointConfig;
 import nl.teslanet.mule.connectors.coap.server.config.ResourceConfig;
 import nl.teslanet.mule.connectors.coap.server.config.ServerConfig;
 import nl.teslanet.mule.connectors.coap.server.error.ErrorHandler;
@@ -176,7 +172,7 @@ public class CoapServerConnector
         @Default("false") boolean put,
         @Default("false") boolean post,
         @Default("false") boolean delete,
-        @Default("false") boolean observable,
+        @Default("false") boolean observe,
         @Default("false") boolean earlyAck ) throws Exception
     {
         if ( uri == null )
@@ -194,7 +190,7 @@ public class CoapServerConnector
         resourceConfig.setPost( post );
         resourceConfig.setPut( put );
         resourceConfig.setDelete( delete );
-        resourceConfig.setObservable( observable );
+        resourceConfig.setObserve( observe );
         resourceConfig.setEarlyAck( earlyAck );
 
         ServedResource toServe= new ServedResource( this, resourceConfig );
