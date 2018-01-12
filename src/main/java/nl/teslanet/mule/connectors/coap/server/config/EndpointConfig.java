@@ -24,6 +24,8 @@ public class EndpointConfig
     @Placement(tab= "Endpoint")
     private String bindToSecurePort= null;
 
+
+
     //---------------    
     @Configurable
     @Optional
@@ -63,7 +65,7 @@ public class EndpointConfig
     //-----------------
     @Configurable
     @Optional
-    @Placement(tab= "Endpoint")
+    @Placement(tab= "Threads", group= "Threads")
     private String nstart= null;
 
     //-----------------
@@ -76,6 +78,37 @@ public class EndpointConfig
     @Optional
     @Placement(tab= "Endpoint")
     private String probingRate= null;
+
+    //-----------------
+    @Configurable
+    @Optional
+    @Placement(tab= "Security", order= 1 )
+    private String keyStoreLocation= null;
+
+    @Configurable
+    @Optional
+    @Placement(tab= "Security", order= 2 )
+    private String keyStorePassword= null;
+
+    @Configurable
+    @Optional
+    @Placement(tab= "Security", order= 3 )
+    private String privateKeyAlias= null;
+
+    @Configurable
+    @Optional
+    @Placement(tab= "Security", order= 4 )
+    private String trustStoreLocation= null;
+
+    @Configurable
+    @Optional
+    @Placement(tab= "Security", order= 5 )
+    private String trustStorePassword= null;
+
+    @Configurable
+    @Optional
+    @Placement(tab= "Security")
+    private String trustedRootCertificateAlias= null;
 
     //-----------------
     @Configurable
@@ -282,6 +315,103 @@ public class EndpointConfig
     public void setBindToSecurePort( String coapSecurePort )
     {
         this.bindToSecurePort= coapSecurePort;
+    }
+
+    /**
+     * @return the keyStoreLocation
+     */
+    public String getKeyStoreLocation()
+    {
+        return keyStoreLocation;
+    }
+
+    /**
+     * @param keyStoreLocation the keyStoreLocation to set
+     */
+    public void setKeyStoreLocation( String keyStoreLocation )
+    {
+        this.keyStoreLocation= keyStoreLocation;
+    }
+
+
+    /**
+     * @return the keyStorePassword
+     */
+    public String getKeyStorePassword()
+    {
+        return keyStorePassword;
+    }
+
+    /**
+     * @param keyStorePassword the keyStorePassword to set
+     */
+    public void setKeyStorePassword( String keyStorePassword )
+    {
+        this.keyStorePassword= keyStorePassword;
+    }
+
+    /**
+     * @return the trustStoreLocation
+     */
+    public String getTrustStoreLocation()
+    {
+        return trustStoreLocation;
+    }
+
+    /**
+     * @param trustStoreLocation the trustStoreLocation to set
+     */
+    public void setTrustStoreLocation( String trustStoreLocation )
+    {
+        this.trustStoreLocation= trustStoreLocation;
+    }
+
+    /**
+     * @return the trustStorePassword
+     */
+    public String getTrustStorePassword()
+    {
+        return trustStorePassword;
+    }
+
+    /**
+     * @param trustStorePassword the trustStorePassword to set
+     */
+    public void setTrustStorePassword( String trustStorePassword )
+    {
+        this.trustStorePassword= trustStorePassword;
+    }
+    
+    /**
+     * @return the privateKeyAlias
+     */
+    public String getPrivateKeyAlias()
+    {
+        return privateKeyAlias;
+    }
+
+    /**
+     * @param privateKeyAlias the privateKeyAlias to set
+     */
+    public void setPrivateKeyAlias( String privateKeyAlias )
+    {
+        this.privateKeyAlias= privateKeyAlias;
+    }
+
+    /**
+     * @return the trustedRootCertificateAlias
+     */
+    public String getTrustedRootCertificateAlias()
+    {
+        return trustedRootCertificateAlias;
+    }
+
+    /**
+     * @param trustedRootCertificateAlias the trustedRootCertificateAlias to set
+     */
+    public void setTrustedRootCertificateAlias( String trustedRootCertificateAlias )
+    {
+        this.trustedRootCertificateAlias= trustedRootCertificateAlias;
     }
 
     /**

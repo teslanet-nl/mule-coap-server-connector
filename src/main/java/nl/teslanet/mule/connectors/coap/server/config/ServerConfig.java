@@ -59,4 +59,6 @@ public class ServerConfig extends EndpointConfig
     {
         this.secure= secure;
     }
+
+
 }
