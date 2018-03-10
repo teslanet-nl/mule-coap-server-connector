@@ -3,6 +3,8 @@ package nl.teslanet.mule.connectors.coap.server;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
@@ -21,6 +23,7 @@ import org.mule.api.callback.SourceCallback;
 import org.mule.security.oauth.processor.AbstractListeningMessageProcessor;
 import org.mule.transformer.types.DataTypeFactory;
 
+
 import nl.teslanet.mule.connectors.coap.options.Options;
 import nl.teslanet.mule.connectors.coap.options.PropertyNames;
 import nl.teslanet.mule.connectors.coap.server.config.ResourceConfig;
@@ -28,6 +31,10 @@ import nl.teslanet.mule.connectors.coap.server.config.ResourceConfig;
 
 public class ServedResource extends CoapResource
 {
+
+    /** The logger. */
+    protected final Logger LOGGER = Logger.getLogger(ServedResource.class.getCanonicalName());
+
     private CoapServerConnector connector;
 
     private ResourceConfig config;
@@ -160,6 +167,7 @@ public class ServedResource extends CoapResource
         catch ( Exception e )
         {
             //TODO make adequate ERROR!
+            LOGGER.log( Level.SEVERE, "CoAP: failed to process request failed: " + exchange.advanced().getRequest().getURI(), e );
             exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR );
         }
     }

@@ -4,24 +4,23 @@ package nl.teslanet.mule.connectors.coap.server.config;
 import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.display.Placement;
-import org.mule.api.annotations.param.Default;
 import org.mule.api.annotations.param.Optional;
 
 public class EndpointConfig
 {
     @Configurable
-    @Default( value="0.0.0.0")
-    @Placement(tab= "Endpoint")
+    @Optional
+    @Placement(tab= "Endpoint", group="Endpoint")
     private String bindToHost= null;
 
     @Configurable
     @Optional
-    @Placement(tab= "Endpoint")
+    @Placement(tab= "Endpoint", group="Endpoint")
     private String bindToPort= null;
 
     @Configurable
     @Optional
-    @Placement(tab= "Endpoint")
+    @Placement(tab= "Endpoint", group="Endpoint")
     private String bindToSecurePort= null;
 
 
@@ -71,43 +70,43 @@ public class EndpointConfig
     //-----------------
     @Configurable
     @Optional
-    @Placement(tab= "Endpoint")
+    @Placement(tab= "Endpoint", group="Endpoint")
     private String leisure= null;
 
     @Configurable
     @Optional
-    @Placement(tab= "Endpoint")
+    @Placement(tab= "Endpoint", group="Endpoint")
     private String probingRate= null;
 
     //-----------------
     @Configurable
     @Optional
-    @Placement(tab= "Security", order= 1 )
+    @Placement(tab= "Security", group="Security", order= 1 )
     private String keyStoreLocation= null;
 
     @Configurable
     @Optional
-    @Placement(tab= "Security", order= 2 )
+    @Placement(tab= "Security", group="Security", order= 2 )
     private String keyStorePassword= null;
 
     @Configurable
     @Optional
-    @Placement(tab= "Security", order= 3 )
+    @Placement(tab= "Security", group="Security", order= 3 )
     private String privateKeyAlias= null;
 
     @Configurable
     @Optional
-    @Placement(tab= "Security", order= 4 )
+    @Placement(tab= "Security", group="Security", order= 4 )
     private String trustStoreLocation= null;
 
     @Configurable
     @Optional
-    @Placement(tab= "Security", order= 5 )
+    @Placement(tab= "Security", group="Security", order= 5 )
     private String trustStorePassword= null;
 
     @Configurable
     @Optional
-    @Placement(tab= "Security")
+    @Placement(tab= "Security", group="Security", order= 6 )
     private String trustedRootCertificateAlias= null;
 
     //-----------------
@@ -1056,7 +1055,7 @@ public class EndpointConfig
 
     public NetworkConfig getNetworkConfig()
     {
-        NetworkConfig config= new NetworkConfig();
+        NetworkConfig config= NetworkConfig.createStandardWithoutFile();
                
         if ( this.bindToPort != null ) config.setInt(NetworkConfig.Keys.COAP_PORT, Integer.valueOf( this.bindToPort )); // CoAP.DEFAULT_COAP_PORT);
         if ( this.bindToSecurePort != null ) config.setInt(NetworkConfig.Keys.COAP_SECURE_PORT, Integer.valueOf( this.bindToSecurePort )); // CoAP.DEFAULT_COAP_SECURE_PORT);
