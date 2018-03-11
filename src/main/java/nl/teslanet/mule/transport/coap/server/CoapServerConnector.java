@@ -1,4 +1,18 @@
-package nl.teslanet.mule.connectors.coap.server;
+/*******************************************************************************
+ * Copyright (c) 2017, 2018 (teslanet.nl) Rogier Cobben.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * and Eclipse Public License - v 2.0 which accompany this distribution.
+ * 
+ * The Eclipse Public License is available at
+ *    http://www.eclipse.org/legal/epl-v20.html
+ * 
+ * Contributors:
+ *    (teslanet.nl) Rogier Cobben - initial creation
+ ******************************************************************************/
+
+package nl.teslanet.mule.transport.coap.server;
 
 
 import java.io.InputStream;
@@ -36,14 +50,17 @@ import org.mule.api.annotations.param.Optional;
 import org.mule.api.callback.SourceCallback;
 import org.mule.util.IOUtils;
 
-import nl.teslanet.mule.connectors.coap.server.config.ResourceConfig;
-import nl.teslanet.mule.connectors.coap.server.config.ServerConfig;
-import nl.teslanet.mule.connectors.coap.server.error.ErrorHandler;
+import nl.teslanet.mule.transport.coap.server.config.ResourceConfig;
+import nl.teslanet.mule.transport.coap.server.config.ServerConfig;
+import nl.teslanet.mule.transport.coap.server.error.ErrorHandler;
 
 
-@Connector(name= "coap-server", friendlyName= "CoAP Server", schemaVersion= "1.0"
-//namespace= "http://www.teslanet.nl/mule/connectors/coap/server",
-//schemaLocation= "http://www.teslanet.nl/mule/connectors/coap/server/1.0/mule-coap-server.xsd"
+@Connector(
+    name= "coap-server", 
+    friendlyName= "CoAP Server", 
+    schemaVersion= "1.0",
+    //namespace= "http://www.mulesoft.org/schema/mule/coap-server",
+    schemaLocation= "http://www.teslanet.nl/schema/mule/coap-server/1.0/mule-coap-server.xsd"
 )
 @OnException(handler= ErrorHandler.class)
 public class CoapServerConnector

@@ -1,4 +1,18 @@
-package nl.teslanet.mule.connectors.coap.server;
+/*******************************************************************************
+ * Copyright (c) 2017, 2018 (teslanet.nl) Rogier Cobben.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * and Eclipse Public License - v 2.0 which accompany this distribution.
+ * 
+ * The Eclipse Public License is available at
+ *    http://www.eclipse.org/legal/epl-v20.html
+ * 
+ * Contributors:
+ *    (teslanet.nl) Rogier Cobben - initial creation
+ ******************************************************************************/
+
+package nl.teslanet.mule.transport.coap.server;
 
 
 import java.util.HashMap;
@@ -23,10 +37,9 @@ import org.mule.api.callback.SourceCallback;
 import org.mule.security.oauth.processor.AbstractListeningMessageProcessor;
 import org.mule.transformer.types.DataTypeFactory;
 
-
-import nl.teslanet.mule.connectors.coap.options.Options;
-import nl.teslanet.mule.connectors.coap.options.PropertyNames;
-import nl.teslanet.mule.connectors.coap.server.config.ResourceConfig;
+import nl.teslanet.mule.transport.coap.commons.options.Options;
+import nl.teslanet.mule.transport.coap.commons.options.PropertyNames;
+import nl.teslanet.mule.transport.coap.server.config.ResourceConfig;
 
 
 public class ServedResource extends CoapResource
