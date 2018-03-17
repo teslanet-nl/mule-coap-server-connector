@@ -274,4 +274,4 @@ Secondary Licenses when the conditions for such availability set forth
 in the Eclipse Public License, v. 2.0 are satisfied.
 
 No additional licenses currently apply, besides the copyright of contributors:
- Copyright (c) 2017, 2018 (teslanet.nl) Rogier Cobben.*
+ Copyright (c) 2017, 2018 (teslanet.nl) Rogier Cobben.
