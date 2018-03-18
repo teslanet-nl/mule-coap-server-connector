@@ -22,7 +22,7 @@ With it Mule applications can implement services that can be accessed by clients
 # CoAP supported versions
 IETF rfc7252
 
-#Used dependencies
+#Dependencies
 * Californium 1.0.6
 * Mule Coap Commons 1.0.0
 
