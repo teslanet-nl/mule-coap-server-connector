@@ -1,5 +1,5 @@
 # Mule CoAP connector - CoapServer
-![Mule-Coap logo](coap-logo.svg)
+![Mule-Coap logo](icons/coap-logo.svg)
 
 Mule CoAP connector is an Anypoint Connector implementation of the [RFC7252 - Constrained Application Protocol](http://tools.ietf.org/html/rfc7252). 
 With it Mule applications become CoAP capable and can communicate with other CoAP capable devices and services, realising Internet of Things solutions (IoT). 
@@ -35,9 +35,8 @@ For information about usage our documentation at https://github.com/rogierc/mule
 
 # Using in Maven Projects
 
-Mule CoAP artifact releases will be publishedses to [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cmule-coap-server).
-Usually the Commons component dependency will added through one of the connector pom's and there is no need to add the 
-dependency manually. But if you need for some reason to add it as a library in your projects, add the following dependency
+Mule CoAP artefact releases will be published to [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cmule-coap-server).
+The CloapServer connector dependency can be used in your project by adding following dependency
 to your `pom.xml` (without the dots):
 
 ```xml
@@ -45,7 +44,7 @@ to your `pom.xml` (without the dots):
     ...
     <dependency>
             <groupId>nl.teslanet.mule.transport.coap</groupId>
-            <artifactId>mule-coap-server</artifactId>
+            <artifactId>mule-coap-server-connector</artifactId>
             <version>1.0.0</version>
     </dependency>
     ...
@@ -55,11 +54,11 @@ to your `pom.xml` (without the dots):
 
 # Reporting Issues
 
-We use GitHub:Issues for tracking issues with this connector. You can report new issues at this link https://github.com/rogierc/mule-coap-server/issues.
+We use GitHub:Issues for tracking issues with this connector. You can report new issues at this link https://github.com/rogierc/mule-coap-server-connector/issues.
 
 # Contact
 
-A bug, an idea, an issue? Create an issue on https://github.com/rogierc/mule-coap-server/issues..
+A bug, an idea, an issue? Create an issue on https://github.com/rogierc/mule-coap-server-connector/issues
 
 # Contributing
 
