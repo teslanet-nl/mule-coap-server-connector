@@ -36,7 +36,7 @@ For information about usage our documentation at https://github.com/rogierc/mule
 # Using in Maven Projects
 
 Mule CoAP artefact releases will be published to [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cmule-coap-server).
-The CloapServer connector dependency can be used in your project by adding following dependency
+The CloapServer connector can be used in your project by adding following dependency
 to your `pom.xml` (without the dots):
 
 ```xml
