@@ -22,7 +22,7 @@ With it Mule applications can implement services that can be accessed by clients
 # CoAP supported versions
 IETF rfc7252
 
-#Dependencies
+# Dependencies
 * Californium 1.0.6
 * Mule Coap Commons 1.0.0
 
@@ -30,7 +30,7 @@ IETF rfc7252
 For beta connectors you can download the source code and build it with devkit to find it available on your local repository. Then you can add it to Studio
 
 
-#Usage
+# Usage
 For information about usage see the [Userguide](doc/index.html)
 
 # Using in Maven Projects
