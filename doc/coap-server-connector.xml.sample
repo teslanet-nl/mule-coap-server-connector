@@ -1,3 +1,0 @@
-<!-- BEGIN_INCLUDE(coap-server:greet) -->
-    <coap-server:greet config-ref="" friend="#[map-payload:friend]" />
-<!-- END_INCLUDE(coap-server:greet) -->

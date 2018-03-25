@@ -31,7 +31,7 @@ For beta connectors you can download the source code and build it with devkit to
 
 
 #Usage
-For information about usage our documentation at https://github.com/rogierc/mule-coap-server
+For information about usage see the [Userguide](doc/index.html)
 
 # Using in Maven Projects
 

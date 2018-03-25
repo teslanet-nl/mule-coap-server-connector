@@ -101,7 +101,7 @@ public class ResourceConfig
     }
 
     /**
-     * @return the put
+     * @return the put flag
      */
     public boolean isPut()
     {
@@ -117,7 +117,7 @@ public class ResourceConfig
     }
 
     /**
-     * @return the delete
+     * @return the delete flag
      */
     public boolean isDelete()
     {
@@ -125,7 +125,7 @@ public class ResourceConfig
     }
 
     /**
-     * @param delete the delete to set
+     * @param delete the delete flag to set
      */
     public void setDelete( boolean delete )
     {
@@ -133,8 +133,7 @@ public class ResourceConfig
     }
 
     /**
-     * @return true when accept flag is set on the resource. 
-     * When accept flag is set, client requests on the resource are acknowledged before processing it.
+     * @return true when earlyAck flag is set on the resource. 
      */
     public boolean isEarlyAck()
     {
@@ -142,7 +141,7 @@ public class ResourceConfig
     }
 
     /**
-     * @param accept set to true when processing requests takes more than a few seconds
+     * @param earlyAck set to true when processing requests takes more than a few seconds
      */
     public void setEarlyAck( boolean earlyAck )
     {
@@ -150,7 +149,7 @@ public class ResourceConfig
     }
 
     /**
-     * @param observe the observe flag to set
+     * @param observable the observe flag to set
      */
     public void setObserve( boolean observable )
     {
@@ -193,7 +192,7 @@ public class ResourceConfig
         }
     }
     /**
-     * @return the child resources or empty collection when not configured
+     * @param resource the resources to add as child resource
      */
     public void addResource( ResourceConfig resource )
     {

@@ -18,20 +18,33 @@ package nl.teslanet.mule.transport.coap.server.config;
 import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.display.Placement;
+import org.mule.api.annotations.param.Default;
 import org.mule.api.annotations.param.Optional;
 
 public class EndpointConfig
 {
+    /**
+     * The hostname or IP address the CoAP server binds to. 
+     * If none is given anyLocalAddress is used (typically 0.0.0.0 or ::0)
+     */
     @Configurable
     @Optional
     @Placement(tab= "Endpoint", group="Endpoint")
     private String bindToHost= null;
 
+    /**
+     * The port the CoAP server will listen on when secure == false.
+     * If none is given the standard port is used (port 5683)
+     */
     @Configurable
     @Optional
     @Placement(tab= "Endpoint", group="Endpoint")
     private String bindToPort= null;
 
+    /**
+     * The port the CoAP server will listen on when secure == true.
+     * If none is given the standard port is used (port 5684)
+     */
     @Configurable
     @Optional
     @Placement(tab= "Endpoint", group="Endpoint")
@@ -39,9 +52,11 @@ public class EndpointConfig
 
 
 
-    //---------------    
+    /**
+     * The acknowledgment timeout in milliseconds [ms])
+     */
     @Configurable
-    @Optional
+    @Default( value= "2000")
     @Placement(tab= "Ackowledgement", group= "Ackowledgement")
     private String ackTimeout= null;
 

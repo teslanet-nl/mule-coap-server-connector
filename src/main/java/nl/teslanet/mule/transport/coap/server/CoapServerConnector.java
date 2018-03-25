@@ -54,11 +54,18 @@ import nl.teslanet.mule.transport.coap.server.config.ResourceConfig;
 import nl.teslanet.mule.transport.coap.server.config.ServerConfig;
 import nl.teslanet.mule.transport.coap.server.error.ErrorHandler;
 
-
+/**
+ * Mule CoAP connector - CoapServer. 
+ * The CoapServer Connector can be used in Mule applications to implement CoAP servers as defined in {@see http://tools.ietf.org/html/rfc7252}.
+ * A CoAP server is defined by means of a set resources on which requests can be done like GET, POST, PUT etc. .
+ * The server CoAP endpoint has a number of configuration parameters that can be used to tune behavior of the server. 
+ * These parameters have sensible defaults and need only to be set for specific needs.     
+ */
 @Connector(
     name= "coap-server", 
     friendlyName= "CoAP Server", 
     schemaVersion= "1.0",
+    minMuleVersion="3.8.0",
     //namespace= "http://www.mulesoft.org/schema/mule/coap-server",
     schemaLocation= "http://www.teslanet.nl/schema/mule/coap-server/1.0/mule-coap-server.xsd"
 )
@@ -70,21 +77,20 @@ public class CoapServerConnector
     @Placement(tab= "General", group= "Server", order= 1)
     private ServerConfig config;
 
+    /**
+     * List of Resources that will be served. 
+     * The resources define their name and the operations that can be done on them by clients. These operations are Get, Post, Put, Delete and Observe. 
+     * When the EarlyAck flag is set an acknowledgement is immediately sent back to the client and before processing the request. Use this when processing takes longer than the acknowledgment-timeout of the client.  
+     */
     @Configurable
     @Optional
     @Placement(tab= "General", group= "Server", order= 2)
     //@FriendlyName(value = "Resources")
+    //mule devkit doesnt allow this to be configured in ServerConfig
     private List< ResourceConfig > resources= null;
-
-    //    @Configurable
-    //    @Optional
-    //    @Placement(tab= "Advanced", group= "Advanced")
-    //    //@FriendlyName(value = "Endpoints")
-    //    private List< EndpointConfig > endpoints= null;
 
     private CoapServer server= null;
 
-    //private HashMap< String, ServedResource > servedResources;
     private ResourceRegistry registry= null;
 
     @Inject
@@ -113,8 +119,6 @@ public class CoapServerConnector
             throw new ConnectionException( null, null, "CoAP configuration error", e );
         }
 
-        //System.getSecurityManager().checkAccept( "localhost", 5683 );
-        //server.addEndpoint(new CoapEndpoint(new InetSocketAddress("0.0.0.0", 5683)));
         //TODO make configurable
         // add special interceptor for message traces
         for ( Endpoint ep : server.getEndpoints() )
@@ -181,9 +185,6 @@ public class CoapServerConnector
                 throw new Exception( "coap: private key with alias not found in keystore" );
             }
             DTLSConnector connector= new DTLSConnector( configBuider.build() );
-            //DTLSConnector connector = new DTLSConnector(new InetSocketAddress(DTLS_PORT), trustedCertificates);
-            //connector.getConfig().setPrivateKey((PrivateKey)keyStore.getKey("server", KEY_STORE_PASSWORD.toCharArray()), keyStore.getCertificateChain("server"), true);
-
             server.addEndpoint( new CoapEndpoint( connector, config.getNetworkConfig() ) );
         }
 
@@ -224,18 +225,49 @@ public class CoapServerConnector
     }
 
     /**
-     *  Register Listener
-     *
-     *  @param callback The sourcecallback used to dispatch message to the flow
+     *  The Listen messageprocessor receives all incoming requests on the specified uri. 
+     *  The uri needs to be an existing resource defined in de coap-server configuration. 
+     *  Wildcards can also be used, like "/*" or "/some/deeper/resources/*". 
+     *  When multiple listeners apply for a resource, the listener with the most specific uri will get the requests on it.
+     *  CoAP options of the request are added to the inbound-scope of the MuleMessage. Example: 
+     *  <pre> 
+     *  {@code
+     *    <flow name="coap-servertestFlow1">
+     *      <coap-server:listen uri="/alphabet/*" config-ref="CoAP_Server_Configuration"/>
+     *      <set-variable variableName="method" value="#[ message.inboundProperties['coap.request.code']]"/>
+     *      <set-variable variableName="uri" value="#[message.inboundProperties['coap.request.uri'] ]"/>
+     *      <byte-array-to-string-transformer/>
+     *      <logger level="INFO" message="#[payload]"/> 
+     *      <set-payload value="&lt;my_response&gt;Hi!&lt;/my_response&gt;" encoding="UTF-8" mimeType="application/xml"/>
+     *      <set-property propertyName="coap.response.code" value="CONTENT" />
+     *    </flow>
+     *  }</pre>   
+     *  @param callback set by Mule, not visible in xml.
+     *  @param uri The uri (without scheme/host part) of the resource the listener get the requests to process. 
+     *  @return the payload of the CoAP request.
      *  @throws Exception error produced while processing the payload
      */
     @Source( /* threadingModel=SourceThreadingModel.NONE */)
-    public void listen( SourceCallback callback, String uri ) throws Exception
+    public byte[] listen( SourceCallback callback, String uri ) throws Exception
     {
         registry.add( new Listener( uri, callback ) );
+        return null;
 
     }
 
+    /**
+     *  The Resource Changed messageprocessor is used to trigger a notification to clients that observe the specified resource.  
+     *  The uri needs to be an existing resource defined in the coap-server configuration or a dynamically created resource. 
+     *  Wildcards can also be used, like "/*" or "/some/deeper/resources/*". 
+     *  The observing clients are notified by issuing an internal get-request for every client that gets processed by the listener on the resource concerned.
+     *  Example: 
+     *  <pre> 
+     *  {@code
+     *    <coap-server:resource-changed config-ref="CoAP_Server_Configuration" uri="/hello/changeme"/>
+     *  }</pre>   
+     *  @param uri The uri (without scheme/host part) of the resource that has changed. 
+     *  @throws Exception produced uri is invalid
+     */
     @Processor
     public void resourceChanged( String uri ) throws Exception
     {
@@ -250,6 +282,27 @@ public class CoapServerConnector
         }
     }
 
+    /**
+     *  The Add Resource messageprocessor is used to dynamically add a resource to the CoAP server.
+     *  The uri needs to be a complete resource-path, including all parent resource(s). 
+     *  All parent resources in the path need to exist already.
+     *  Requests on the resource can be done immediately, provided there is a listener configured for it, 
+     *  e.g. by means of a listener that has a wildcard uri (for the example below a listener with uri="/alphabet/*" would do).
+     *  Example: 
+     *  <pre> 
+     *  {@code
+     *    <coap-server:add-resource config-ref="CoAP_Server_Configuration"
+                    uri="/alphabet/z" get="true" delete="true"/>
+     *  }</pre>   
+     *  @param get when true the resource accepts get-requests. 
+     *  @param put when true the resource accepts put-requests. 
+     *  @param post when true the resource accepts post-requests. 
+     *  @param delete when true the resource accepts delete-requests. 
+     *  @param observe when true the resource accepts observe-requests. 
+     *  @param earlyAck an immediate acknowledgement is sent tot the client before processing the request. 
+     *  @param size the estimated maximum size of the response content. 
+     *  @param type the content type of the response, specified as CoAP type number. 
+     */
     @Processor
     public void addResource(
         String uri,
@@ -258,7 +311,9 @@ public class CoapServerConnector
         @Default("false") boolean post,
         @Default("false") boolean delete,
         @Default("false") boolean observe,
-        @Default("false") boolean earlyAck ) throws Exception
+        @Default("false") boolean earlyAck,
+        @Optional String size,
+        @Optional String type ) throws Exception
     {
         if ( uri == null )
         {
@@ -277,6 +332,8 @@ public class CoapServerConnector
         resourceConfig.setDelete( delete );
         resourceConfig.setObserve( observe );
         resourceConfig.setEarlyAck( earlyAck );
+        resourceConfig.setSize( size );
+        resourceConfig.setType( type );
 
         ServedResource toServe= new ServedResource( this, resourceConfig );
         parent= registry.getResource( parentUri );
@@ -284,8 +341,21 @@ public class CoapServerConnector
 
     }
 
+    /**
+     *  The Remove Resource  messageprocessor removes one or more resources from the server.  
+     *  A wildcard can be used, e.g. "/tobedeleted/*". All resources that apply to the uri will be removed.
+     *  Clients that observe a resource that is removed will be notified.
+     *  Example: 
+     *  <pre> 
+     *  {@code
+     *    <coap-server:remove-resource config-ref="CoAP_Server_Configuration"
+                    uri="/alphabet/z" />
+     *  }</pre>   
+     *  @param uri The uri (without scheme/host part) of the resource(s) to be deleted. 
+     *  @throws Exception error produced when the uri is not valid.
+     */    
     @Processor
-    public void deleteResource( String uri ) throws Exception
+    public void removeResource( String uri ) throws Exception
     {
         if ( uri == null )
         {
@@ -297,6 +367,8 @@ public class CoapServerConnector
             registry.remove( resource );
         }
     }
+    
+    //TODO add list-resources operation
 
     public ServerConfig getConfig()
     {
