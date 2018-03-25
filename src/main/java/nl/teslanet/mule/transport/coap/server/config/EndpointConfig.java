@@ -34,19 +34,17 @@ public class EndpointConfig
 
     /**
      * The port the CoAP server will listen on when secure == false.
-     * If none is given the standard port is used (port 5683)
      */
     @Configurable
-    @Optional
+    @Default( value= "5683")
     @Placement(tab= "Endpoint", group="Endpoint")
     private String bindToPort= null;
 
     /**
      * The port the CoAP server will listen on when secure == true.
-     * If none is given the standard port is used (port 5684)
      */
     @Configurable
-    @Optional
+    @Default( value= "5684")
     @Placement(tab= "Endpoint", group="Endpoint")
     private String bindToSecurePort= null;
 

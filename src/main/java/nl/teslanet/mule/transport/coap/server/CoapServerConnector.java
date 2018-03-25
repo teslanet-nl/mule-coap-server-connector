@@ -229,23 +229,23 @@ public class CoapServerConnector
      *  The uri needs to be an existing resource defined in de coap-server configuration. 
      *  Wildcards can also be used, like "/*" or "/some/deeper/resources/*". 
      *  When multiple listeners apply for a resource, the listener with the most specific uri will get the requests on it.
-     *  CoAP options of the request are added to the inbound-scope of the MuleMessage. Example: 
-     *  <pre> 
-     *  {@code
-     *    <flow name="coap-servertestFlow1">
-     *      <coap-server:listen uri="/alphabet/*" config-ref="CoAP_Server_Configuration"/>
-     *      <set-variable variableName="method" value="#[ message.inboundProperties['coap.request.code']]"/>
-     *      <set-variable variableName="uri" value="#[message.inboundProperties['coap.request.uri'] ]"/>
-     *      <byte-array-to-string-transformer/>
-     *      <logger level="INFO" message="#[payload]"/> 
-     *      <set-payload value="&lt;my_response&gt;Hi!&lt;/my_response&gt;" encoding="UTF-8" mimeType="application/xml"/>
-     *      <set-property propertyName="coap.response.code" value="CONTENT" />
-     *    </flow>
-     *  }</pre>   
-     *  @param callback set by Mule, not visible in xml.
+     *  CoAP options of the request are added to the inbound-scope of the MuleMessage. 
+     *  <br/>Example: <br/>
+     *  <code> 
+     *    &lt;flow name="coap-serverFlow1"&gt;<br/>
+     *    &emsp;&emsp;  &lt;coap-server:listen uri="/alphabet/*" config-ref="CoAP_Server_Configuration"/&gt;<br/>
+     *    &emsp;&emsp;  &lt;set-variable variableName="method" value="#[ message.inboundProperties['coap.request.code']]"/&gt;<br/>
+     *    &emsp;&emsp;  &lt;set-variable variableName="uri" value="#[message.inboundProperties['coap.request.uri'] ]"/&gt;<br/>
+     *    &emsp;&emsp;  &lt;byte-array-to-string-transformer/&gt;<br/>
+     *    &emsp;&emsp;  &lt;logger level="INFO" message="#[payload]"/&gt; <br/>
+     *    &emsp;&emsp;  &lt;set-payload value="&amp;lt;my_response&amp;gt;Hi!&amp;lt;/my_response&amp;gt;" encoding="UTF-8" mimeType="application/xml"/&gt;<br/>
+     *    &emsp;&emsp;  &lt;set-property propertyName="coap.response.code" value="CONTENT" /&gt;<br/>
+     *    &lt;/flow&gt;<br/>
+     *  </code>
+     *  @param callback Set by Mule, not visible in xml.
      *  @param uri The uri (without scheme/host part) of the resource the listener get the requests to process. 
-     *  @return the payload of the CoAP request.
-     *  @throws Exception error produced while processing the payload
+     *  @return The payload of the CoAP request.
+     *  @throws Exception Error produced while processing the payload.
      */
     @Source( /* threadingModel=SourceThreadingModel.NONE */)
     public byte[] listen( SourceCallback callback, String uri ) throws Exception
@@ -260,13 +260,12 @@ public class CoapServerConnector
      *  The uri needs to be an existing resource defined in the coap-server configuration or a dynamically created resource. 
      *  Wildcards can also be used, like "/*" or "/some/deeper/resources/*". 
      *  The observing clients are notified by issuing an internal get-request for every client that gets processed by the listener on the resource concerned.
-     *  Example: 
-     *  <pre> 
-     *  {@code
-     *    <coap-server:resource-changed config-ref="CoAP_Server_Configuration" uri="/hello/changeme"/>
-     *  }</pre>   
+     *  <br/>Example:<br/>
+     *  <code> 
+     *    &lt;coap-server:resource-changed config-ref="CoAP_Server_Configuration" uri="/hello/changeme"/&gt;<br/>
+     *  </code>
      *  @param uri The uri (without scheme/host part) of the resource that has changed. 
-     *  @throws Exception produced uri is invalid
+     *  @throws Exception Produced uri is invalid.
      */
     @Processor
     public void resourceChanged( String uri ) throws Exception
@@ -288,20 +287,19 @@ public class CoapServerConnector
      *  All parent resources in the path need to exist already.
      *  Requests on the resource can be done immediately, provided there is a listener configured for it, 
      *  e.g. by means of a listener that has a wildcard uri (for the example below a listener with uri="/alphabet/*" would do).
-     *  Example: 
-     *  <pre> 
-     *  {@code
-     *    <coap-server:add-resource config-ref="CoAP_Server_Configuration"
-                    uri="/alphabet/z" get="true" delete="true"/>
-     *  }</pre>   
-     *  @param get when true the resource accepts get-requests. 
-     *  @param put when true the resource accepts put-requests. 
-     *  @param post when true the resource accepts post-requests. 
-     *  @param delete when true the resource accepts delete-requests. 
-     *  @param observe when true the resource accepts observe-requests. 
-     *  @param earlyAck an immediate acknowledgement is sent tot the client before processing the request. 
-     *  @param size the estimated maximum size of the response content. 
-     *  @param type the content type of the response, specified as CoAP type number. 
+     *  <br/>Example:<br/>
+     *  <code> 
+     *    &lt;coap-server:add-resource config-ref="CoAP_Server_Configuration"  uri="/alphabet/z" get="true" delete="true"/&gt;
+     *  </code>
+     *  @param uri The uri (without scheme/host part) of the resource to add. 
+     *  @param get When true the resource accepts get-requests. 
+     *  @param put When true the resource accepts put-requests. 
+     *  @param post When true the resource accepts post-requests. 
+     *  @param delete When true the resource accepts delete-requests. 
+     *  @param observe When true the resource accepts observe-requests. 
+     *  @param earlyAck An immediate acknowledgement is sent tot the client before processing the request. 
+     *  @param size The estimated maximum size of the response content. 
+     *  @param type The content type of the response, specified as CoAP type number. 
      */
     @Processor
     public void addResource(
@@ -345,14 +343,12 @@ public class CoapServerConnector
      *  The Remove Resource  messageprocessor removes one or more resources from the server.  
      *  A wildcard can be used, e.g. "/tobedeleted/*". All resources that apply to the uri will be removed.
      *  Clients that observe a resource that is removed will be notified.
-     *  Example: 
-     *  <pre> 
-     *  {@code
-     *    <coap-server:remove-resource config-ref="CoAP_Server_Configuration"
-                    uri="/alphabet/z" />
-     *  }</pre>   
+     *  <br/>Example:<br/>
+     *  <code>
+     *    &lt;coap-server:remove-resource config-ref="CoAP_Server_Configuration" uri="/alphabet/z" /&gt;
+     *  </code><br/>
      *  @param uri The uri (without scheme/host part) of the resource(s) to be deleted. 
-     *  @throws Exception error produced when the uri is not valid.
+     *  @throws Exception Error produced when the uri is not valid.
      */    
     @Processor
     public void removeResource( String uri ) throws Exception
