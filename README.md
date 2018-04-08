@@ -20,18 +20,22 @@ With it Mule applications can implement services that can be accessed by clients
 * Mule 3.9.x
 
 # CoAP supported versions
-IETF rfc7252
+[IETF rfc7252](https://tools.ietf.org/html/rfc7252)
 
 # Dependencies
-* Californium 1.0.6
-* Mule Coap Commons 1.0.0
+* [Californium](https://www.eclipse.org/californium/) 1.0.6
+* [Mule Coap Commons](https://github.com/rogierc/mule-coap-commons) 1.0.0 
 
 # Installation 
-For beta connectors you can download the source code and build it with devkit to find it available on your local repository. Then you can add it to Studio
+For beta connectors you can download the source code and build it in Anypoint Studio:
+
+* Import source into [Anypoint Studio](https://www.mulesoft.com/platform/studio)
+* Select the imported project
+* Build and install: Context Menu -> Anypoint Connector / Install or Update
 
 
 # Usage
-For information about usage see the [Userguide](doc/index.html)
+See the Userguide on [Teslanet.nl](http://www.teslanet.nl)
 
 # Using in Maven Projects
 

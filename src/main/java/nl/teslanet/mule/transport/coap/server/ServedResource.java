@@ -41,6 +41,8 @@ import nl.teslanet.mule.transport.coap.commons.options.Options;
 import nl.teslanet.mule.transport.coap.commons.options.PropertyNames;
 import nl.teslanet.mule.transport.coap.server.config.ResourceConfig;
 
+//TODO: nullmessage response -> empty byte[]
+//TODO: processors should pass through message, not null
 
 public class ServedResource extends CoapResource
 {
@@ -179,7 +181,7 @@ public class ServedResource extends CoapResource
         }
         catch ( Exception e )
         {
-            //TODO make adequate ERROR!
+            //TODO make adequate ERROR! Mule exception strategy has not kicked in yet, and does not...
             LOGGER.log( Level.SEVERE, "CoAP: failed to process request failed: " + exchange.advanced().getRequest().getURI(), e );
             exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR );
         }
