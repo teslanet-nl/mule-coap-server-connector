@@ -34,14 +34,15 @@ import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.callback.SourceCallback;
+import org.mule.processor.NullMessageProcessor;
 import org.mule.security.oauth.processor.AbstractListeningMessageProcessor;
 import org.mule.transformer.types.DataTypeFactory;
+import org.mule.transport.NullPayload;
 
 import nl.teslanet.mule.transport.coap.commons.options.Options;
 import nl.teslanet.mule.transport.coap.commons.options.PropertyNames;
 import nl.teslanet.mule.transport.coap.server.config.ResourceConfig;
 
-//TODO: nullmessage response -> empty byte[]
 //TODO: processors should pass through message, not null
 
 public class ServedResource extends CoapResource
@@ -173,7 +174,7 @@ public class ServedResource extends CoapResource
             {
                 response.setPayload( (byte[]) outboundPayload );
             }
-            else if ( outboundPayload != null )
+            else if ( outboundPayload != null && ! NullPayload.getInstance().equals( outboundPayload ))
             {
                 response.setPayload( outboundPayload.toString() );
             } ;
