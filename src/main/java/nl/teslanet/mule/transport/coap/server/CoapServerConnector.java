@@ -341,7 +341,7 @@ public class CoapServerConnector
 
     /**
      *  The Remove Resource  messageprocessor removes one or more resources from the server.  
-     *  A wildcard can be used, e.g. "/tobedeleted/*". All resources that apply to the uri will be removed.
+     *  A wildcard can be used, e.g. "/tobefound/*". All resources that apply to the uri will be removed.
      *  Clients that observe a resource that is removed will be notified.
      *  <br/>Example:<br/>
      *  <code>
@@ -362,6 +362,29 @@ public class CoapServerConnector
         {
             registry.remove( resource );
         }
+    }
+    
+    /**
+     *  The <code>&lt;coap-server:resource-exists/&gt;</code> messageprocessor returns 'true' when a resource on 
+     *  the given uri is active, otherwise false. 
+     *  A wildcard can be used, e.g. "/tobefound/*". When at least one resource is found that applies to the uri, the Boolean 'true' is returned. 
+     *  @param uri The uri (without scheme/host part) of the resource(s) to be deleted. 
+     *  @return true when at least one resource is found.
+     *  @throws Exception Error produced when the uri is not valid.
+     */    
+    @Processor
+    public Boolean ResourceExists( String uri ) throws Exception
+    {
+        if ( uri == null )
+        {
+            throw new Exception( "CoAP URI cannot be null." );
+        }
+
+        for ( ServedResource resource : registry.findResources( uri ) )
+        {
+            return new Boolean( true );
+        }
+		return new Boolean( false );
     }
     
     //TODO add list-resources operation
