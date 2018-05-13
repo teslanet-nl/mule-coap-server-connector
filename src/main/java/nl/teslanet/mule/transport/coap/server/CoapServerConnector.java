@@ -41,6 +41,7 @@ import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.Processor;
 import org.mule.api.annotations.Source;
+import org.mule.api.annotations.display.FriendlyName;
 import org.mule.api.annotations.display.Placement;
 import org.mule.api.annotations.lifecycle.OnException;
 import org.mule.api.annotations.lifecycle.Start;
@@ -308,10 +309,14 @@ public class CoapServerConnector
         @Default("false") boolean put,
         @Default("false") boolean post,
         @Default("false") boolean delete,
-        @Default("false") boolean observe,
+        @Default("false") boolean observable,
         @Default("false") boolean earlyAck,
-        @Optional String size,
-        @Optional String type ) throws Exception
+        @Optional String title,
+        @FriendlyName("if")
+        @Optional String ifdesc,
+        @Optional String rt,
+        @Optional String sz,
+        @Optional String ct ) throws Exception
     {
         if ( uri == null )
         {
@@ -328,10 +333,13 @@ public class CoapServerConnector
         resourceConfig.setPost( post );
         resourceConfig.setPut( put );
         resourceConfig.setDelete( delete );
-        resourceConfig.setObserve( observe );
+        resourceConfig.setObservable( observable );
         resourceConfig.setEarlyAck( earlyAck );
-        resourceConfig.setSize( size );
-        resourceConfig.setType( type );
+        resourceConfig.setTitle( title );
+        resourceConfig.setIfdesc( ifdesc );
+        resourceConfig.setRt( rt );
+        resourceConfig.setSz( sz );
+        resourceConfig.setCt( ct );
 
         ServedResource toServe= new ServedResource( this, resourceConfig );
         parent= registry.getResource( parentUri );
@@ -380,7 +388,7 @@ public class CoapServerConnector
             throw new Exception( "CoAP URI cannot be null." );
         }
 
-        for ( ServedResource resource : registry.findResources( uri ) )
+        for ( @SuppressWarnings("unused") ServedResource resource : registry.findResources( uri ) )
         {
             return new Boolean( true );
         }

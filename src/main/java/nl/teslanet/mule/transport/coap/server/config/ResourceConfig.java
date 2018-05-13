@@ -27,30 +27,79 @@ import org.mule.api.annotations.param.Optional;
 
 public class ResourceConfig
 {
+    /**
+     * Name of the resource, to be used in URI paths.
+     */
     private String name= null;
 
+    /**
+     * When true Get requests are allowed on the resource.
+     */
     @Placement(group= "Methods")
     private boolean get= true;
 
+    /**
+     * When true Post requests are allowed on the resource.
+     */
     @Placement(group= "Methods")
     private boolean post= false;
 
+    /**
+     * When true Put requests are allowed on the resource.
+     */
     @Placement(group= "Methods")
     private boolean put= false;
 
+    /**
+     * When true Delete requests are allowed on the resource.
+     */
     @Placement(group= "Methods")
     private boolean delete= false;
 
-    @Placement(group= "Methods")
-    private boolean observe= false;
+    /**
+     * When true the resource can be observed by clients.
+     */
+    private boolean observable= false;
 
+    /**
+     * When true an early acknowledgement is sent to client, before processing the request and returning the response.
+     */
     private boolean earlyAck= false;
 
+    /**
+     * Human readable title of the resource. 
+     */
     @Optional
-    private String size;
+    private String title;
 
+    /**
+     * Comma separated list of interface descriptions that apply to the resource.
+     */
     @Optional
-    private String type;
+    @FriendlyName("if")
+    private String ifdesc;
+
+    /**
+     * Comma separated list of resource types that apply to the resource.
+     */
+    @Optional
+    @FriendlyName("rt")
+    private String rt;
+
+    /**
+     * Maximum size estimate of the resource.
+     */
+    @Optional
+    @FriendlyName("sz")
+    private String sz;
+
+    /**
+     * Comma separated list of content types that are available for the resource.
+     * The types are specified by an integer as defined by CoAP.
+     */
+    @Optional
+    @FriendlyName("ct")
+    private String ct;
 
 
     @Configurable
@@ -68,7 +117,31 @@ public class ResourceConfig
         this.name= name;
     }
 
-    /**
+    public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getIfdesc() {
+		return ifdesc;
+	}
+
+	public void setIfdesc(String ifdesc) {
+		this.ifdesc = ifdesc;
+	}
+
+	public String getRt() {
+		return rt;
+	}
+
+	public void setRt(String rt) {
+		this.rt = rt;
+	}
+
+	/**
      * @return the get
      */
     public boolean isGet()
@@ -151,14 +224,14 @@ public class ResourceConfig
     /**
      * @param observable the observe flag to set
      */
-    public void setObserve( boolean observable )
+    public void setObservable( boolean observable )
     {
-        this.observe= observable;
+        this.observable= observable;
     }
 
-    public boolean isObserve()
+    public boolean isObservable()
     {
-        return this.observe;
+        return this.observable;
     }
 
     /**
@@ -203,33 +276,33 @@ public class ResourceConfig
         resources.add( resource );
     }
 
-    public String getSize()
+    public String getSz()
     {
-        // TODO Auto-generated method stub
-        return this.size;
+        return this.sz;
     }
+    
     /**
      * @param sizeEstimate the sizeEstimate to set
      */
-    public void setSize( String sizeEstimate )
+    public void setSz( String sizeEstimate )
     {
-        this.size= sizeEstimate;
+        this.sz= sizeEstimate;
     }
 
     /**
      * @return the contentType
      */
-    public String getType()
+    public String getCt()
     {
-        return type;
+        return ct;
     }
 
     /**
      * @param contentType the contentType to set
      */
-    public void setType( String contentType )
+    public void setCt( String contentType )
     {
-        this.type= contentType;
+        this.ct= contentType;
     }
 
 }

@@ -62,22 +62,39 @@ public class ServedResource extends CoapResource
         super( resourceConfig.getName() );
         connector= coapServerConnector;
         config= resourceConfig;
-        setObservable( config.isObserve() );
+        setObservable( config.isObservable() );
 
         //TODO make use of visible/invisible?
-        // set display name
-        //TODO make title attribute in resourceconfig
-        //TODO add more attributes (e.g. types)
-        getAttributes().setTitle( "Mule CoAP Resource " + getName() );
-        if ( config.getType() != null )
+
+        if ( config.getTitle() != null )
         {
-            getAttributes().setAttribute( LinkFormat.CONTENT_TYPE, MediaTypeRegistry.toString( MediaTypeRegistry.parse( config.getType() ) ) );
-        }
-        if ( config.getSize() != null )
+            getAttributes().setTitle( config.getTitle() );
+        };
+        if ( config.getRt() != null )
         {
-            getAttributes().setMaximumSizeEstimate( config.getSize() );
+            for ( String rt : config.getRt().split( "\\s*,\\s*" ))
+            {
+            	getAttributes().addResourceType( rt );
+            }      	
+        };        
+        if ( config.getIfdesc() != null )
+        {
+            for ( String ifdesc : config.getIfdesc().split( "\\s*,\\s*" ))
+            {
+            	getAttributes().addInterfaceDescription( ifdesc );
+            }      	
+        };      
+        if ( config.getCt() != null )
+        {
+            for ( String ct : config.getCt().split( "\\s*,\\s*" ))
+            {
+            	getAttributes().addContentType( Integer.parseInt( ct ));
+            }      	
         }
-        if ( config.isObserve() ) getAttributes().setObservable();
+        if ( config.getSz() != null )
+        {
+            getAttributes().setMaximumSizeEstimate( config.getSz() );
+        }
     }
 
     @Override
