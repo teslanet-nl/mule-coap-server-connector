@@ -15,9 +15,13 @@
 package nl.teslanet.mule.transport.coap.server;
 
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.cert.CertificateException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -53,7 +57,9 @@ import org.mule.util.IOUtils;
 
 import nl.teslanet.mule.transport.coap.server.config.ResourceConfig;
 import nl.teslanet.mule.transport.coap.server.config.ServerConfig;
+import nl.teslanet.mule.transport.coap.server.error.EndpointConstructionException;
 import nl.teslanet.mule.transport.coap.server.error.ErrorHandler;
+import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
 
 /**
  * Mule CoAP connector - CoapServer. 
@@ -137,7 +143,7 @@ public class CoapServerConnector
     //        }
     //    }
 
-    private void addEndPoint( CoapServer server, ServerConfig config ) throws Exception
+    private void addEndPoint( CoapServer server, ServerConfig config ) throws EndpointConstructionException 
     {
         if ( !config.isSecure() )
         {
@@ -151,16 +157,62 @@ public class CoapServerConnector
             //pskStore.setKey("password", "sesame".getBytes()); // from ETSI Plugtest test spec
 
             // load the key store
-            KeyStore keyStore= KeyStore.getInstance( "JKS" );
+            KeyStore keyStore;
+            try
+            {
+                keyStore= KeyStore.getInstance( "JKS" );
+            }
+            catch ( KeyStoreException e1 )
+            {
+                throw new EndpointConstructionException( "cannot create JKS keystore instance", e1 );
+            }
             //TODO load from from Mule util
-            InputStream in= IOUtils.getResourceAsStream( config.getKeyStoreLocation(), server.getClass(), true, true );
-            keyStore.load( in, config.getKeyStorePassword().toCharArray() );
+            InputStream in;
+            try
+            {
+                in= IOUtils.getResourceAsStream( config.getKeyStoreLocation(), server.getClass(), true, true );
+            }
+            catch ( IOException e1 )
+            {
+                throw new EndpointConstructionException( "cannot load keystore from { " + config.getKeyStoreLocation() + " }", e1 );
+            }
+            try
+            {
+                keyStore.load( in, config.getKeyStorePassword().toCharArray() );
+            }
+            catch ( NoSuchAlgorithmException | CertificateException | IOException e1 )
+            {
+                throw new EndpointConstructionException( "cannot load keystore from { " + config.getKeyStoreLocation() + " } using passwd ***", e1 );
+            }
 
             // load the trust store
-            KeyStore trustStore= KeyStore.getInstance( "JKS" );
+            KeyStore trustStore;
+            try
+            {
+                trustStore= KeyStore.getInstance( "JKS" );
+            }
+            catch ( KeyStoreException e1 )
+            {
+                throw new EndpointConstructionException( "cannot create JKS truststore instance", e1 );
+            }
             //TODO load from from Mule util
-            InputStream inTrust= IOUtils.getResourceAsStream( config.getTrustStoreLocation(), server.getClass(), true, true );
-            trustStore.load( inTrust, config.getTrustStorePassword().toCharArray() );
+            InputStream inTrust;
+            try
+            {
+                inTrust= IOUtils.getResourceAsStream( config.getTrustStoreLocation(), server.getClass(), true, true );
+            }
+            catch ( IOException e1 )
+            {
+                throw new EndpointConstructionException( "cannot load truststore from { " + config.getTrustStoreLocation() + " }", e1 );
+            }
+            try
+            {
+                trustStore.load( inTrust, config.getTrustStorePassword().toCharArray() );
+            }
+            catch ( NoSuchAlgorithmException | CertificateException | IOException e1 )
+            {
+                throw new EndpointConstructionException( "cannot load truststore from { " + config.getTrustStoreLocation() + " } using passwd ***", e1 );
+            }
 
             // You can load multiple certificates if needed
             DtlsConnectorConfig.Builder configBuider= new Builder( config.getInetSocketAddress() );
@@ -171,7 +223,7 @@ public class CoapServerConnector
             }
             catch ( Exception e )
             {
-                throw new Exception( "coap: certificate chain with alias not found in truststore" );
+                throw new EndpointConstructionException( "certificate chain with alias { " + config.getTrustedRootCertificateAlias()  + " } not found in truststore", e );
             }
             try
             {
@@ -183,7 +235,7 @@ public class CoapServerConnector
             }
             catch ( Exception e )
             {
-                throw new Exception( "coap: private key with alias not found in keystore" );
+                throw new EndpointConstructionException( "identity with private key alias { " + config.getPrivateKeyAlias() + " } could not be set" );
             }
             DTLSConnector connector= new DTLSConnector( configBuider.build() );
             server.addEndpoint( new CoapEndpoint( connector, config.getNetworkConfig() ) );
@@ -191,7 +243,12 @@ public class CoapServerConnector
 
     }
 
-    private void addResources( CoapServer server, List< ResourceConfig > resourceConfigs ) throws Exception
+    /**
+     * Create all resources that are configured on the server 
+     * @param server
+     * @param resourceConfigs
+     */
+    private void addResources( CoapServer server, List< ResourceConfig > resourceConfigs )  
     {
         for ( ResourceConfig resourceConfig : resourceConfigs )
         {
@@ -201,7 +258,11 @@ public class CoapServerConnector
         }
     }
 
-    private void addChildren( ServedResource parent ) throws Exception
+    /**
+     * Create child-resources that are configured on a resource. 
+     * @param parent resource of which to create the child-resources 
+     */
+    private void addChildren( ServedResource parent ) 
     {
         for ( ResourceConfig childResourceConfig : parent.getConfiguredResource().getResourceCollection() )
         {
@@ -246,10 +307,10 @@ public class CoapServerConnector
      *  @param callback Set by Mule, not visible in xml.
      *  @param uri The uri (without scheme/host part) of the resource the listener get the requests to process. 
      *  @return The payload of the CoAP request.
-     *  @throws Exception Error produced while processing the payload.
+     * @throws ResourceUriException thrown when uri is not valid
      */
     @Source( /* threadingModel=SourceThreadingModel.NONE */)
-    public byte[] listen( SourceCallback callback, String uri ) throws Exception
+    public byte[] listen( SourceCallback callback, String uri ) throws ResourceUriException 
     {
         registry.add( new Listener( uri, callback ) );
         return null;
@@ -266,14 +327,14 @@ public class CoapServerConnector
      *    &lt;coap-server:resource-changed config-ref="CoAP_Server_Configuration" uri="/hello/changeme"/&gt;<br/>
      *  </code>
      *  @param uri The uri (without scheme/host part) of the resource that has changed. 
-     *  @throws Exception Produced uri is invalid.
+     * @throws ResourceUriException thrown when resource uri is invalid.
      */
     @Processor
-    public void resourceChanged( String uri ) throws Exception
+    public void resourceChanged( String uri ) throws ResourceUriException 
     {
         if ( uri == null )
         {
-            throw new Exception( "CoAP URI cannot be null." );
+            throw new ResourceUriException( "null" );
         }
 
         for ( ServedResource resource : registry.findResources( uri ) )
@@ -301,6 +362,7 @@ public class CoapServerConnector
      *  @param earlyAck An immediate acknowledgement is sent tot the client before processing the request. 
      *  @param size The estimated maximum size of the response content. 
      *  @param type The content type of the response, specified as CoAP type number. 
+     * @throws ResourceUriException thrown when resource uri is not valid
      */
     @Processor
     public void addResource(
@@ -316,16 +378,16 @@ public class CoapServerConnector
         @Optional String ifdesc,
         @Optional String rt,
         @Optional String sz,
-        @Optional String ct ) throws Exception
+        @Optional String ct ) throws ResourceUriException 
     {
         if ( uri == null )
         {
-            throw new Exception( "CoAP URI cannot be null." );
+            throw new ResourceUriException( "null" );
         }
         String parentUri= ResourceRegistry.getParentUri( uri );
         ServedResource parent= null;
         String name= ResourceRegistry.getUriResourceName( uri );
-        if ( name.length() <= 0 ) throw new Exception( "CoAP resource name is empty" );
+        if ( name.length() <= 0 ) throw new ResourceUriException( "empty string" );
 
         ResourceConfig resourceConfig= new ResourceConfig();
         resourceConfig.setName( name );
@@ -356,14 +418,14 @@ public class CoapServerConnector
      *    &lt;coap-server:remove-resource config-ref="CoAP_Server_Configuration" uri="/alphabet/z" /&gt;
      *  </code><br/>
      *  @param uri The uri (without scheme/host part) of the resource(s) to be deleted. 
-     *  @throws Exception Error produced when the uri is not valid.
+     * @throws ResourceUriException thrown when the uri is not valid.
      */    
     @Processor
-    public void removeResource( String uri ) throws Exception
+    public void removeResource( String uri ) throws ResourceUriException 
     {
         if ( uri == null )
         {
-            throw new Exception( "CoAP URI cannot be null." );
+            throw new ResourceUriException( "null" );
         }
 
         for ( ServedResource resource : registry.findResources( uri ) )
@@ -378,14 +440,14 @@ public class CoapServerConnector
      *  A wildcard can be used, e.g. "/tobefound/*". When at least one resource is found that applies to the uri, the Boolean 'true' is returned. 
      *  @param uri The uri (without scheme/host part) of the resource(s) to be deleted. 
      *  @return true when at least one resource is found.
-     *  @throws Exception Error produced when the uri is not valid.
+     * @throws ResourceUriException thrown when uri is not valid.
      */    
     @Processor
-    public Boolean ResourceExists( String uri ) throws Exception
+    public Boolean ResourceExists( String uri ) throws ResourceUriException 
     {
         if ( uri == null )
         {
-            throw new Exception( "CoAP URI cannot be null." );
+            throw new ResourceUriException( "null" );
         }
 
         for ( @SuppressWarnings("unused") ServedResource resource : registry.findResources( uri ) )

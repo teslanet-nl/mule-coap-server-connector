@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
-import org.eclipse.californium.core.coap.LinkFormat;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.eclipse.californium.core.coap.Response;
 import org.eclipse.californium.core.server.resources.CoapExchange;
@@ -34,7 +33,6 @@ import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.callback.SourceCallback;
-import org.mule.processor.NullMessageProcessor;
 import org.mule.security.oauth.processor.AbstractListeningMessageProcessor;
 import org.mule.transformer.types.DataTypeFactory;
 import org.mule.transport.NullPayload;
@@ -155,12 +153,14 @@ public class ServedResource extends CoapResource
 
     private void handleRequest( CoapExchange exchange, ResponseCode defaultResponseCode )
     {
-        Object outboundPayload= null;
-        ResponseCode responseCode= defaultResponseCode;
         if ( !hasCallback() )
         {
             exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "NO LISTENER" );
+            return;
         }
+        
+        Object outboundPayload= null;
+        ResponseCode responseCode= defaultResponseCode;
 
         if ( config.isEarlyAck() )
         {
@@ -199,9 +199,7 @@ public class ServedResource extends CoapResource
         }
         catch ( Exception e )
         {
-            //TODO make adequate ERROR! Mule exception strategy has not kicked in yet, and does not...
-            LOGGER.log( Level.SEVERE, "CoAP: failed to process request failed: " + exchange.advanced().getRequest().getURI(), e );
-            exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR );
+            throw new RuntimeException( "failed to process request: " + exchange.advanced().getRequest().getURI(), e );
         }
     }
 

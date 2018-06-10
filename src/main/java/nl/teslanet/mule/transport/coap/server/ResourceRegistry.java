@@ -20,6 +20,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.eclipse.californium.core.server.resources.Resource;
 
 import nl.teslanet.mule.transport.coap.commons.Defs;
+import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ public class ResourceRegistry
         listeners= new CopyOnWriteArrayList< Listener >();
     }
 
-    public void add( ServedResource parent, ServedResource resource ) throws Exception
+    public void add( ServedResource parent, ServedResource resource ) 
     {
         //TODO responsibility of registry?
         if ( parent == null )
@@ -58,7 +59,7 @@ public class ResourceRegistry
         setResourceCallBack( resource );
     }
 
-    public void add( Listener listener ) throws Exception
+    public void add( Listener listener ) 
     {
         listeners.add( listener );
         setResourceCallBack();
@@ -70,7 +71,7 @@ public class ResourceRegistry
         resource.delete();
     }
 
-    private void setResourceCallBack() throws Exception
+    private void setResourceCallBack() 
     {
         for ( Entry< String, ServedResource > e : servedResources.entrySet() )
         {
@@ -79,7 +80,7 @@ public class ResourceRegistry
 
     }
 
-    private void setResourceCallBack( ServedResource toServe ) throws Exception
+    private void setResourceCallBack( ServedResource toServe ) 
     {
         Listener bestListener= null;
         int maxMatchlevel= 0;
@@ -95,7 +96,7 @@ public class ResourceRegistry
         if ( bestListener != null ) toServe.setCallback( bestListener.getCallback() );
     }
 
-    public ServedResource getResource( String uri ) throws Exception
+    public ServedResource getResource( String uri ) throws ResourceUriException 
     {
         if ( uri.length() == 0 )
         {
@@ -112,7 +113,7 @@ public class ResourceRegistry
                 }
             }
         }
-        throw new Exception( "CoAP resource does not exist." );
+        throw new ResourceUriException( uri, ", resource does not exist." );
     }
 
     public List< ServedResource > findResources( String uriPattern )

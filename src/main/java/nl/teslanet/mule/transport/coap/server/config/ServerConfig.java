@@ -14,17 +14,13 @@
 
 package nl.teslanet.mule.transport.coap.server.config;
 
-import org.mule.api.annotations.components.Configuration;
-import org.mule.api.annotations.display.FriendlyName;
-import org.mule.api.annotations.display.Placement;
-
 import java.net.InetSocketAddress;
-import java.util.List;
 
 import org.eclipse.californium.core.coap.CoAP;
 import org.mule.api.annotations.Configurable;
+import org.mule.api.annotations.components.Configuration;
+import org.mule.api.annotations.display.Placement;
 import org.mule.api.annotations.param.Default;
-import org.mule.api.annotations.param.Optional;
 
 /**
  * The CoAP server configuration contains attributes defining the CoAP endpoint and child elements that define CoAP 

@@ -18,6 +18,7 @@ package nl.teslanet.mule.transport.coap.server;
 import org.mule.api.callback.SourceCallback;
 
 import nl.teslanet.mule.transport.coap.commons.Defs;
+import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
 
 
 public class Listener
@@ -27,7 +28,7 @@ public class Listener
 
     SourceCallback callback;
 
-    public Listener( String uri, SourceCallback callback ) throws Exception
+    public Listener( String uri, SourceCallback callback ) throws ResourceUriException 
     {
         super();
         setUri( uri );
@@ -44,20 +45,20 @@ public class Listener
 
     /**
      * @param uri the uri to set
-     * @throws Exception 
+     * @throws ResourceUriException 
      */
-    public void setUri( String uri ) throws Exception
+    public void setUri( String uri ) throws ResourceUriException  
     {
         //TODO assure no bad chars
-        if ( uri == null ) throw new Exception( "CoAP no uri specified on listener");
+        if ( uri == null ) throw new ResourceUriException( "null", " set on listener");
         this.uri= uri.trim();
         if ( !this.uri.startsWith( Defs.COAP_URI_PATHSEP ))
         {
             this.uri= Defs.COAP_URI_PATHSEP + this.uri; 
         };
         int wildcardIndex= this.uri.indexOf( Defs.COAP_URI_WILDCARD );
-        if ( wildcardIndex >= 0 && wildcardIndex < this.uri.length()-1)throw new Exception( "CoAP wildcard in listener needs to be last char");
-        if ( this.uri.length() < 2 ) throw new Exception( "CoAP listener uri cannot be empty.");
+        if ( wildcardIndex >= 0 && wildcardIndex < this.uri.length()-1) throw new ResourceUriException( uri, ", wildcard in listener needs to be last char.");
+        if ( this.uri.length() < 2 ) throw new ResourceUriException( uri, ", listener uri cannot be empty."); 
 
     }
 
