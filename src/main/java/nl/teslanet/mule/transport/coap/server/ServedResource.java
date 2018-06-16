@@ -208,12 +208,13 @@ public class ServedResource extends CoapResource
 
         HashMap< String, Object > props= new HashMap< String, Object >();
 
-        props.put( "coap.request.code", exchange.getRequestCode().toString() );
-        props.put( "coap.request.adress", exchange.advanced().getEndpoint().getAddress() );
-        props.put( "coap.request.uri", this.getURI() );
-        props.put( "coap.request.relation", ( exchange.advanced().getRelation() != null ? exchange.advanced().getRelation().getKey() : null ) );
-        props.put( "coap.request.source.host", exchange.getSourceAddress() );
-        props.put( "coap.request.source.port", exchange.getSourcePort() );
+        props.put( PropertyNames.COAP_REQUEST_CODE, exchange.getRequestCode().toString() );
+        props.put( PropertyNames.COAP_REQUEST_CONFIRMABLE, exchange.advanced().getRequest().isConfirmable() );
+        props.put( PropertyNames.COAP_REQUEST_ADDRESS, exchange.advanced().getEndpoint().getAddress() );
+        props.put( PropertyNames.COAP_REQUEST_URI, this.getURI() );
+        props.put( PropertyNames.COAP_REQUEST_RELATION, ( exchange.advanced().getRelation() != null ? exchange.advanced().getRelation().getKey() : null ) );
+        props.put( PropertyNames.COAP_REQUEST_SOURCE_HOST, exchange.getSourceAddress() );
+        props.put( PropertyNames.COAP_REQUEST_SOURCE_PORT, exchange.getSourcePort() );
 
         Options.fillProperties( exchange.getRequestOptions(), props );
 
