@@ -29,6 +29,7 @@ import org.eclipse.californium.core.server.resources.Resource;
 import org.mule.DefaultMuleEvent;
 import org.mule.DefaultMuleMessage;
 import org.mule.MessageExchangePattern;
+import org.mule.api.MessagingException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
@@ -174,6 +175,7 @@ public class ServedResource extends CoapResource
         try
         {
             outboundPayload= processMuleFlow( requestPayload, requestContentFormat, inboundProperties, outboundProperties );
+        
             if ( outboundProperties.containsKey( PropertyNames.COAP_RESPONSE_CODE ) )
             {
                 responseCode= ResponseCode.valueOf( outboundProperties.get( PropertyNames.COAP_RESPONSE_CODE ).toString() );
@@ -222,8 +224,9 @@ public class ServedResource extends CoapResource
     }
 
     private Object processMuleFlow( Object requestPayload, int requestContentFormat, Map< String, Object > inboundProperties, Map< String, Object > outboundProperties )
-        throws MuleException
+        
     {
+        MuleEvent responseEvent= null;
         Object response= null;
 
         AbstractListeningMessageProcessor processor= (AbstractListeningMessageProcessor) getCallback();
@@ -245,8 +248,17 @@ public class ServedResource extends CoapResource
                 DataTypeFactory.create( requestPayload.getClass(), MediaTypeRegistry.toString( requestContentFormat ) ) );
         }
         MuleEvent muleEvent= new DefaultMuleEvent( muleMessage, MessageExchangePattern.REQUEST_RESPONSE, processor.getFlowConstruct() );
+        try
+        {
+            responseEvent= processor.processEvent( muleEvent );
+        }
+        catch ( MuleException ex )
+        {
+            responseEvent= processor.getFlowConstruct().getExceptionListener().handleException( ex, muleEvent );
+            //exception.getEvent().getFlowConstruct().getExceptionListener().handleException(exception, exception.getEvent());
+            //connector.getContext().getExceptionListener().handleException( new MessagingException( muleEvent, ex ));
+        }
 
-        MuleEvent responseEvent= processor.processEvent( muleEvent );
         if ( ( responseEvent != null ) )
         {
             MuleMessage responseMessage= responseEvent.getMessage();
