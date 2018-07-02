@@ -17,7 +17,6 @@ package nl.teslanet.mule.transport.coap.server;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.eclipse.californium.core.CoapResource;
@@ -29,7 +28,6 @@ import org.eclipse.californium.core.server.resources.Resource;
 import org.mule.DefaultMuleEvent;
 import org.mule.DefaultMuleMessage;
 import org.mule.MessageExchangePattern;
-import org.mule.api.MessagingException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
@@ -254,6 +252,7 @@ public class ServedResource extends CoapResource
         }
         catch ( MuleException ex )
         {
+            //handle over to Flow's exception handling
             responseEvent= processor.getFlowConstruct().getExceptionListener().handleException( ex, muleEvent );
             //exception.getEvent().getFlowConstruct().getExceptionListener().handleException(exception, exception.getEvent());
             //connector.getContext().getExceptionListener().handleException( new MessagingException( muleEvent, ex ));
