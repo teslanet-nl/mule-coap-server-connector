@@ -40,7 +40,6 @@ import nl.teslanet.mule.transport.coap.commons.options.Options;
 import nl.teslanet.mule.transport.coap.commons.options.PropertyNames;
 import nl.teslanet.mule.transport.coap.server.config.ResourceConfig;
 
-//TODO: processors should pass through message, not null
 
 public class ServedResource extends CoapResource
 {
@@ -182,11 +181,6 @@ public class ServedResource extends CoapResource
             Options options= new Options( outboundProperties );
             response.setOptions( options );
 
-            //if ( exchange.advanced().getRelation() != null  )
-            //{
-            // is an observe response
-            //}
-            //TODO check responsecode allows for content
             if ( byte[].class.isInstance( outboundPayload ) )
             {
                 response.setPayload( (byte[]) outboundPayload );
@@ -229,7 +223,6 @@ public class ServedResource extends CoapResource
 
         AbstractListeningMessageProcessor processor= (AbstractListeningMessageProcessor) getCallback();
 
-        //TODO make safe:
         MuleMessage muleMessage;
         if ( requestContentFormat == MediaTypeRegistry.UNDEFINED )
         {

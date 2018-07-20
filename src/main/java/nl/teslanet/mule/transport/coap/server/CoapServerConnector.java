@@ -126,11 +126,13 @@ public class CoapServerConnector
             throw new ConnectionException( null, null, "CoAP configuration error", e );
         }
 
-        //TODO make configurable
-        // add special interceptor for message traces
-        for ( Endpoint ep : server.getEndpoints() )
+        if ( config.isLogMessages() )
         {
-            ep.addInterceptor( new MessageTracer() );
+            // add special interceptor for message traces
+            for ( Endpoint ep : server.getEndpoints() )
+            {
+                ep.addInterceptor( new MessageTracer() );
+            }
         }
         server.start();
     }
@@ -166,7 +168,6 @@ public class CoapServerConnector
             {
                 throw new EndpointConstructionException( "cannot create JKS keystore instance", e1 );
             }
-            //TODO load from from Mule util
             InputStream in;
             try
             {
@@ -195,7 +196,6 @@ public class CoapServerConnector
             {
                 throw new EndpointConstructionException( "cannot create JKS truststore instance", e1 );
             }
-            //TODO load from from Mule util
             InputStream inTrust;
             try
             {
@@ -223,7 +223,7 @@ public class CoapServerConnector
             }
             catch ( Exception e )
             {
-                throw new EndpointConstructionException( "certificate chain with alias { " + config.getTrustedRootCertificateAlias()  + " } not found in truststore", e );
+                throw new EndpointConstructionException( "certificate chain with alias { " + config.getTrustedRootCertificateAlias() + " } not found in truststore", e );
             }
             try
             {
@@ -248,7 +248,7 @@ public class CoapServerConnector
      * @param server
      * @param resourceConfigs
      */
-    private void addResources( CoapServer server, List< ResourceConfig > resourceConfigs )  
+    private void addResources( CoapServer server, List< ResourceConfig > resourceConfigs )
     {
         for ( ResourceConfig resourceConfig : resourceConfigs )
         {
@@ -262,7 +262,7 @@ public class CoapServerConnector
      * Create child-resources that are configured on a resource. 
      * @param parent resource of which to create the child-resources 
      */
-    private void addChildren( ServedResource parent ) 
+    private void addChildren( ServedResource parent )
     {
         for ( ResourceConfig childResourceConfig : parent.getConfiguredResource().getResourceCollection() )
         {
@@ -310,7 +310,7 @@ public class CoapServerConnector
      * @throws ResourceUriException thrown when uri is not valid
      */
     @Source( /* threadingModel=SourceThreadingModel.NONE */)
-    public byte[] listen( SourceCallback callback, String uri ) throws ResourceUriException 
+    public byte[] listen( SourceCallback callback, String uri ) throws ResourceUriException
     {
         registry.add( new Listener( uri, callback ) );
         return null;
@@ -330,7 +330,7 @@ public class CoapServerConnector
      * @throws ResourceUriException thrown when resource uri is invalid.
      */
     @Processor
-    public void resourceChanged( String uri ) throws ResourceUriException 
+    public void resourceChanged( String uri ) throws ResourceUriException
     {
         if ( uri == null )
         {
@@ -374,11 +374,11 @@ public class CoapServerConnector
         @Default("false") boolean observable,
         @Default("false") boolean earlyAck,
         @Optional String title,
-        @FriendlyName("if")
+        @FriendlyName("if") 
         @Optional String ifdesc,
         @Optional String rt,
         @Optional String sz,
-        @Optional String ct ) throws ResourceUriException 
+        @Optional String ct ) throws ResourceUriException
     {
         if ( uri == null )
         {
@@ -419,9 +419,9 @@ public class CoapServerConnector
      *  </code><br/>
      *  @param uri The uri (without scheme/host part) of the resource(s) to be deleted. 
      * @throws ResourceUriException thrown when the uri is not valid.
-     */    
+     */
     @Processor
-    public void removeResource( String uri ) throws ResourceUriException 
+    public void removeResource( String uri ) throws ResourceUriException
     {
         if ( uri == null )
         {
@@ -433,7 +433,7 @@ public class CoapServerConnector
             registry.remove( resource );
         }
     }
-    
+
     /**
      *  The <code>&lt;coap-server:resource-exists/&gt;</code> messageprocessor returns 'true' when a resource on 
      *  the given uri is active, otherwise false. 
@@ -441,9 +441,9 @@ public class CoapServerConnector
      *  @param uri The uri (without scheme/host part) of the resource(s) to be deleted. 
      *  @return true when at least one resource is found.
      * @throws ResourceUriException thrown when uri is not valid.
-     */    
+     */
     @Processor
-    public Boolean ResourceExists( String uri ) throws ResourceUriException 
+    public Boolean ResourceExists( String uri ) throws ResourceUriException
     {
         if ( uri == null )
         {
@@ -454,9 +454,9 @@ public class CoapServerConnector
         {
             return new Boolean( true );
         }
-		return new Boolean( false );
+        return new Boolean( false );
     }
-    
+
     //TODO add list-resources operation
 
     public ServerConfig getConfig()

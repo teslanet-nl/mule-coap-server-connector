@@ -77,6 +77,18 @@ public class ServerConfig extends EndpointConfig
     //@FriendlyName(value = false)
     private boolean secure= false;
 
+    /**
+     * When true each CoAP message will be logged.
+     */
+    @Configurable
+    @Default( value= "false")
+    @Placement(tab= "Logging", group= "CoAP")
+    //@FriendlyName(value = false)
+    private boolean logMessages= false;
+    
+    /**
+     * Gets the Socket address the server listens on
+     */
     public InetSocketAddress getInetSocketAddress()
     {
         int port;
@@ -114,6 +126,24 @@ public class ServerConfig extends EndpointConfig
     public void setSecure( boolean secure )
     {
         this.secure= secure;
+    }
+
+    /**
+     * Indicates whether CoAP messages should be logged
+     * @return the logMessages
+     */
+    public boolean isLogMessages()
+    {
+        return logMessages;
+    }
+
+    /**
+     * Set flag that indicates whether CoAP messages should be logged
+     * @param logMessages the logMessages to set
+     */
+    public void setLogMessages( boolean logMessages )
+    {
+        this.logMessages= logMessages;
     }
 
 
