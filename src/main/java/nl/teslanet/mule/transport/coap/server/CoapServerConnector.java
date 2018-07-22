@@ -63,7 +63,7 @@ import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
 
 /**
  * Mule CoAP connector - CoapServer. 
- * The CoapServer Connector can be used in Mule applications to implement CoAP servers as defined in {@see http://tools.ietf.org/html/rfc7252}.
+ * The CoapServer Connector can be used in Mule applications to implement CoAP servers.
  * A CoAP server is defined by means of a set resources on which requests can be done like GET, POST, PUT etc. .
  * The server CoAP endpoint has a number of configuration parameters that can be used to tune behavior of the server. 
  * These parameters have sensible defaults and need only to be set for specific needs.     
@@ -358,10 +358,12 @@ public class CoapServerConnector
      *  @param put When true the resource accepts put-requests. 
      *  @param post When true the resource accepts post-requests. 
      *  @param delete When true the resource accepts delete-requests. 
-     *  @param observe When true the resource accepts observe-requests. 
+     *  @param observable When true the resource accepts observe-requests. 
      *  @param earlyAck An immediate acknowledgement is sent tot the client before processing the request. 
-     *  @param size The estimated maximum size of the response content. 
-     *  @param type The content type of the response, specified as CoAP type number. 
+     *  @param title The readable title of the resource. 
+     *  @param ifdesc The interface ( if ) indicates interfaces-name the resource implements. 
+     *  @param rt The defines the resource type. 
+     *  @param ct The type of the resources content, specified as CoAP type number. 
      * @throws ResourceUriException thrown when resource uri is not valid
      */
     @Processor
