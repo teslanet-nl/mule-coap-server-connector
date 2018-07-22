@@ -1,17 +1,16 @@
-# CoapServer Release Notes
+# Coap Server Connector Release Notes
 # --------------------------------------------------------------------
-# Date: <DD-MMM-YYYY>
-Example: 24-Jan-2015
-# Version: (default value: 0.1)
+# Date: 
+21-Jul-2018
+# Version:
+${project.version}
 # Supported API versions: 
-Example: Salesforce Bulk API v.28, SOAP API V.28 (include links to API docs)
+IETF rfc 7252
 # Supported Mule Runtime Versions: 
 ${project.devkitVersion}
 # New Features and Functionality
-(default value: Initial version) 
-Example: Added support for Query. http://github.com/mulesoft/coap-server/issues/61
-# Closed Issues in this release 
-(include issue link when possible)
-Example: Fixed problem with lost telefone on Bulk Update (CLDCONNECT-123).
+Initial version
+# Closed Issues in this release
+
 # Known Issues in this release
-Example: Session ID expires after  30 days. http://github.com/mulesoft/coap-server/issues/62
+- Observing client should be sent 'Not Acceptable' on resource content format change. https://github.com/teslanet-nl/mule-coap-server-connector/issues/1
