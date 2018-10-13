@@ -285,10 +285,6 @@ public class EndpointConfig
     private String httpCacheSize= null;
 */
     //---------------
-    @Configurable
-    @Optional
-    @Placement(tab= "Status", group= "Status")
-    private String healthStatusPrintLevel= null;
 
     @Configurable
     @Optional
@@ -1048,21 +1044,6 @@ public class EndpointConfig
         this.httpCacheSize= httpCacheSize;
     }
 */
-    /**
-     * @return the healthStatusPrintLevel
-     */
-    public String getHealthStatusPrintLevel()
-    {
-        return healthStatusPrintLevel;
-    }
-
-    /**
-     * @param healthStatusPrintLevel the healthStatusPrintLevel to set
-     */
-    public void setHealthStatusPrintLevel( String healthStatusPrintLevel )
-    {
-        this.healthStatusPrintLevel= healthStatusPrintLevel;
-    }
 
     /**
      * @return the healthStatusInterval
@@ -1132,7 +1113,6 @@ public class EndpointConfig
         if ( this.httpCacheResponseMaxAge != null ) config.setInt(NetworkConfig.Keys.HTTP_CACHE_RESPONSE_MAX_AGE, Integer.valueOf( this.httpCacheResponseMaxAge )); // 86400);
         if ( this.httpCacheSize != null ) config.setInt(NetworkConfig.Keys.HTTP_CACHE_SIZE, Integer.valueOf( this.httpCacheSize )); // 32);
         */
-        if ( this.healthStatusPrintLevel != null ) config.setString(NetworkConfig.Keys.HEALTH_STATUS_PRINT_LEVEL, String.valueOf( this.healthStatusPrintLevel )); // "FINEST");
         if ( this.healthStatusInterval != null ) config.setInt(NetworkConfig.Keys.HEALTH_STATUS_INTERVAL, Integer.valueOf( this.healthStatusInterval )); // 60); // s
         return config;
     }

@@ -35,7 +35,6 @@ import org.eclipse.californium.core.network.interceptors.MessageTracer;
 import org.eclipse.californium.core.server.resources.Resource;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
-import org.eclipse.californium.scandium.config.DtlsConnectorConfig.Builder;
 import org.eclipse.californium.scandium.dtls.pskstore.InMemoryPskStore;
 import org.mule.api.ConnectionException;
 import org.mule.api.ConnectionExceptionCode;
@@ -145,11 +144,14 @@ public class CoapServerConnector
     //        }
     //    }
 
-    private void addEndPoint( CoapServer server, ServerConfig config ) throws EndpointConstructionException 
+    private void addEndPoint( CoapServer server, ServerConfig config ) throws EndpointConstructionException
     {
         if ( !config.isSecure() )
         {
-            server.addEndpoint( new CoapEndpoint( config.getInetSocketAddress(), config.getNetworkConfig() ) );
+            CoapEndpoint.CoapEndpointBuilder builder= new CoapEndpoint.CoapEndpointBuilder();
+            builder.setInetSocketAddress( config.getInetSocketAddress() );
+            builder.setNetworkConfig( config.getNetworkConfig() );
+            server.addEndpoint( builder.build() );
         }
         else
         {
@@ -196,49 +198,55 @@ public class CoapServerConnector
             {
                 throw new EndpointConstructionException( "cannot create JKS truststore instance", e1 );
             }
-            InputStream inTrust;
-            try
+            try (
+                    InputStream inTrust= IOUtils.getResourceAsStream( config.getTrustStoreLocation(), server.getClass(), true, true );
+                )
+
             {
-                inTrust= IOUtils.getResourceAsStream( config.getTrustStoreLocation(), server.getClass(), true, true );
+                try
+                {
+                    trustStore.load( inTrust, config.getTrustStorePassword().toCharArray() );
+                }
+                catch ( NoSuchAlgorithmException | CertificateException | IOException e1 )
+                {
+                    throw new EndpointConstructionException( "cannot load truststore from { " + config.getTrustStoreLocation() + " } using passwd ***", e1 );
+                }
+
+                // You can load multiple certificates if needed
+                DtlsConnectorConfig.Builder dtlsBuilder= new DtlsConnectorConfig.Builder();
+                dtlsBuilder.setAddress( config.getInetSocketAddress() );
+                dtlsBuilder.setPskStore( pskStore );
+                try
+                {
+                    dtlsBuilder.setTrustStore( trustStore.getCertificateChain( config.getTrustedRootCertificateAlias() ) );
+                }
+                catch ( Exception e )
+                {
+                    throw new EndpointConstructionException( "certificate chain with alias { " + config.getTrustedRootCertificateAlias() + " } not found in truststore", e );
+                }
+                try
+                {
+
+                    dtlsBuilder.setIdentity(
+                        (PrivateKey) keyStore.getKey( config.getPrivateKeyAlias(), config.getKeyStorePassword().toCharArray() ),
+                        keyStore.getCertificateChain( config.getPrivateKeyAlias() ),
+                        true );
+                }
+                catch ( Exception e )
+                {
+                    throw new EndpointConstructionException( "identity with private key alias { " + config.getPrivateKeyAlias() + " } could not be set" );
+                }
+                DTLSConnector dtlsConnector= new DTLSConnector( dtlsBuilder.build() );
+
+                CoapEndpoint.CoapEndpointBuilder builder= new CoapEndpoint.CoapEndpointBuilder();
+                builder.setNetworkConfig( config.getNetworkConfig() );
+                builder.setConnector( dtlsConnector );
+                server.addEndpoint( builder.build() );
             }
             catch ( IOException e1 )
             {
                 throw new EndpointConstructionException( "cannot load truststore from { " + config.getTrustStoreLocation() + " }", e1 );
             }
-            try
-            {
-                trustStore.load( inTrust, config.getTrustStorePassword().toCharArray() );
-            }
-            catch ( NoSuchAlgorithmException | CertificateException | IOException e1 )
-            {
-                throw new EndpointConstructionException( "cannot load truststore from { " + config.getTrustStoreLocation() + " } using passwd ***", e1 );
-            }
-
-            // You can load multiple certificates if needed
-            DtlsConnectorConfig.Builder configBuider= new Builder( config.getInetSocketAddress() );
-            configBuider.setPskStore( pskStore );
-            try
-            {
-                configBuider.setTrustStore( trustStore.getCertificateChain( config.getTrustedRootCertificateAlias() ) );
-            }
-            catch ( Exception e )
-            {
-                throw new EndpointConstructionException( "certificate chain with alias { " + config.getTrustedRootCertificateAlias() + " } not found in truststore", e );
-            }
-            try
-            {
-
-                configBuider.setIdentity(
-                    (PrivateKey) keyStore.getKey( config.getPrivateKeyAlias(), config.getKeyStorePassword().toCharArray() ),
-                    keyStore.getCertificateChain( config.getPrivateKeyAlias() ),
-                    true );
-            }
-            catch ( Exception e )
-            {
-                throw new EndpointConstructionException( "identity with private key alias { " + config.getPrivateKeyAlias() + " } could not be set" );
-            }
-            DTLSConnector connector= new DTLSConnector( configBuider.build() );
-            server.addEndpoint( new CoapEndpoint( connector, config.getNetworkConfig() ) );
         }
 
     }

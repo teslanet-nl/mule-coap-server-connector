@@ -36,6 +36,7 @@ import org.mule.security.oauth.processor.AbstractListeningMessageProcessor;
 import org.mule.transformer.types.DataTypeFactory;
 import org.mule.transport.NullPayload;
 
+import nl.teslanet.mule.transport.coap.commons.options.InvalidOptionValueException;
 import nl.teslanet.mule.transport.coap.commons.options.Options;
 import nl.teslanet.mule.transport.coap.commons.options.PropertyNames;
 import nl.teslanet.mule.transport.coap.server.config.ResourceConfig;
@@ -45,7 +46,7 @@ public class ServedResource extends CoapResource
 {
 
     /** The logger. */
-    protected final Logger LOGGER = Logger.getLogger(ServedResource.class.getCanonicalName());
+    protected final Logger LOGGER= Logger.getLogger( ServedResource.class.getCanonicalName() );
 
     private CoapServerConnector connector;
 
@@ -65,27 +66,27 @@ public class ServedResource extends CoapResource
         if ( config.getTitle() != null )
         {
             getAttributes().setTitle( config.getTitle() );
-        };
+        } ;
         if ( config.getRt() != null )
         {
-            for ( String rt : config.getRt().split( "\\s*,\\s*" ))
+            for ( String rt : config.getRt().split( "\\s*,\\s*" ) )
             {
-            	getAttributes().addResourceType( rt );
-            }      	
-        };        
+                getAttributes().addResourceType( rt );
+            }
+        } ;
         if ( config.getIfdesc() != null )
         {
-            for ( String ifdesc : config.getIfdesc().split( "\\s*,\\s*" ))
+            for ( String ifdesc : config.getIfdesc().split( "\\s*,\\s*" ) )
             {
-            	getAttributes().addInterfaceDescription( ifdesc );
-            }      	
-        };      
+                getAttributes().addInterfaceDescription( ifdesc );
+            }
+        } ;
         if ( config.getCt() != null )
         {
-            for ( String ct : config.getCt().split( "\\s*,\\s*" ))
+            for ( String ct : config.getCt().split( "\\s*,\\s*" ) )
             {
-            	getAttributes().addContentType( Integer.parseInt( ct ));
-            }      	
+                getAttributes().addContentType( Integer.parseInt( ct ) );
+            }
         }
         if ( config.getSz() != null )
         {
@@ -156,7 +157,7 @@ public class ServedResource extends CoapResource
             exchange.respond( ResponseCode.INTERNAL_SERVER_ERROR, "NO LISTENER" );
             return;
         }
-        
+
         Object outboundPayload= null;
         ResponseCode responseCode= defaultResponseCode;
 
@@ -167,37 +168,49 @@ public class ServedResource extends CoapResource
         byte[] requestPayload= exchange.getRequestPayload();
         int requestContentFormat= exchange.getRequestOptions().getContentFormat();
 
-        Map< String, Object > inboundProperties= createInboundProperties( exchange );
-        Map< String, Object > outboundProperties= new HashMap< String, Object >();
         try
         {
-            outboundPayload= processMuleFlow( requestPayload, requestContentFormat, inboundProperties, outboundProperties );
-        
-            if ( outboundProperties.containsKey( PropertyNames.COAP_RESPONSE_CODE ) )
+            Map< String, Object > inboundProperties= createInboundProperties( exchange );
+            Map< String, Object > outboundProperties= new HashMap< String, Object >();
+            try
             {
-                responseCode= ResponseCode.valueOf( outboundProperties.get( PropertyNames.COAP_RESPONSE_CODE ).toString() );
-            }
-            Response response= new Response( responseCode );
-            Options options= new Options( outboundProperties );
-            response.setOptions( options );
+                outboundPayload= processMuleFlow( requestPayload, requestContentFormat, inboundProperties, outboundProperties );
 
-            if ( byte[].class.isInstance( outboundPayload ) )
-            {
-                response.setPayload( (byte[]) outboundPayload );
+                if ( outboundProperties.containsKey( PropertyNames.COAP_RESPONSE_CODE ) )
+                {
+                    responseCode= ResponseCode.valueOf( outboundProperties.get( PropertyNames.COAP_RESPONSE_CODE ).toString() );
+                }
+                Response response= new Response( responseCode );
+                Options options= new Options( outboundProperties );
+                response.setOptions( options.getOptionSet() );
+
+                if ( byte[].class.isInstance( outboundPayload ) )
+                {
+                    response.setPayload( (byte[]) outboundPayload );
+                }
+                else if ( outboundPayload != null && !NullPayload.getInstance().equals( outboundPayload ) )
+                {
+                    response.setPayload( outboundPayload.toString() );
+                } ;
+                exchange.respond( response );
             }
-            else if ( outboundPayload != null && ! NullPayload.getInstance().equals( outboundPayload ))
+            catch ( Exception e )
             {
-                response.setPayload( outboundPayload.toString() );
-            } ;
+                throw new RuntimeException( "failed to process request: " + exchange.advanced().getRequest().getURI(), e );
+            }
+        }
+        catch ( InvalidOptionValueException e1 )
+        {
+            //cannot process request when option not valid, 
+            //probably Californium has already dealt with this, so shouldn't occur
+            Response response= new Response( ResponseCode.BAD_OPTION );
+            response.setPayload( e1.getMessage() );
             exchange.respond( response );
         }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( "failed to process request: " + exchange.advanced().getRequest().getURI(), e );
-        }
+
     }
 
-    private Map< String, Object > createInboundProperties( CoapExchange exchange )
+    private Map< String, Object > createInboundProperties( CoapExchange exchange ) throws InvalidOptionValueException
     {
 
         HashMap< String, Object > props= new HashMap< String, Object >();
@@ -210,13 +223,13 @@ public class ServedResource extends CoapResource
         props.put( PropertyNames.COAP_REQUEST_SOURCE_HOST, exchange.getSourceAddress() );
         props.put( PropertyNames.COAP_REQUEST_SOURCE_PORT, exchange.getSourcePort() );
 
-        Options.fillProperties( exchange.getRequestOptions(), props );
+        Options.fillPropertyMap( exchange.getRequestOptions(), props );
 
         return props;
     }
 
     private Object processMuleFlow( Object requestPayload, int requestContentFormat, Map< String, Object > inboundProperties, Map< String, Object > outboundProperties )
-        
+
     {
         MuleEvent responseEvent= null;
         Object response= null;
