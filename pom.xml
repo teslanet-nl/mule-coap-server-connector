@@ -52,6 +52,8 @@
         <category>Community</category>
         <licensePath>LICENSE.md</licensePath>
         <devkit.studio.package.skip>false</devkit.studio.package.skip>
+        <californium.version>2.0.0-M12</californium.version>
+        <test.mule.version>3.9.0</test.mule.version>
     </properties>
     <build>
     	<plugins>
@@ -115,19 +117,49 @@
 		<dependency>
 		    <groupId>org.eclipse.californium</groupId>
 		    <artifactId>californium-core</artifactId>
-		    <version>2.0.0-M12</version>
+		    <version>${californium.version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.eclipse.californium</groupId>
 		    <artifactId>scandium</artifactId>
-		    <version>2.0.0-M12</version>
+		    <version>${californium.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>nl.teslanet.mule.transport.coap</groupId>
 			<artifactId>mule-coap-commons</artifactId>
 			<version>2.0.0-SNAPSHOT</version>
 		</dependency>
-    </dependencies>
+      
+   		<!-- Test Dependencies -->
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-module-spring-config</artifactId>
+			<version>${mule.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Mule Transports -->
+		
+		<!-- Mule Modules -->
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-module-scripting</artifactId>
+			<version>${test.mule.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-module-xml</artifactId>
+			<version>${test.mule.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- for testing -->
+		<dependency>
+			<groupId>org.mule.tests</groupId>
+			<artifactId>mule-tests-functional</artifactId>
+			<version>${test.mule.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
     <repositories>
         <repository>
             <id>mulesoft-releases</id>

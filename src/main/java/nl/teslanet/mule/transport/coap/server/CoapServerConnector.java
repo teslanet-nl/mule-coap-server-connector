@@ -60,6 +60,7 @@ import nl.teslanet.mule.transport.coap.server.error.EndpointConstructionExceptio
 import nl.teslanet.mule.transport.coap.server.error.ErrorHandler;
 import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
 
+
 /**
  * Mule CoAP connector - CoapServer. 
  * The CoapServer Connector can be used in Mule applications to implement CoAP servers.
@@ -105,7 +106,7 @@ public class CoapServerConnector
     @Start
     public void startServer() throws ConnectionException, WorkException
     {
-
+        //TODO allow empty server
         if ( getResources() == null || getResources().isEmpty() )
         {
             throw new ConnectionException( ConnectionExceptionCode.UNKNOWN, "coap no resources configured", null );
@@ -198,9 +199,7 @@ public class CoapServerConnector
             {
                 throw new EndpointConstructionException( "cannot create JKS truststore instance", e1 );
             }
-            try (
-                    InputStream inTrust= IOUtils.getResourceAsStream( config.getTrustStoreLocation(), server.getClass(), true, true );
-                )
+            try ( InputStream inTrust= IOUtils.getResourceAsStream( config.getTrustStoreLocation(), server.getClass(), true, true ); )
 
             {
                 try
@@ -258,6 +257,11 @@ public class CoapServerConnector
      */
     private void addResources( CoapServer server, List< ResourceConfig > resourceConfigs )
     {
+        if ( resourceConfigs == null )
+        {
+            //nothing to do
+            return;
+        }
         for ( ResourceConfig resourceConfig : resourceConfigs )
         {
             ServedResource toServe= new ServedResource( this, resourceConfig );
@@ -384,8 +388,7 @@ public class CoapServerConnector
         @Default("false") boolean observable,
         @Default("false") boolean earlyAck,
         @Optional String title,
-        @FriendlyName("if") 
-        @Optional String ifdesc,
+        @FriendlyName("if") @Optional String ifdesc,
         @Optional String rt,
         @Optional String sz,
         @Optional String ct ) throws ResourceUriException
@@ -460,7 +463,8 @@ public class CoapServerConnector
             throw new ResourceUriException( "null" );
         }
 
-        for ( @SuppressWarnings("unused") ServedResource resource : registry.findResources( uri ) )
+        for ( @SuppressWarnings("unused")
+        ServedResource resource : registry.findResources( uri ) )
         {
             return new Boolean( true );
         }
