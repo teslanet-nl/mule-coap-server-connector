@@ -10,10 +10,10 @@ import nl.teslanet.mule.transport.coap.server.CoapServerConnector;
 //@RunWith(Suite.class)
 //@SuiteClasses
 //({ 
-//    ResourceExistsTestCases.class,
-//    AddResourceTestCases.class,
-//    RemoveResourceTestCases.class,
-//    ResourceChangedTestCases.class 
+//    ResourceExistsTest.class,
+//    AddResourceTest.class,
+//    RemoveResourceTest.class,
+//    ResourceChangedTest.class 
 //})
 public class FunctionalTestSuite
 {

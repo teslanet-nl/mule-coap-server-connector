@@ -12,10 +12,10 @@ import org.junit.Test;
 import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
 
 
-public class ResourceChangedTestCases extends AbstractTestCase< CoapServerConnector >
+public class ResourceChangedTest extends AbstractTestCase< CoapServerConnector >
 {
 
-    public ResourceChangedTestCases()
+    public ResourceChangedTest()
     {
         super( CoapServerConnector.class );
     }

@@ -16,7 +16,7 @@ import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
 import nl.teslanet.mule.transport.coap.server.generated.sources.ListenMessageSource;
 
 
-public class ListenerTestCases
+public class ListenerTest
 {
 
     @Rule

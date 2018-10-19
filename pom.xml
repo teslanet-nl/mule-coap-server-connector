@@ -52,8 +52,7 @@
         <category>Community</category>
         <licensePath>LICENSE.md</licensePath>
         <devkit.studio.package.skip>false</devkit.studio.package.skip>
-        <californium.version>2.0.0-M12</californium.version>
-        <test.mule.version>3.9.0</test.mule.version>
+        <californium.version>2.0.0-M12</californium.version>        
     </properties>
     <build>
     	<plugins>
@@ -132,6 +131,12 @@
       
    		<!-- Test Dependencies -->
 		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.mule.modules</groupId>
 			<artifactId>mule-module-spring-config</artifactId>
 			<version>${mule.version}</version>
@@ -143,20 +148,20 @@
 		<dependency>
 			<groupId>org.mule.modules</groupId>
 			<artifactId>mule-module-scripting</artifactId>
-			<version>${test.mule.version}</version>
+			<version>${mule.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mule.modules</groupId>
 			<artifactId>mule-module-xml</artifactId>
-			<version>${test.mule.version}</version>
+			<version>${mule.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- for testing -->
 		<dependency>
 			<groupId>org.mule.tests</groupId>
 			<artifactId>mule-tests-functional</artifactId>
-			<version>${test.mule.version}</version>
+			<version>${mule.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

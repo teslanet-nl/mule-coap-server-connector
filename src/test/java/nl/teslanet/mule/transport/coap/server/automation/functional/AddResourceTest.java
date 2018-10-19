@@ -12,17 +12,31 @@ import org.junit.Test;
 import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
 
 
-public class RemoveResourceTestCases extends AbstractTestCase< CoapServerConnector >
+public class AddResourceTest extends AbstractTestCases
 {
 
-    public RemoveResourceTestCases()
+    public AddResourceTest()
     {
-        super( CoapServerConnector.class );
+        super( );
     }
 
     @Before
-    public void setup() throws ResourceUriException
+    public void setup()
     {
+        // TODO
+    }
+
+    @After
+    public void tearDown()
+    {
+        // TODO
+    }
+
+    @Ignore
+    @Test
+    public void verify() throws ResourceUriException
+    {
+        //void expected;
         String uri= "/test";
         boolean get= true;
         boolean put= true;
@@ -37,23 +51,7 @@ public class RemoveResourceTestCases extends AbstractTestCase< CoapServerConnect
         java.lang.String ct= null;
         
         getConnector().addResource( uri, get, put, post, delete, observable, earlyAck, title, ifdesc, rt, sz, ct );
-    }
-    
-    @After
-    public void tearDown()
-    {
-        // TODO
-    }
-
-    @Ignore
-    @Test
-    public void verify() throws ResourceUriException
-    {
-        //void expected;
-        java.lang.String uri= "/test";
         assertEquals( getConnector().ResourceExists( uri ), true );
-        getConnector().removeResource( uri );
-        assertEquals( getConnector().ResourceExists( uri ), false );
     }
 
 }

@@ -12,12 +12,12 @@ import org.junit.Test;
 import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
 
 
-public class AddResourceTestCases extends AbstractTestCases
+public class ResourceExistsTest extends AbstractTestCases
 {
 
-    public AddResourceTestCases()
+    public ResourceExistsTest()
     {
-        super( );
+        super(  );
     }
 
     @Before
@@ -36,7 +36,6 @@ public class AddResourceTestCases extends AbstractTestCases
     @Test
     public void verify() throws ResourceUriException
     {
-        //void expected;
         String uri= "/test";
         boolean get= true;
         boolean put= true;
@@ -49,9 +48,11 @@ public class AddResourceTestCases extends AbstractTestCases
         java.lang.String rt= null;
         java.lang.String sz= null;
         java.lang.String ct= null;
-        
+        assertEquals( getConnector().ResourceExists( uri ), false );
         getConnector().addResource( uri, get, put, post, delete, observable, earlyAck, title, ifdesc, rt, sz, ct );
         assertEquals( getConnector().ResourceExists( uri ), true );
+        getConnector().removeResource( uri );
+        assertEquals( getConnector().ResourceExists( uri ), false );
     }
 
 }

@@ -14,7 +14,7 @@ import org.junit.Test;
 import org.mule.tck.junit4.FunctionalTestCase;
 
 
-public class GetMethodTestCases extends FunctionalTestCase
+public class GetMethodTest extends FunctionalTestCase
 {
     CoapClient client1= null;
 
