@@ -28,23 +28,39 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 
+/**
+ * Registry of served resources and listeners on the resources.
+ * It maintains consistency of the callback relations they have.
+ */
 public class ResourceRegistry
 {
+    //TODO maybe list, depending on validation of duplication of resourcenames
     private ConcurrentHashMap< String, ServedResource > servedResources;
 
     private CopyOnWriteArrayList< Listener > listeners;
 
     Resource root= null;
 
+    /**
+     * Construct a registry. The constructor initializes served resources 
+     * and listener repositories. 
+     * @param root mandatory root resource
+     */
     public ResourceRegistry( Resource root )
     {
+        if ( root == null ) throw new NullPointerException( "Cannot construct a ResourceRegistry without root resource." );
         this.root= root;
-        //TODO maybe list, depending on validation of duplication of resourcenames
+
         servedResources= new ConcurrentHashMap< String, ServedResource >();
         listeners= new CopyOnWriteArrayList< Listener >();
     }
 
-    public void add( ServedResource parent, ServedResource resource ) 
+    /**
+     * Add a resource to the registry. 
+     * @param parent to which the resource is added as child
+     * @param resource the resource to add
+     */
+    public void add( ServedResource parent, ServedResource resource )
     {
         //TODO responsibility of registry?
         if ( parent == null )
@@ -53,13 +69,14 @@ public class ResourceRegistry
         }
         else
         {
+            //TODO check that parent is contained in registry
             parent.add( resource );
         }
         servedResources.put( resource.getURI(), resource );
         setResourceCallBack( resource );
     }
 
-    public void add( Listener listener ) 
+    public void add( Listener listener )
     {
         listeners.add( listener );
         setResourceCallBack();
@@ -71,16 +88,16 @@ public class ResourceRegistry
         resource.delete();
     }
 
-    private void setResourceCallBack() 
+    private void setResourceCallBack()
     {
         for ( Entry< String, ServedResource > e : servedResources.entrySet() )
         {
-            setResourceCallBack( e.getValue());
+            setResourceCallBack( e.getValue() );
         }
 
     }
 
-    private void setResourceCallBack( ServedResource toServe ) 
+    private void setResourceCallBack( ServedResource toServe )
     {
         Listener bestListener= null;
         int maxMatchlevel= 0;
@@ -96,7 +113,7 @@ public class ResourceRegistry
         if ( bestListener != null ) toServe.setCallback( bestListener.getCallback() );
     }
 
-    public ServedResource getResource( String uri ) throws ResourceUriException 
+    public ServedResource getResource( String uri ) throws ResourceUriException
     {
         if ( uri.length() == 0 )
         {

@@ -288,7 +288,7 @@ public class ServedResource extends CoapResource
 
     /**
      * @return get the parent resource
-     */
+     
     public ServedResource getParent()
     {
         Resource parent= super.getParent();
@@ -300,7 +300,7 @@ public class ServedResource extends CoapResource
         {
             return (ServedResource) parent;
         }
-    }
+    }*/
 
     /**
      * @return the configured Resource
