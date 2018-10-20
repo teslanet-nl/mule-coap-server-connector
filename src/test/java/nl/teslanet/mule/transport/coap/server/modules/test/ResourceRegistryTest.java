@@ -1,35 +1,29 @@
 package nl.teslanet.mule.transport.coap.server.modules.test;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import org.eclipse.californium.core.CoapResource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.junit.Assert.*;
-
-import org.eclipse.californium.core.CoapResource;
-import nl.teslanet.mule.transport.coap.server.CoapServerConnector;
-import nl.teslanet.mule.transport.coap.server.Listener;
 import nl.teslanet.mule.transport.coap.server.ResourceRegistry;
-import nl.teslanet.mule.transport.coap.server.ServedResource;
 import nl.teslanet.mule.transport.coap.server.config.ResourceConfig;
 import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
-import nl.teslanet.mule.transport.coap.server.generated.sources.ListenMessageSource;
 
 
 public class ResourceRegistryTest
 {
-    CoapServerConnector coapServerConnector= null;
-
     @Rule
     public ExpectedException exception= ExpectedException.none();
 
     @Before
     public void setUp() throws Exception
     {
-        coapServerConnector= new CoapServerConnector();
     }
 
     @After
@@ -66,42 +60,39 @@ public class ResourceRegistryTest
     {
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
-        ResourceConfig resourceConfig1;
-        ServedResource resource1;
-        ResourceConfig resourceConfig2;
-        ServedResource resource2;
-        ResourceConfig resourceConfig3;
-        ServedResource resource3;
-        ResourceConfig resourceConfig4;
-        ServedResource resource4;
+        ResourceConfig resourceConfig;
+        String name1= "resource1";
+        String uri1= "/" + name1;
+        String name2= "resource2";
+        String uri2= uri1 + "/" + name2;
+        String name3= "resource3";
+        String uri3= uri2 + "/" + name3;
+        String name4= "resource4";
+        String uri4= uri1 + "/" + name2;
 
-        resourceConfig1= new ResourceConfig();
-        resourceConfig1.setName( "resource1" );
-        resource1= new ServedResource( coapServerConnector, resourceConfig1 );
-        registry.add( null, resource1 );
+        resourceConfig= new ResourceConfig();
+        resourceConfig.setName( name1 );
+        registry.add( null, resourceConfig );
         assertNotNull( registry );
-        assertEquals( "registry does not contain resource", resource1, registry.getResource( "/resource1" ) );
+        assertEquals( "registry does not contain resource", uri1, registry.getResource( uri1 ).getURI() );
 
-        resourceConfig2= new ResourceConfig();
-        resourceConfig2.setName( "resource2" );
-        resource2= new ServedResource( coapServerConnector, resourceConfig2 );
-        registry.add( resource1, resource2 );
+        resourceConfig= new ResourceConfig();
+        resourceConfig.setName( name2 );
+        registry.add( uri1, resourceConfig );
         assertNotNull( registry );
-        assertEquals( "registry does not contain resource2", resource2, registry.getResource( "/resource1/resource2" ) );
+        assertEquals( "registry does not contain resource2", uri2, registry.getResource( uri2 ).getURI() );
 
-        resourceConfig3= new ResourceConfig();
-        resourceConfig3.setName( "resource3" );
-        resource3= new ServedResource( coapServerConnector, resourceConfig3 );
-        registry.add( resource2, resource3 );
+        resourceConfig= new ResourceConfig();
+        resourceConfig.setName( name3 );
+        registry.add( uri2, resourceConfig );
         assertNotNull( registry );
-        assertEquals( "registry does not contain resource3", resource3, registry.getResource( "/resource1/resource2/resource3" ) );
+        assertEquals( "registry does not contain resource3", uri3, registry.getResource( uri3 ).getURI() );
 
-        resourceConfig4= new ResourceConfig();
-        resourceConfig4.setName( "resource4" );
-        resource4= new ServedResource( coapServerConnector, resourceConfig4 );
-        registry.add( resource1, resource4 );
+        resourceConfig= new ResourceConfig();
+        resourceConfig.setName( name4 );
+        registry.add( uri2, resourceConfig );
         assertNotNull( registry );
-        assertEquals( "registry does not contain resource3", resource4, registry.getResource( "/resource1/resource4" ) );
+        assertEquals( "registry does not contain resource3", uri4, registry.getResource( uri4 ).getURI() );
     }
 
     @Test
@@ -110,16 +101,14 @@ public class ResourceRegistryTest
         CoapResource root= new CoapResource( "" );
         ResourceRegistry registry= new ResourceRegistry( root );
         ResourceConfig resourceConfig;
-        ServedResource resource;
 
         resourceConfig= new ResourceConfig();
         //resourceConfig.setName( "resource" );
-        resource= new ServedResource( coapServerConnector, resourceConfig );
 
         exception.expect( NullPointerException.class );
         exception.expectMessage( "Child must have a name" );
 
-        registry.add( null, resource );
+        registry.add( null, resourceConfig );
     }
 
 }

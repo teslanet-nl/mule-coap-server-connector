@@ -15,6 +15,7 @@
 package nl.teslanet.mule.transport.coap.server;
 
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -48,56 +49,77 @@ public class ServedResource extends CoapResource
     /** The logger. */
     protected final Logger LOGGER= Logger.getLogger( ServedResource.class.getCanonicalName() );
 
-    private CoapServerConnector connector;
+    //private CoapServerConnector connector;
 
-    private ResourceConfig config;
+    //private ResourceConfig config;
 
     private SourceCallback callback= null;
 
-    public ServedResource( CoapServerConnector coapServerConnector, ResourceConfig resourceConfig )
+    private Boolean get= false;
+
+    private Boolean put= false;
+
+    private Boolean post= false;
+
+    private Boolean delete= false;
+
+    private Boolean earlyAck= false;
+
+    public ServedResource( ResourceConfig resourceConfig )
     {
         super( resourceConfig.getName() );
-        connector= coapServerConnector;
-        config= resourceConfig;
-        setObservable( config.isObservable() );
 
         //TODO make use of visible/invisible?
 
-        if ( config.getTitle() != null )
+        get= resourceConfig.isGet();
+        put= resourceConfig.isPut();
+        post= resourceConfig.isPost();
+        delete= resourceConfig.isDelete();
+        earlyAck= resourceConfig.isEarlyAck();
+
+        setObservable( resourceConfig.isObservable() );
+
+        if ( resourceConfig.getTitle() != null )
         {
-            getAttributes().setTitle( config.getTitle() );
+            getAttributes().setTitle( resourceConfig.getTitle() );
         } ;
-        if ( config.getRt() != null )
+        if ( resourceConfig.getRt() != null )
         {
-            for ( String rt : config.getRt().split( "\\s*,\\s*" ) )
+            for ( String rt : resourceConfig.getRt().split( "\\s*,\\s*" ) )
             {
                 getAttributes().addResourceType( rt );
             }
         } ;
-        if ( config.getIfdesc() != null )
+        if ( resourceConfig.getIfdesc() != null )
         {
-            for ( String ifdesc : config.getIfdesc().split( "\\s*,\\s*" ) )
+            for ( String ifdesc : resourceConfig.getIfdesc().split( "\\s*,\\s*" ) )
             {
                 getAttributes().addInterfaceDescription( ifdesc );
             }
         } ;
-        if ( config.getCt() != null )
+        if ( resourceConfig.getCt() != null )
         {
-            for ( String ct : config.getCt().split( "\\s*,\\s*" ) )
+            for ( String ct : resourceConfig.getCt().split( "\\s*,\\s*" ) )
             {
                 getAttributes().addContentType( Integer.parseInt( ct ) );
             }
         }
-        if ( config.getSz() != null )
+        if ( resourceConfig.getSz() != null )
         {
-            getAttributes().setMaximumSizeEstimate( config.getSz() );
+            getAttributes().setMaximumSizeEstimate( resourceConfig.getSz() );
+        }
+        //also create children (recursively) 
+        for ( ResourceConfig childResourceConfig : resourceConfig.getResourceCollection() )
+        {
+            ServedResource child= new ServedResource( childResourceConfig );
+            add( child );
         }
     }
 
     @Override
     public void handleGET( CoapExchange exchange )
     {
-        if ( !config.isGet() )
+        if ( !isGet() )
         {
             //default implementation is to respond METHOD_NOT_ALLOWED
             super.handleGET( exchange );
@@ -111,7 +133,7 @@ public class ServedResource extends CoapResource
     @Override
     public void handlePUT( CoapExchange exchange )
     {
-        if ( !config.isPut() )
+        if ( !isPut() )
         {
             //default implementation is to respond METHOD_NOT_ALLOWED
             super.handlePUT( exchange );
@@ -125,7 +147,7 @@ public class ServedResource extends CoapResource
     @Override
     public void handlePOST( CoapExchange exchange )
     {
-        if ( !config.isPost() )
+        if ( !isPost() )
         {
             //default implementation is to respond METHOD_NOT_ALLOWED
             super.handlePOST( exchange );
@@ -139,7 +161,7 @@ public class ServedResource extends CoapResource
     @Override
     public void handleDELETE( CoapExchange exchange )
     {
-        if ( !config.isDelete() )
+        if ( !isDelete() )
         {
             //default implementation is to respond METHOD_NOT_ALLOWED
             super.handleDELETE( exchange );
@@ -161,7 +183,7 @@ public class ServedResource extends CoapResource
         Object outboundPayload= null;
         ResponseCode responseCode= defaultResponseCode;
 
-        if ( config.isEarlyAck() )
+        if ( isEarlyAck() )
         {
             exchange.accept();
         }
@@ -287,27 +309,43 @@ public class ServedResource extends CoapResource
     };
 
     /**
-     * @return get the parent resource
-     
-    public ServedResource getParent()
+     * @return the get
+     */
+    public Boolean isGet()
     {
-        Resource parent= super.getParent();
-        if ( connector.isRootResource( parent ) )
-        {
-            return null;
-        }
-        else
-        {
-            return (ServedResource) parent;
-        }
-    }*/
+        return get;
+    }
 
     /**
-     * @return the configured Resource
+     * @return the put
      */
-    public ResourceConfig getConfiguredResource()
+    public Boolean isPut()
     {
-        return config;
+        return put;
+    }
+
+    /**
+     * @return the post
+     */
+    public Boolean isPost()
+    {
+        return post;
+    }
+
+    /**
+     * @return the delete
+     */
+    public Boolean isDelete()
+    {
+        return delete;
+    }
+
+    /**
+     * @return the earlyAck
+     */
+    public Boolean isEarlyAck()
+    {
+        return earlyAck;
     }
 
     /**
@@ -319,6 +357,7 @@ public class ServedResource extends CoapResource
     }
 
     /**
+     * Get the Mule MessageSource callback
      * @return the callback
      */
     public SourceCallback getCallback()
@@ -330,5 +369,4 @@ public class ServedResource extends CoapResource
     {
         return( callback != null );
     }
-
 }

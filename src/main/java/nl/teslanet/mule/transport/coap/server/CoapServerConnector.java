@@ -251,11 +251,12 @@ public class CoapServerConnector
     }
 
     /**
-     * Create all resources that are configured on the server 
+     * Add all resources that are configured on the server 
      * @param server
      * @param resourceConfigs
+     * @throws ResourceUriException 
      */
-    private void addResources( CoapServer server, List< ResourceConfig > resourceConfigs )
+    private void addResources( CoapServer server, List< ResourceConfig > resourceConfigs ) throws ResourceUriException
     {
         if ( resourceConfigs == null )
         {
@@ -264,26 +265,11 @@ public class CoapServerConnector
         }
         for ( ResourceConfig resourceConfig : resourceConfigs )
         {
-            ServedResource toServe= new ServedResource( this, resourceConfig );
-            registry.add( null, toServe );
-            addChildren( toServe );
+            registry.add( null, resourceConfig );
         }
     }
 
-    /**
-     * Create child-resources that are configured on a resource. 
-     * @param parent resource of which to create the child-resources 
-     */
-    private void addChildren( ServedResource parent )
-    {
-        for ( ResourceConfig childResourceConfig : parent.getConfiguredResource().getResourceCollection() )
-        {
-            ServedResource childToServe= new ServedResource( this, childResourceConfig );
 
-            registry.add( parent, childToServe );
-            addChildren( childToServe );
-        }
-    }
 
     // A class with @Connector must contain exactly one method annotated with
     @Stop
@@ -376,7 +362,7 @@ public class CoapServerConnector
      *  @param ifdesc The interface ( if ) indicates interfaces-name the resource implements. 
      *  @param rt The defines the resource type. 
      *  @param ct The type of the resources content, specified as CoAP type number. 
-     * @throws ResourceUriException thrown when resource uri is not valid
+     *  @throws ResourceUriException thrown when resource uri is not valid
      */
     @Processor
     public void addResource(
@@ -398,7 +384,6 @@ public class CoapServerConnector
             throw new ResourceUriException( "null" );
         }
         String parentUri= ResourceRegistry.getParentUri( uri );
-        ServedResource parent= null;
         String name= ResourceRegistry.getUriResourceName( uri );
         if ( name.length() <= 0 ) throw new ResourceUriException( "empty string" );
 
@@ -416,10 +401,7 @@ public class CoapServerConnector
         resourceConfig.setSz( sz );
         resourceConfig.setCt( ct );
 
-        ServedResource toServe= new ServedResource( this, resourceConfig );
-        parent= registry.getResource( parentUri );
-        registry.add( parent, toServe );
-
+        registry.add( parentUri, resourceConfig );
     }
 
     /**
@@ -434,17 +416,13 @@ public class CoapServerConnector
      * @throws ResourceUriException thrown when the uri is not valid.
      */
     @Processor
-    public void removeResource( String uri ) throws ResourceUriException
+    public void removeResource( String uriPattern ) throws ResourceUriException
     {
-        if ( uri == null )
+        if ( uriPattern == null )
         {
             throw new ResourceUriException( "null" );
         }
-
-        for ( ServedResource resource : registry.findResources( uri ) )
-        {
-            registry.remove( resource );
-        }
+            registry.remove( uriPattern );
     }
 
     /**
@@ -462,13 +440,8 @@ public class CoapServerConnector
         {
             throw new ResourceUriException( "null" );
         }
-
-        for ( @SuppressWarnings("unused")
-        ServedResource resource : registry.findResources( uri ) )
-        {
-            return new Boolean( true );
-        }
-        return new Boolean( false );
+        List< ServedResource > found= registry.findResources( uri );
+        return !found.isEmpty();
     }
 
     //TODO add list-resources operation

@@ -20,6 +20,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.eclipse.californium.core.server.resources.Resource;
 
 import nl.teslanet.mule.transport.coap.commons.Defs;
+import nl.teslanet.mule.transport.coap.server.config.ResourceConfig;
 import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
 
 import java.util.ArrayList;
@@ -56,66 +57,130 @@ public class ResourceRegistry
     }
 
     /**
-     * Add a resource to the registry. 
-     * @param parent to which the resource is added as child
-     * @param resource the resource to add
+     * Add a new resource to the registry based on given resource configuration. 
+     * The resource will be added as a child of resource with given parentUri. 
+     * When parentUri is null the resource will be added to the root. 
+     * @param parentUri the uri of the parent of the new resource. 
+     * @param config the definition of the resource to create
+     * @throws ResourceUriException the parent uri does not resolve to an existing resource
      */
-    public void add( ServedResource parent, ServedResource resource )
+    public void add( String parentUri, ResourceConfig config ) throws ResourceUriException
     {
-        //TODO responsibility of registry?
+        ServedResource parent= getResource( parentUri );
+        ServedResource resource= new ServedResource( config );
         if ( parent == null )
         {
             root.add( resource );
         }
         else
         {
-            //TODO check that parent is contained in registry
             parent.add( resource );
         }
+        register( resource );
+    }
+
+    /**
+     * Register resource and its children.
+     * @param resource to be registered
+     */
+    private void register( ServedResource resource )
+    {
         servedResources.put( resource.getURI(), resource );
         setResourceCallBack( resource );
+        //also register children recursively 
+        for ( Resource child : resource.getChildren() )
+        {
+            register( (ServedResource) child );
+        }
     }
 
-    public void add( Listener listener )
+    /**
+     * Remove a resource from the registry
+     * @param uriPattern The uri pattern defining the resources to remove
+     */
+    public void remove( String uriPattern )
     {
-        listeners.add( listener );
-        setResourceCallBack();
+        for ( ServedResource resource : findResources( uriPattern ) )
+        {
+            unRegister( resource );
+        }
     }
 
-    public void remove( ServedResource resource )
+    /**
+     * Unregister resource and its children. 
+     * @param resource to be registered
+     */
+    private void unRegister( ServedResource resource )
     {
         servedResources.remove( resource.getURI() );
+        //also unregister children recursively 
+        for ( Resource child : resource.getChildren() )
+        {
+            unRegister( (ServedResource) child );
+        }
         resource.delete();
     }
 
-    private void setResourceCallBack()
+    /**
+    * Add a listener to the registry.
+    * @param listener The listener to add
+    */
+    public void add( Listener listener )
+    {
+        listeners.add( listener );
+        updateResourceCallBack();
+    }
+
+    /**
+     * Updates callback of all served resources.
+     */
+    private void updateResourceCallBack()
     {
         for ( Entry< String, ServedResource > e : servedResources.entrySet() )
         {
             setResourceCallBack( e.getValue() );
         }
-
     }
 
-    private void setResourceCallBack( ServedResource toServe )
+    /**
+     * Set the callback of the resource given to the listener that matches best
+     * to the resources uri.
+     * @param toServe the served resource of which the callback is set.
+     */
+    private void setResourceCallBack( ServedResource resource )
     {
         Listener bestListener= null;
         int maxMatchlevel= 0;
         for ( Listener listener : listeners )
         {
-            int matchLevel= matchUri( listener.getUri(), toServe.getURI() );
+            int matchLevel= matchUri( listener.getUri(), resource.getURI() );
             if ( matchLevel > maxMatchlevel )
             {
                 maxMatchlevel= matchLevel;
                 bestListener= listener;
             }
         }
-        if ( bestListener != null ) toServe.setCallback( bestListener.getCallback() );
+        if ( bestListener != null )
+        {
+            resource.setCallback( bestListener.getCallback() );
+        }
+        else
+        {
+            resource.setCallback( null );
+            //TODO log warning
+        }
     }
 
+    /**
+     * Get the resources from the registry with given uri.
+     * A null uri, an empty string or "/" is interpreted as the root uri. 
+     * @param uri The uri of the resource to get.
+     * @return The served resource that has given uri, or null when the root uri is given.
+     * @throws ResourceUriException The resource does not exist.
+     */
     public ServedResource getResource( String uri ) throws ResourceUriException
     {
-        if ( uri.length() == 0 )
+        if ( uri == null || uri.length() == 0 || uri.equals( "/" ) )
         {
             //do not expose root resource
             return null;
@@ -133,8 +198,14 @@ public class ResourceRegistry
         throw new ResourceUriException( uri, ", resource does not exist." );
     }
 
+    /**
+     * Find all resources of that have matching uri's 
+     * @param uriPattern the pattern to match to.
+     * @return A list containing all served resource that match.
+     */
     public List< ServedResource > findResources( String uriPattern )
     {
+        //TODO regex support
         ArrayList< ServedResource > found= new ArrayList< ServedResource >();
 
         for ( Entry< String, ServedResource > e : servedResources.entrySet() )
@@ -147,6 +218,18 @@ public class ResourceRegistry
         return found;
     }
 
+    /**
+     * Establish the degree in which a resource uri matches an uriPattern.
+     * The degree is an indication how good the pattern matches.
+     * It can be used to compare the matching of a resource uri to different patterns.
+     * For example the resource "/one/two/three" will match to both patterns
+     * "/one/*" and "/one/two/*". The latter with an higher degree because it is more 
+     * specific. The degree value returned is 0 when there is no match. An integer > 0 
+     * when there is a match to some degree. MAX_VALUE when there is a perfect match, which means the pattern equals the uri.
+     * @param uriPattern The pattern to match to.
+     * @param resourceUri The resource uri to do the matching on.
+     * @return The degree of matching.
+     */
     public static int matchUri( String uriPattern, String resourceUri )
     {
         //TODO assure wildcard only occurs at end
@@ -164,6 +247,11 @@ public class ResourceRegistry
         return 0;
     }
 
+    /**
+     * Get the depth of resource hierachy in an uri.
+     * @param uri the resource uri
+     * @return
+     */
     public static int getUriDepth( String uri )
     {
         int count;
@@ -172,6 +260,11 @@ public class ResourceRegistry
         return count;
     }
 
+    /**
+     * Get the path part of an uri. That is the uri without the resource name. 
+     * @param uri The uri of the resouce.
+     * @return The path from the uri.
+     */
     public static String getUriPath( String uri )
     {
         int lastPathSep= uri.lastIndexOf( Defs.COAP_URI_PATHSEP );
@@ -185,6 +278,11 @@ public class ResourceRegistry
         }
     }
 
+    /**
+     * Get the resource name part of an uri. That is the uri without the path preceding the resource name. 
+     * @param uri The uri of the resource.
+     * @return The resource name.
+     */
     public static String getUriResourceName( String uri )
     {
         int lastPathSep= uri.lastIndexOf( Defs.COAP_URI_PATHSEP );
@@ -199,11 +297,21 @@ public class ResourceRegistry
         }
     }
 
+    /**
+     * Establish whether the uri has a wildcard and is in fact a pattern.
+     * @param uri The uri of a resource.
+     * @return true when a wildcard is found, otherwise false.
+     */
     public static boolean uriHasWildcard( String uri )
     {
         return uri.endsWith( Defs.COAP_URI_WILDCARD );
     }
 
+    /**
+     * Get the uri of the parent of a resource.
+     * @param uri The uri of the resource to get the parent from.
+     * @return the uri of the parent.
+     */
     public static String getParentUri( String uri )
     {
         int lastPathSep= uri.lastIndexOf( Defs.COAP_URI_PATHSEP );
