@@ -47,6 +47,7 @@ public class Listener
      * @param uri the uri to set
      * @throws ResourceUriException 
      */
+    //TODO: make URIpattern class
     public void setUri( String uri ) throws ResourceUriException  
     {
         //TODO assure no bad chars

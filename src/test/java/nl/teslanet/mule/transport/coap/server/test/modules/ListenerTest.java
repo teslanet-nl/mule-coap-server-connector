@@ -1,4 +1,4 @@
-package nl.teslanet.mule.transport.coap.server.modules.test;
+package nl.teslanet.mule.transport.coap.server.test.modules;
 
 
 import static org.junit.Assert.assertEquals;
