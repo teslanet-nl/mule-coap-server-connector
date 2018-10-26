@@ -4,6 +4,9 @@ package nl.teslanet.mule.transport.coap.server.test.modules;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.junit.After;
 import org.junit.Before;
@@ -41,293 +44,771 @@ public class EndpointConfigTest
     }
 
     @Test
-    public void testGettersAndSetters() throws ResourceUriException
+    public void testGettersAndSetters() throws Exception
     {
         EndpointConfig config= new EndpointConfig();
 
-        String bindToHost= "bindToHost";
-        String bindToPort= "bindToPort";
-        String bindToSecurePort= "bindToSecurePort";
-        String ackTimeout= "ackTimeout";
-        String ackRandomFactor= "ackRandomFactor";
-        String ackTimeoutScale= "ackTimeoutScale";
-        String maxRetransmit= "maxRetransmit";
-        String exchangeLifetime= "exchangeLifetime";
-        String nonLifetime= "nonLifetime";
-        String maxTransmitWait= "maxTransmitWait";
-        String nstart= "nstart";
-        String leisure= "leisure";
-        String probingRate= "probingRate";
-        String keyStoreLocation= "keyStoreLocation";
-        String keyStorePassword= "keyStorePassword";
-        String privateKeyAlias= "privateKeyAlias";
-        String trustStoreLocation= "trustStoreLocation";
-        String trustStorePassword= "trustStorePassword";
-        String trustedRootCertificateAlias= "trustedRootCertificateAlias";
-        String useRandomMidStart= "useRandomMidStart";
-        String tokenSizeLimit= "tokenSizeLimit";
-        String preferredBlockSize= "preferredBlockSize";
-        String maxMessageSize= "maxMessageSize";
-        String blockwiseStatusLifetime= "blockwiseStatusLifetime";
-        String notificationCheckIntervalTime= "notificationCheckIntervalTime";
-        String notificationCheckIntervalCount= "notificationCheckIntervalCount";
-        String notificationReregistrationBackoff= "notificationReregistrationBackoff";
-        String useCongestionControl= "useCongestionControl";
-        String congestionControlAlgorithm= "congestionControlAlgorithm";
-        String protocolStageThreadCount= "protocolStageThreadCount";
-        String networkStageReceiverThreadCount= "networkStageReceiverThreadCount";
-        String networkStageSenderThreadCount= "networkStageSenderThreadCount";
-        String udpConnectorDatagramSize= "udpConnectorDatagramSize";
-        String udpConnectorReceiveBuffer= "udpConnectorReceiveBuffer";
-        String udpConnectorSendBuffer= "udpConnectorSendBuffer";
-        String udpConnectorOutCapacity= "udpConnectorOutCapacity";
-        String deduplicator= "deduplicator";
-        String deduplicatorMarkAndSweep= "deduplicatorMarkAndSweep";
-        String markAndSweepInterval= "markAndSweepInterval";
-        String deduplicatorCropRotation= "deduplicatorCropRotation";
-        String cropRotationPeriod= "cropRotationPeriod";
-        String noDeduplicator= "noDeduplicator";
-        //String httpPort= "httpPort";
-        // String httpServerSocketTimeout= "httpServerSocketTimeout";
-        // String httpServerSocketBufferSize= "httpServerSocketBufferSize";
-        // String httpCacheResponseMaxAge= "httpCacheResponseMaxAge";
-        // String httpCacheSize= "httpCacheSize";
-        String healthStatusInterval= "healthStatusInterval";
+        for ( ConfigPropertyDesc prop : getConfigProperties() )
+        {
+            String input;
+            String output;
 
-        String input;
-        String output;
-
-        input= bindToHost;
-        config.setBindToHost( input );
-        output= config.getBindToHost();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= bindToPort;
-        config.setBindToPort( input );
-        output= config.getBindToPort();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= bindToPort;
-        config.setBindToPort( input );
-        output= config.getBindToPort();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= bindToSecurePort;
-        config.setBindToSecurePort( input );
-        output= config.getBindToSecurePort();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= keyStoreLocation;
-        config.setKeyStoreLocation( input );
-        output= config.getKeyStoreLocation();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= keyStorePassword;
-        config.setKeyStorePassword( input );
-        output= config.getKeyStorePassword();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= trustStoreLocation;
-        config.setTrustStoreLocation( input );
-        output= config.getTrustStoreLocation();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= trustStorePassword;
-        config.setTrustStorePassword( input );
-        output= config.getTrustStorePassword();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= privateKeyAlias;
-        config.setPrivateKeyAlias( input );
-        output= config.getPrivateKeyAlias();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= trustedRootCertificateAlias;
-        config.setTrustedRootCertificateAlias( input );
-        output= config.getTrustedRootCertificateAlias();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= ackTimeout;
-        config.setAckTimeout( input );
-        output= config.getAckTimeout();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= ackRandomFactor;
-        config.setAckRandomFactor( input );
-        output= config.getAckRandomFactor();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= ackTimeoutScale;
-        config.setAckTimeoutScale( input );
-        output= config.getAckTimeoutScale();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= maxRetransmit;
-        config.setMaxRetransmit( input );
-        output= config.getMaxRetransmit();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= exchangeLifetime;
-        config.setExchangeLifetime( input );
-        output= config.getExchangeLifetime();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= nonLifetime;
-        config.setNonLifetime( input );
-        output= config.getNonLifetime();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= maxTransmitWait;
-        config.setMaxTransmitWait( input );
-        output= config.getMaxTransmitWait();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= maxTransmitWait;
-        config.setNstart( input );
-        output= config.getNstart();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= leisure;
-        config.setLeisure( input );
-        output= config.getLeisure();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= probingRate;
-        config.setProbingRate( input );
-        output= config.getProbingRate();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= useRandomMidStart;
-        config.setUseRandomMidStart( input );
-        output= config.getUseRandomMidStart();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= tokenSizeLimit;
-        config.setTokenSizeLimit( input );
-        output= config.getTokenSizeLimit();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= preferredBlockSize;
-        config.setPreferredBlockSize( input );
-        output= config.getPreferredBlockSize();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= maxMessageSize;
-        config.setMaxMessageSize( input );
-        output= config.getMaxMessageSize();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= blockwiseStatusLifetime;
-        config.setBlockwiseStatusLifetime( input );
-        output= config.getBlockwiseStatusLifetime();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= notificationCheckIntervalTime;
-        config.setNotificationCheckIntervalTime( input );
-        output= config.getNotificationCheckIntervalTime();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= notificationCheckIntervalCount;
-        config.setNotificationCheckIntervalCount( input );
-        output= config.getNotificationCheckIntervalCount();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= notificationReregistrationBackoff;
-        config.setNotificationReregistrationBackoff( input );
-        output= config.getNotificationReregistrationBackoff();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= useCongestionControl;
-        config.setUseCongestionControl( input );
-        output= config.getUseCongestionControl();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= congestionControlAlgorithm;
-        config.setCongestionControlAlgorithm( input );
-        output= config.getCongestionControlAlgorithm();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= protocolStageThreadCount;
-        config.setProtocolStageThreadCount( input );
-        output= config.getProtocolStageThreadCount();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= networkStageReceiverThreadCount;
-        config.setNetworkStageReceiverThreadCount( input );
-        output= config.getNetworkStageReceiverThreadCount();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= networkStageSenderThreadCount;
-        config.setNetworkStageSenderThreadCount( input );
-        output= config.getNetworkStageSenderThreadCount();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= udpConnectorDatagramSize;
-        config.setUdpConnectorDatagramSize( input );
-        output= config.getUdpConnectorDatagramSize();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= udpConnectorReceiveBuffer;
-        config.setUdpConnectorReceiveBuffer( input );
-        output= config.getUdpConnectorReceiveBuffer();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= udpConnectorSendBuffer;
-        config.setUdpConnectorSendBuffer( input );
-        output= config.getUdpConnectorSendBuffer();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= udpConnectorOutCapacity;
-        config.setUdpConnectorOutCapacity( input );
-        output= config.getUdpConnectorOutCapacity();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= deduplicator;
-        config.setDeduplicator( input );
-        output= config.getDeduplicator();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= deduplicatorMarkAndSweep;
-        config.setDeduplicatorMarkAndSweep( input );
-        output= config.getDeduplicatorMarkAndSweep();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= markAndSweepInterval;
-        config.setMarkAndSweepInterval( input );
-        output= config.getMarkAndSweepInterval();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= deduplicatorCropRotation;
-        config.setDeduplicatorCropRotation( input );
-        output= config.getDeduplicatorCropRotation();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= cropRotationPeriod;
-        config.setCropRotationPeriod( input );
-        output= config.getCropRotationPeriod();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= noDeduplicator;
-        config.setNoDeduplicator( input );
-        output= config.getNoDeduplicator();
-        assertEquals( "get/set failed on " + input, input, output );
-
-        input= healthStatusInterval;
-        config.setHealthStatusInterval( input );
-        output= config.getHealthStatusInterval();
-        assertEquals( "get/set failed on " + input, input, output );
-
+            input= prop.getCustomValue();
+            prop.setValue( config, input );
+            output= prop.getValue( config );
+            assertEquals( "get/set failed on " + prop.getPropertyName(), input, output );
+        }
     }
 
     @Test
-    public void testGetNetworkConfigEmpty() throws ResourceUriException
+    public void testDefaults() throws Exception
     {
-        EndpointConfig config= new EndpointConfig();     
-        NetworkConfig networkConfig= config.getNetworkConfig();
-        
-        assertNotNull( networkConfig );
-        NetworkConfig stdNetworkConfig= NetworkConfig.createStandardWithoutFile();
-        stdNetworkConfig.setStandard( networkConfig );
+        EndpointConfig config= new EndpointConfig();
+
+        for ( ConfigPropertyDesc prop : getConfigProperties() )
+        {
+            String defaultValue;
+            String output;
+
+            defaultValue= null;
+            output= prop.getValue( config );
+            assertEquals( "got wrong default value for " + prop.getPropertyName(), defaultValue, output );
+        }
     }
 
+    @Test
+    public void testDefaultNetworkValues() throws Exception
+    {
+        EndpointConfig config= new EndpointConfig();
+
+        for ( ConfigPropertyDesc prop : getConfigProperties() )
+        {
+            if ( prop.isNetworkProperty() )
+            {
+                String input;
+                String output;
+
+                input= prop.getDefaultValue();
+                output= prop.getNetworkValue( config );
+                assertEquals( "got wrong network value for " + prop.getPropertyName(), input, output );
+            }
+        }
+    }
+
+
+    @Test
+    public void testCustomNetworkValues() throws Exception
+    {
+        EndpointConfig config= new EndpointConfig();
+
+        for ( ConfigPropertyDesc prop : getConfigProperties() )
+        {
+            if ( prop.isNetworkProperty() )
+            {
+                String input;
+                String output;
+
+                input= prop.getCustomValue();
+                prop.setValue( config, input );
+                output= prop.getNetworkValue( config );
+                assertEquals( "got wrong network value for " + prop.getPropertyName(), input, output );
+            }
+        }
+    }
+    
+    /**
+     * Description of a property to test
+     *
+     */
+    public static class ConfigPropertyDesc
+    {
+        public enum PropertyName
+        {
+            bindToHost, bindToPort, bindToSecurePort, ackTimeout, ackRandomFactor, ackTimeoutScale, maxRetransmit, exchangeLifetime, nonLifetime, maxTransmitWait, nstart, leisure, probingRate, keyStoreLocation, keyStorePassword, privateKeyAlias, trustStoreLocation, trustStorePassword, trustedRootCertificateAlias, useRandomMidStart, tokenSizeLimit, preferredBlockSize, maxMessageSize, blockwiseStatusLifetime, notificationCheckIntervalTime, notificationCheckIntervalCount, notificationReregistrationBackoff, useCongestionControl, congestionControlAlgorithm, protocolStageThreadCount, networkStageReceiverThreadCount, networkStageSenderThreadCount, udpConnectorDatagramSize, udpConnectorReceiveBuffer, udpConnectorSendBuffer, udpConnectorOutCapacity, deduplicator, deduplicatorMarkAndSweep, markAndSweepInterval, deduplicatorCropRotation, cropRotationPeriod, noDeduplicator,
+            //httpPort,
+            // httpServerSocketTimeout,
+            // httpServerSocketBufferSize,
+            // httpCacheResponseMaxAge,
+            // httpCacheSize,
+            healthStatusInterval
+        }
+
+        private PropertyName propertyName;
+
+        private String defaultValue;
+
+        private String customValue;
+
+        /**
+         * Construct the c
+         * @param propertyName
+         * @param defaultValue
+         * @param customValue
+         */
+        public ConfigPropertyDesc( PropertyName propertyName, String defaultValue, String customValue )
+        {
+            this.propertyName= propertyName;
+            this.defaultValue= defaultValue;
+            this.customValue= customValue;
+        }
+
+        /**
+         * @return the propertyName
+         */
+        public PropertyName getPropertyName()
+        {
+            return propertyName;
+        }
+
+        /**
+         * @return the defaultValue
+         */
+        public String getDefaultValue()
+        {
+            return defaultValue;
+        }
+
+        /**
+         * @return the customValue
+         */
+        public String getCustomValue()
+        {
+            return customValue;
+        }
+
+        /**
+         * @return the value
+         * @throws Exception 
+         */
+        public String getValue( EndpointConfig config ) throws Exception
+        {
+            String result= null;
+
+            switch ( propertyName )
+            {
+                case bindToHost:
+                    result= config.getBindToHost();
+                    break;
+                case bindToPort:
+                    result= config.getBindToPort();
+                    break;
+                case bindToSecurePort:
+                    result= config.getBindToSecurePort();
+                    break;
+                case keyStoreLocation:
+                    result= config.getKeyStoreLocation();
+                    break;
+                case keyStorePassword:
+                    result= config.getKeyStorePassword();
+                    break;
+                case trustStoreLocation:
+                    result= config.getTrustStoreLocation();
+                    break;
+                case trustStorePassword:
+                    result= config.getTrustStorePassword();
+                    break;
+                case privateKeyAlias:
+                    result= config.getPrivateKeyAlias();
+                    break;
+                case trustedRootCertificateAlias:
+                    result= config.getTrustedRootCertificateAlias();
+                    break;
+                case ackTimeout:
+                    result= config.getAckTimeout();
+                    break;
+                case ackRandomFactor:
+                    result= config.getAckRandomFactor();
+                    break;
+                case ackTimeoutScale:
+                    result= config.getAckTimeoutScale();
+                    break;
+                case maxRetransmit:
+                    result= config.getMaxRetransmit();
+                    break;
+                case exchangeLifetime:
+                    result= config.getExchangeLifetime();
+                    break;
+                case nonLifetime:
+                    result= config.getNonLifetime();
+                    break;
+                case maxTransmitWait:
+                    result= config.getMaxTransmitWait();
+                    break;
+                case nstart:
+                    result= config.getNstart();
+                    break;
+                case leisure:
+                    result= config.getLeisure();
+                    break;
+                case probingRate:
+                    result= config.getProbingRate();
+                    break;
+                case useRandomMidStart:
+                    result= config.getUseRandomMidStart();
+                    break;
+                case tokenSizeLimit:
+                    result= config.getTokenSizeLimit();
+                    break;
+                case preferredBlockSize:
+                    result= config.getPreferredBlockSize();
+                    break;
+                case maxMessageSize:
+                    result= config.getMaxMessageSize();
+                    break;
+                case blockwiseStatusLifetime:
+                    result= config.getBlockwiseStatusLifetime();
+                    break;
+                case notificationCheckIntervalTime:
+                    result= config.getNotificationCheckIntervalTime();
+                    break;
+                case notificationCheckIntervalCount:
+                    result= config.getNotificationCheckIntervalCount();
+                    break;
+                case notificationReregistrationBackoff:
+                    result= config.getNotificationReregistrationBackoff();
+                    break;
+                case useCongestionControl:
+                    result= config.getUseCongestionControl();
+                    break;
+                case congestionControlAlgorithm:
+                    result= config.getCongestionControlAlgorithm();
+                    break;
+                case protocolStageThreadCount:
+                    result= config.getProtocolStageThreadCount();
+                    break;
+                case networkStageReceiverThreadCount:
+                    result= config.getNetworkStageReceiverThreadCount();
+                    break;
+                case networkStageSenderThreadCount:
+                    result= config.getNetworkStageSenderThreadCount();
+                    break;
+                case udpConnectorDatagramSize:
+                    result= config.getUdpConnectorDatagramSize();
+                    break;
+                case udpConnectorReceiveBuffer:
+                    result= config.getUdpConnectorReceiveBuffer();
+                    break;
+                case udpConnectorSendBuffer:
+                    result= config.getUdpConnectorSendBuffer();
+                    break;
+                case udpConnectorOutCapacity:
+                    result= config.getUdpConnectorOutCapacity();
+                    break;
+                case deduplicator:
+                    result= config.getDeduplicator();
+                    break;
+                case deduplicatorMarkAndSweep:
+                    result= config.getDeduplicatorMarkAndSweep();
+                    break;
+                case markAndSweepInterval:
+                    result= config.getMarkAndSweepInterval();
+                    break;
+                case deduplicatorCropRotation:
+                    result= config.getDeduplicatorCropRotation();
+                    break;
+                case cropRotationPeriod:
+                    result= config.getCropRotationPeriod();
+                    break;
+                case noDeduplicator:
+                    result= config.getNoDeduplicator();
+                    break;
+                case healthStatusInterval:
+                    result= config.getHealthStatusInterval();
+                    break;
+                default:
+                    throw new Exception( "propertyname unknown" );
+            }
+            return result;
+        }
+
+        /**
+         * @param value to set
+         * @throws Exception 
+         */
+        public void setValue( EndpointConfig config, String value ) throws Exception
+        {
+            switch ( propertyName )
+            {
+                case bindToHost:
+                    config.setBindToHost( value );
+                    break;
+                case bindToPort:
+                    config.setBindToPort( value );
+                    break;
+                case bindToSecurePort:
+                    config.setBindToSecurePort( value );
+                    break;
+                case keyStoreLocation:
+                    config.setKeyStoreLocation( value );
+                    break;
+                case keyStorePassword:
+                    config.setKeyStorePassword( value );
+                    break;
+                case trustStoreLocation:
+                    config.setTrustStoreLocation( value );
+                    break;
+                case trustStorePassword:
+                    config.setTrustStorePassword( value );
+                    break;
+                case privateKeyAlias:
+                    config.setPrivateKeyAlias( value );
+                    break;
+                case trustedRootCertificateAlias:
+                    config.setTrustedRootCertificateAlias( value );
+                    break;
+                case ackTimeout:
+                    config.setAckTimeout( value );
+                    break;
+                case ackRandomFactor:
+                    config.setAckRandomFactor( value );
+                    break;
+                case ackTimeoutScale:
+                    config.setAckTimeoutScale( value );
+                    break;
+                case maxRetransmit:
+                    config.setMaxRetransmit( value );
+                    break;
+                case exchangeLifetime:
+                    config.setExchangeLifetime( value );
+                    break;
+                case nonLifetime:
+                    config.setNonLifetime( value );
+                    break;
+                case maxTransmitWait:
+                    config.setMaxTransmitWait( value );
+                    break;
+                case nstart:
+                    config.setNstart( value );
+                    break;
+                case leisure:
+                    config.setLeisure( value );
+                    break;
+                case probingRate:
+                    config.setProbingRate( value );
+                    break;
+                case useRandomMidStart:
+                    config.setUseRandomMidStart( value );
+                    break;
+                case tokenSizeLimit:
+                    config.setTokenSizeLimit( value );
+                    break;
+                case preferredBlockSize:
+                    config.setPreferredBlockSize( value );
+                    break;
+                case maxMessageSize:
+                    config.setMaxMessageSize( value );
+                    break;
+                case blockwiseStatusLifetime:
+                    config.setBlockwiseStatusLifetime( value );
+                    break;
+                case notificationCheckIntervalTime:
+                    config.setNotificationCheckIntervalTime( value );
+                    break;
+                case notificationCheckIntervalCount:
+                    config.setNotificationCheckIntervalCount( value );
+                    break;
+                case notificationReregistrationBackoff:
+                    config.setNotificationReregistrationBackoff( value );
+                    break;
+                case useCongestionControl:
+                    config.setUseCongestionControl( value );
+                    break;
+                case congestionControlAlgorithm:
+                    config.setCongestionControlAlgorithm( value );
+                    break;
+                case protocolStageThreadCount:
+                    config.setProtocolStageThreadCount( value );
+                    break;
+                case networkStageReceiverThreadCount:
+                    config.setNetworkStageReceiverThreadCount( value );
+                    break;
+                case networkStageSenderThreadCount:
+                    config.setNetworkStageSenderThreadCount( value );
+                    break;
+                case udpConnectorDatagramSize:
+                    config.setUdpConnectorDatagramSize( value );
+                    break;
+                case udpConnectorReceiveBuffer:
+                    config.setUdpConnectorReceiveBuffer( value );
+                    break;
+                case udpConnectorSendBuffer:
+                    config.setUdpConnectorSendBuffer( value );
+                    break;
+                case udpConnectorOutCapacity:
+                    config.setUdpConnectorOutCapacity( value );
+                    break;
+                case deduplicator:
+                    config.setDeduplicator( value );
+                    break;
+                case deduplicatorMarkAndSweep:
+                    config.setDeduplicatorMarkAndSweep( value );
+                    break;
+                case markAndSweepInterval:
+                    config.setMarkAndSweepInterval( value );
+                    break;
+                case deduplicatorCropRotation:
+                    config.setDeduplicatorCropRotation( value );
+                    break;
+                case cropRotationPeriod:
+                    config.setCropRotationPeriod( value );
+                    break;
+                case noDeduplicator:
+                    config.setNoDeduplicator( value );
+                    break;
+
+                case healthStatusInterval:
+                    config.setHealthStatusInterval( value );
+                    break;
+                default:
+                    throw new Exception( "propertyname unknown" );
+            }
+        }
+
+        /**
+         * @return the networkConfig Key
+         * @throws Exception 
+         */
+        public String getKey() throws Exception
+        {
+            String result= null;
+
+            switch ( propertyName )
+            {
+                case bindToHost:
+                    break;
+                case bindToPort:
+                    result= NetworkConfig.Keys.COAP_PORT;
+                    break;
+                case bindToSecurePort:
+                    result= NetworkConfig.Keys.COAP_SECURE_PORT;
+                    break;
+                case ackTimeout:
+                    result= NetworkConfig.Keys.ACK_TIMEOUT;
+                    break;
+                case ackRandomFactor:
+                    result= NetworkConfig.Keys.ACK_RANDOM_FACTOR;
+                    break;
+                case ackTimeoutScale:
+                    result= NetworkConfig.Keys.ACK_TIMEOUT_SCALE;
+                    break;
+                case maxRetransmit:
+                    result= NetworkConfig.Keys.MAX_RETRANSMIT;
+                    break;
+                case exchangeLifetime:
+                    result= NetworkConfig.Keys.EXCHANGE_LIFETIME;
+                    break;
+                case nonLifetime:
+                    result= NetworkConfig.Keys.NON_LIFETIME;
+                    break;
+                case maxTransmitWait:
+                    result= NetworkConfig.Keys.MAX_TRANSMIT_WAIT;
+                    break;
+                case nstart:
+                    result= NetworkConfig.Keys.NSTART;
+                    break;
+                case leisure:
+                    result= NetworkConfig.Keys.LEISURE;
+                    break;
+                case probingRate:
+                    result= NetworkConfig.Keys.PROBING_RATE;
+                    break;
+                case keyStoreLocation:
+                    break;
+                case keyStorePassword:
+                    break;
+                case privateKeyAlias:
+                    break;
+                case trustStoreLocation:
+                    break;
+                case trustStorePassword:
+                    break;
+                case trustedRootCertificateAlias:
+                    break;
+                case useRandomMidStart:
+                    result= NetworkConfig.Keys.USE_RANDOM_MID_START;
+                    break;
+                case tokenSizeLimit:
+                    result= NetworkConfig.Keys.TOKEN_SIZE_LIMIT;
+                    break;
+                case preferredBlockSize:
+                    result= NetworkConfig.Keys.PREFERRED_BLOCK_SIZE;
+                    break;
+                case maxMessageSize:
+                    result= NetworkConfig.Keys.MAX_MESSAGE_SIZE;
+                    break;
+                case blockwiseStatusLifetime:
+                    result= NetworkConfig.Keys.BLOCKWISE_STATUS_LIFETIME;
+                    break;
+                case notificationCheckIntervalTime:
+                    result= NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_TIME;
+                    break;
+                case notificationCheckIntervalCount:
+                    result= NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_COUNT;
+                    break;
+                case notificationReregistrationBackoff:
+                    result= NetworkConfig.Keys.NOTIFICATION_REREGISTRATION_BACKOFF;
+                    break;
+                case useCongestionControl:
+                    result= NetworkConfig.Keys.USE_CONGESTION_CONTROL;
+                    break;
+                case congestionControlAlgorithm:
+                    result= NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM;
+                    break;
+                case protocolStageThreadCount:
+                    result= NetworkConfig.Keys.PROTOCOL_STAGE_THREAD_COUNT;
+                    break;
+                case networkStageReceiverThreadCount:
+                    result= NetworkConfig.Keys.NETWORK_STAGE_RECEIVER_THREAD_COUNT;
+                    break;
+                case networkStageSenderThreadCount:
+                    result= NetworkConfig.Keys.NETWORK_STAGE_SENDER_THREAD_COUNT;
+                    break;
+                case udpConnectorDatagramSize:
+                    result= NetworkConfig.Keys.UDP_CONNECTOR_DATAGRAM_SIZE;
+                    break;
+                case udpConnectorReceiveBuffer:
+                    result= NetworkConfig.Keys.UDP_CONNECTOR_RECEIVE_BUFFER;
+                    break;
+                case udpConnectorSendBuffer:
+                    result= NetworkConfig.Keys.UDP_CONNECTOR_SEND_BUFFER;
+                    break;
+                case udpConnectorOutCapacity:
+                    result= NetworkConfig.Keys.UDP_CONNECTOR_OUT_CAPACITY;
+                    break;
+                case deduplicator:
+                    result= NetworkConfig.Keys.DEDUPLICATOR;
+                    break;
+                case deduplicatorMarkAndSweep:
+                    result= NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP;
+                    break;
+                case markAndSweepInterval:
+                    result= NetworkConfig.Keys.MARK_AND_SWEEP_INTERVAL;
+                    break;
+                case deduplicatorCropRotation:
+                    result= NetworkConfig.Keys.DEDUPLICATOR_CROP_ROTATION;
+                    break;
+                case cropRotationPeriod:
+                    result= NetworkConfig.Keys.CROP_ROTATION_PERIOD;
+                    break;
+                case noDeduplicator:
+                    result= NetworkConfig.Keys.NO_DEDUPLICATOR;
+                    break;
+                //case httpPort: result= NetworkConfig.Keys.httpPort ; break;
+                // case httpServerSocketTimeout: result= NetworkConfig.Keys.httpServerSocketTimeout ; break;
+                // case httpServerSocketBufferSize: result= NetworkConfig.Keys.httpServerSocketBufferSize ; break;
+                // case httpCacheResponseMaxAge: result= NetworkConfig.Keys.httpCacheResponseMaxAge ; break;
+                // case httpCacheSize: result= NetworkConfig.Keys.httpCacheSize ; break;
+                case healthStatusInterval:
+                    result= NetworkConfig.Keys.HEALTH_STATUS_INTERVAL;
+                    break;
+
+                default:
+                    throw new Exception( "propertyname unknown" );
+            }
+            return result;
+        }
+
+        /**
+         * @param networkPropertyKey the networkPropertyKey to set
+         * @throws Exception when invalid property
+         */
+        boolean isNetworkProperty() throws Exception
+        {
+            return( getKey() != null );
+        }
+
+        /**
+         * @return the value
+         * @throws Exception 
+         */
+        public String getNetworkValue( EndpointConfig config ) throws Exception
+        {
+            String key= null;
+            String result= null;
+
+            switch ( propertyName )
+            {
+                case bindToHost:
+                    break;
+                case bindToPort:
+                    key= NetworkConfig.Keys.COAP_PORT;
+                    break;
+                case bindToSecurePort:
+                    key= NetworkConfig.Keys.COAP_SECURE_PORT;
+                    break;
+                case keyStoreLocation:
+                    break;
+                case keyStorePassword:
+                    break;
+                case trustStoreLocation:
+                    break;
+                case trustStorePassword:
+                    break;
+                case privateKeyAlias:
+                    break;
+                case trustedRootCertificateAlias:
+                    break;
+                case ackTimeout:
+                    key= NetworkConfig.Keys.ACK_TIMEOUT;
+                    break;
+                case ackRandomFactor:
+                    key= NetworkConfig.Keys.ACK_RANDOM_FACTOR;
+                    break;
+                case ackTimeoutScale:
+                    key= NetworkConfig.Keys.ACK_TIMEOUT_SCALE;
+                    break;
+                case maxRetransmit:
+                    key= NetworkConfig.Keys.MAX_RETRANSMIT;
+                    break;
+                case exchangeLifetime:
+                    key= NetworkConfig.Keys.EXCHANGE_LIFETIME;
+                    break;
+                case nonLifetime:
+                    key= NetworkConfig.Keys.NON_LIFETIME;
+                    break;
+                case maxTransmitWait:
+                    key= NetworkConfig.Keys.MAX_TRANSMIT_WAIT;
+                    break;
+                case nstart:
+                    key= NetworkConfig.Keys.NSTART;
+                    break;
+                case leisure:
+                    key= NetworkConfig.Keys.LEISURE;
+                    break;
+                case probingRate:
+                    key= NetworkConfig.Keys.PROBING_RATE;
+                    break;
+                case useRandomMidStart:
+                    key= NetworkConfig.Keys.USE_RANDOM_MID_START;
+                    break;
+                case tokenSizeLimit:
+                    key= NetworkConfig.Keys.TOKEN_SIZE_LIMIT;
+                    break;
+                case preferredBlockSize:
+                    key= NetworkConfig.Keys.PREFERRED_BLOCK_SIZE;
+                    break;
+                case maxMessageSize:
+                    key= NetworkConfig.Keys.MAX_MESSAGE_SIZE;
+                    break;
+                case blockwiseStatusLifetime:
+                    key= NetworkConfig.Keys.BLOCKWISE_STATUS_LIFETIME;
+                    break;
+                case notificationCheckIntervalTime:
+                    key= NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_TIME;
+                    break;
+                case notificationCheckIntervalCount:
+                    key= NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_COUNT;
+                    break;
+                case notificationReregistrationBackoff:
+                    key= NetworkConfig.Keys.NOTIFICATION_REREGISTRATION_BACKOFF;
+                    break;
+                case useCongestionControl:
+                    key= NetworkConfig.Keys.USE_CONGESTION_CONTROL;
+                    break;
+                case congestionControlAlgorithm:
+                    key= NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM;
+                    break;
+                case protocolStageThreadCount:
+                    key= NetworkConfig.Keys.PROTOCOL_STAGE_THREAD_COUNT;
+                    break;
+                case networkStageReceiverThreadCount:
+                    key= NetworkConfig.Keys.NETWORK_STAGE_RECEIVER_THREAD_COUNT;
+                    break;
+                case networkStageSenderThreadCount:
+                    key= NetworkConfig.Keys.NETWORK_STAGE_SENDER_THREAD_COUNT;
+                    break;
+                case udpConnectorDatagramSize:
+                    key= NetworkConfig.Keys.UDP_CONNECTOR_DATAGRAM_SIZE;
+                    break;
+                case udpConnectorReceiveBuffer:
+                    key= NetworkConfig.Keys.UDP_CONNECTOR_RECEIVE_BUFFER;
+                    break;
+                case udpConnectorSendBuffer:
+                    key= NetworkConfig.Keys.UDP_CONNECTOR_SEND_BUFFER;
+                    break;
+                case udpConnectorOutCapacity:
+                    key= NetworkConfig.Keys.UDP_CONNECTOR_OUT_CAPACITY;
+                    break;
+                case deduplicator:
+                    key= NetworkConfig.Keys.DEDUPLICATOR;
+                    break;
+                case deduplicatorMarkAndSweep:
+                    key= NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP;
+                    break;
+                case markAndSweepInterval:
+                    key= NetworkConfig.Keys.MARK_AND_SWEEP_INTERVAL;
+                    break;
+                case deduplicatorCropRotation:
+                    key= NetworkConfig.Keys.DEDUPLICATOR_CROP_ROTATION;
+                    break;
+                case cropRotationPeriod:
+                    key= NetworkConfig.Keys.CROP_ROTATION_PERIOD;
+                    break;
+                case noDeduplicator:
+                    key= NetworkConfig.Keys.NO_DEDUPLICATOR;
+                    break;
+                case healthStatusInterval:
+                    key= NetworkConfig.Keys.HEALTH_STATUS_INTERVAL;
+                    break;
+                default:
+                    throw new Exception( "propertyname unknown" );
+            }
+            if ( key != null )
+            {
+                result= config.getNetworkConfig().getString( key );
+            }
+            return result;
+        }
+    }
+
+    private ArrayList< ConfigPropertyDesc > getConfigProperties()
+    {
+        ArrayList< ConfigPropertyDesc > list= new ArrayList< ConfigPropertyDesc >();
+
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.bindToHost, null, "somehost.org" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.bindToPort, "5683", "9983" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.bindToSecurePort, "5684", "9984" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.keyStoreLocation, null, "/tmp/test1" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.keyStorePassword, null, "secret1" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.trustStoreLocation, null, "/tmp/test2" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.trustStorePassword, null, "secret1" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.privateKeyAlias, null, "secretKey" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.trustedRootCertificateAlias, null, "certificate2" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.ackTimeout, "2000", "22000" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.ackRandomFactor, "1.5", "3.56" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.ackTimeoutScale, "2.0", "7.364" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.maxRetransmit, "4", "44" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.exchangeLifetime, "247000", "3000000" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.nonLifetime, "145000", "755000" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.maxTransmitWait, "93000", "158000" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.nstart, "1", "145" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.leisure, "5000", "9000" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.probingRate, "1.0", "3.15" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.useRandomMidStart, "true", "false" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.tokenSizeLimit, "8", "15" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.preferredBlockSize, "512", "1024" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.maxMessageSize, "1024", "4156" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.blockwiseStatusLifetime, "300000", "150000" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.notificationCheckIntervalTime, "86400000", "91100001" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.notificationCheckIntervalCount, "100", "95" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.notificationReregistrationBackoff, "2000", "5002" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.useCongestionControl, "false", "true" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.congestionControlAlgorithm, "Cocoala", "Cocoala2" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.protocolStageThreadCount, "4", "12" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.networkStageReceiverThreadCount, "1", "12" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.networkStageSenderThreadCount, "1", "18" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.udpConnectorDatagramSize, "2048", "4096" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.udpConnectorReceiveBuffer, "0", "1000" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.udpConnectorSendBuffer, "0", "500" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.udpConnectorOutCapacity, "2147483647", "1007483647" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.deduplicator, "DEDUPLICATOR_MARK_AND_SWEEP", "SOMETHING_ELSE" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.deduplicatorMarkAndSweep, null, "deduplicatorMarkAndSweep2" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.markAndSweepInterval, "10000", "22000" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.deduplicatorCropRotation, null, "deduplicatorCropRotation2" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.cropRotationPeriod, "2000", "7800" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.noDeduplicator, null, "true" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.healthStatusInterval, "0", "100" ) );
+
+        return list;
+    }
 }
