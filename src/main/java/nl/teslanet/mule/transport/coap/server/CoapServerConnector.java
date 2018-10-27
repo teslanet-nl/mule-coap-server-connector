@@ -71,10 +71,10 @@ import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
 @Connector(
     name= "coap-server", 
     friendlyName= "CoAP Server", 
-    schemaVersion= "1.0",
+    schemaVersion= "2.0",
     minMuleVersion="3.8.0",
     //namespace= "http://www.mulesoft.org/schema/mule/coap-server",
-    schemaLocation= "http://www.teslanet.nl/schema/mule/coap-server/1.0/mule-coap-server.xsd"
+    schemaLocation= "http://www.teslanet.nl/schema/mule/coap-server/2.0/mule-coap-server.xsd"
 )
 @OnException(handler= ErrorHandler.class)
 public class CoapServerConnector
@@ -126,7 +126,7 @@ public class CoapServerConnector
             throw new ConnectionException( null, null, "CoAP configuration error", e );
         }
 
-        if ( config.isLogMessages() )
+        if ( config.isLogCoapMessages() )
         {
             // add special interceptor for message traces
             for ( Endpoint ep : server.getEndpoints() )

@@ -84,7 +84,7 @@ public class ServerConfig extends EndpointConfig
     @Default( value= "false")
     @Placement(tab= "Logging", group= "CoAP")
     //@FriendlyName(value = false)
-    private boolean logMessages= false;
+    private boolean logCoapMessages= false;
     
     /**
      * Gets the Socket address the server listens on
@@ -129,21 +129,21 @@ public class ServerConfig extends EndpointConfig
     }
 
     /**
-     * Indicates whether CoAP messages should be logged
-     * @return the logMessages
+     * Indicates whether CoAP messages will be logged
+     * @return the flag indicating whether CoAP messages will be logged
      */
-    public boolean isLogMessages()
+    public boolean isLogCoapMessages()
     {
-        return logMessages;
+        return logCoapMessages;
     }
 
     /**
      * Set flag that indicates whether CoAP messages should be logged
-     * @param logMessages the logMessages to set
+     * @param logMessages the log flag to set
      */
-    public void setLogMessages( boolean logMessages )
+    public void setLogCoapMessages( boolean logMessages )
     {
-        this.logMessages= logMessages;
+        this.logCoapMessages= logMessages;
     }
 
 
