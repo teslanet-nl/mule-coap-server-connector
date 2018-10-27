@@ -15,7 +15,6 @@
 package nl.teslanet.mule.transport.coap.server;
 
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -25,7 +24,6 @@ import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.eclipse.californium.core.coap.Response;
 import org.eclipse.californium.core.server.resources.CoapExchange;
-import org.eclipse.californium.core.server.resources.Resource;
 import org.mule.DefaultMuleEvent;
 import org.mule.DefaultMuleMessage;
 import org.mule.MessageExchangePattern;
@@ -48,10 +46,6 @@ public class ServedResource extends CoapResource
 
     /** The logger. */
     protected final Logger LOGGER= Logger.getLogger( ServedResource.class.getCanonicalName() );
-
-    //private CoapServerConnector connector;
-
-    //private ResourceConfig config;
 
     private SourceCallback callback= null;
 
