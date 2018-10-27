@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+   xmlns:coap-server="http://www.mulesoft.org/schema/mule/coap-server"
+   xmlns:spring="http://www.springframework.org/schema/beans"
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd 
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/3.9/mule.xsd 
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd 
+http://www.mulesoft.org/schema/mule/coap-server http://www.teslanet.nl/schema/mule/coap-server/2.0/mule-coap-server.xsd 
+   ">
+
+   <context:property-placeholder location="test2.properties" ignore-resource-not-found="true"/>
+
+   <coap-server:config name="config" exchangeLifetime="1" logCoapMessages="true">
+      <coap-server:resources>
+         <coap-server:resource name="basic">
+            <coap-server:resources>
+               <coap-server:resource name="always_CREATED" get="true" put="true" post="true"
+                  delete="true"/>
+               <coap-server:resource name="always_DELETED" get="true" put="true" post="true"
+                  delete="true"/>
+               <coap-server:resource name="always_VALID" get="true" put="true" post="true"
+                  delete="true"/>
+               <coap-server:resource name="always_CHANGED" get="true" put="true" post="true"
+                  delete="true"/>
+               <coap-server:resource name="always_CONTENT" get="true" put="true" post="true"
+                  delete="true"/>
+               <coap-server:resource name="always_CONTINUE" get="true" put="true" post="true"
+                  delete="true"/>
+               <coap-server:resource name="always_BAD_REQUEST" get="true" put="true" post="true"
+                  delete="true"/>
+               <coap-server:resource name="always_UNAUTHORIZED" get="true" put="true" post="true"
+                  delete="true"/>
+               <coap-server:resource name="always_BAD_OPTION" get="true" put="true" post="true"
+                  delete="true"/>
+               <coap-server:resource name="always_FORBIDDEN" get="true" put="true" post="true"
+                  delete="true"/>
+               <coap-server:resource name="always_NOT_FOUND" get="true" put="true" post="true"
+                  delete="true"/>
+               <coap-server:resource name="always_METHOD_NOT_ALLOWED" get="true" put="true"
+                  post="true" delete="true"/>
+               <coap-server:resource name="always_NOT_ACCEPTABLE" get="true" put="true" post="true"
+                  delete="true"/>
+               <coap-server:resource name="always_REQUEST_ENTITY_INCOMPLETE" get="true" put="true"
+                  post="true" delete="true"/>
+               <coap-server:resource name="always_CONFLICT" get="true" put="true"
+                  post="true" delete="true"/>
+               <coap-server:resource name="always_PRECONDITION_FAILED" get="true" put="true"
+                  post="true" delete="true"/>
+               <coap-server:resource name="always_REQUEST_ENTITY_TOO_LARGE" get="true" put="true"
+                  post="true" delete="true"/>
+               <coap-server:resource name="always_UNSUPPORTED_CONTENT_FORMAT" get="true" put="true"
+                  post="true" delete="true"/>
+               <coap-server:resource name="always_UNPROCESSABLE_ENTITY" get="true" put="true"
+                  post="true" delete="true"/>
+               <coap-server:resource name="always_INTERNAL_SERVER_ERROR" get="true" put="true"
+                  post="true" delete="true"/>
+               <coap-server:resource name="always_NOT_IMPLEMENTED" get="true" put="true" post="true"
+                  delete="true"/>
+               <coap-server:resource name="always_BAD_GATEWAY" get="true" put="true" post="true"
+                  delete="true"/>
+               <coap-server:resource name="always_SERVICE_UNAVAILABLE" get="true" put="true"
+                  post="true" delete="true"/>
+               <coap-server:resource name="always_GATEWAY_TIMEOUT" get="true" put="true" post="true"
+                  delete="true"/>
+               <coap-server:resource name="always_PROXY_NOT_SUPPORTED" get="true" put="true"
+                  post="true" delete="true"/>
+
+            </coap-server:resources>
+         </coap-server:resource>
+      </coap-server:resources>
+
+   </coap-server:config>
+
+
+   <flow name="listen-all">
+      <coap-server:listen uri="/*" config-ref="config"/>
+      <logger/>
+      <set-payload value="#[NullPayload.getInstance()]"/>
+      <choice>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_CREATED' ]">
+            <set-property propertyName="coap.response.code" value="CREATED"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_DELETED' ]">
+            <set-property propertyName="coap.response.code" value="DELETED"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_VALID' ]">
+            <set-property propertyName="coap.response.code" value="VALID"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_CHANGED' ]">
+            <set-property propertyName="coap.response.code" value="CHANGED"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_CONTENT' ]">
+            <set-property propertyName="coap.response.code" value="CONTENT"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_CONTINUE' ]">
+            <set-property propertyName="coap.response.code" value="CONTINUE"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_BAD_REQUEST' ]">
+            <set-property propertyName="coap.response.code" value="BAD_REQUEST"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_UNAUTHORIZED' ]">
+            <set-property propertyName="coap.response.code" value="UNAUTHORIZED"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_BAD_OPTION' ]">
+            <set-property propertyName="coap.response.code" value="BAD_OPTION"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_FORBIDDEN' ]">
+            <set-property propertyName="coap.response.code" value="FORBIDDEN"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_NOT_FOUND' ]">
+            <set-property propertyName="coap.response.code" value="NOT_FOUND"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_METHOD_NOT_ALLOWED' ]">
+            <set-property propertyName="coap.response.code" value="METHOD_NOT_ALLOWED"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_NOT_ACCEPTABLE' ]">
+            <set-property propertyName="coap.response.code" value="NOT_ACCEPTABLE"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_REQUEST_ENTITY_INCOMPLETE' ]">
+            <set-property propertyName="coap.response.code" value="REQUEST_ENTITY_INCOMPLETE"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_CONFLICT' ]">
+            <set-property propertyName="coap.response.code" value="CONFLICT"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_PRECONDITION_FAILED' ]">
+            <set-property propertyName="coap.response.code" value="PRECONDITION_FAILED"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_REQUEST_ENTITY_TOO_LARGE' ]">
+            <set-property propertyName="coap.response.code" value="REQUEST_ENTITY_TOO_LARGE"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_UNSUPPORTED_CONTENT_FORMAT' ]">
+            <set-property propertyName="coap.response.code" value="UNSUPPORTED_CONTENT_FORMAT"/>
+         </when>         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_UNPROCESSABLE_ENTITY' ]">
+            <set-property propertyName="coap.response.code" value="UNPROCESSABLE_ENTITY"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_INTERNAL_SERVER_ERROR' ]">
+            <set-property propertyName="coap.response.code" value="INTERNAL_SERVER_ERROR"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_NOT_IMPLEMENTED' ]">
+            <set-property propertyName="coap.response.code" value="NOT_IMPLEMENTED"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_BAD_GATEWAY' ]">
+            <set-property propertyName="coap.response.code" value="BAD_GATEWAY"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_SERVICE_UNAVAILABLE' ]">
+            <set-property propertyName="coap.response.code" value="SERVICE_UNAVAILABLE"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_GATEWAY_TIMEOUT' ]">
+            <set-property propertyName="coap.response.code" value="GATEWAY_TIMEOUT"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_FORBIDDEN' ]">
+            <set-property propertyName="coap.response.code" value="FORBIDDEN"/>
+         </when>
+         <when
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_PROXY_NOT_SUPPORTED' ]">
+            <set-property propertyName="coap.response.code" value="PROXY_NOT_SUPPORTED"/>
+         </when>
+         <otherwise>
+            <echo-component/>
+         </otherwise>
+      </choice>
+   </flow>
+</mule>
