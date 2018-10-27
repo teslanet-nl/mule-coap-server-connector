@@ -231,12 +231,7 @@ public class EndpointConfig
     @Configurable
     @Optional
     @Placement(tab= "Deduplicator", group= "Deduplicator")
-    private String deduplicator= null;
-
-    @Configurable
-    @Optional
-    @Placement(tab= "Deduplicator", group= "Deduplicator")
-    private String deduplicatorMarkAndSweep= null;
+    private DeduplicatorType deduplicator= null;
 
     @Configurable
     @Optional
@@ -246,17 +241,8 @@ public class EndpointConfig
     @Configurable
     @Optional
     @Placement(tab= "Deduplicator", group= "Deduplicator")
-    private String deduplicatorCropRotation= null;
-
-    @Configurable
-    @Optional
-    @Placement(tab= "Deduplicator", group= "Deduplicator")
     private String cropRotationPeriod= null;
 
-    @Configurable
-    @Optional
-    @Placement(tab= "Deduplicator", group= "Deduplicator")
-    private String noDeduplicator= null;
 /*
     //---------------
     @Configurable
@@ -871,7 +857,7 @@ public class EndpointConfig
     /**
      * @return the deduplicator
      */
-    public String getDeduplicator()
+    public DeduplicatorType getDeduplicator()
     {
         return deduplicator;
     }
@@ -879,25 +865,9 @@ public class EndpointConfig
     /**
      * @param deduplicator the deduplicator to set
      */
-    public void setDeduplicator( String deduplicator )
+    public void setDeduplicator( DeduplicatorType deduplicator )
     {
         this.deduplicator= deduplicator;
-    }
-
-    /**
-     * @return the deduplicatorMarkAndSweep
-     */
-    public String getDeduplicatorMarkAndSweep()
-    {
-        return deduplicatorMarkAndSweep;
-    }
-
-    /**
-     * @param deduplicatorMarkAndSweep the deduplicatorMarkAndSweep to set
-     */
-    public void setDeduplicatorMarkAndSweep( String deduplicatorMarkAndSweep )
-    {
-        this.deduplicatorMarkAndSweep= deduplicatorMarkAndSweep;
     }
 
     /**
@@ -917,22 +887,6 @@ public class EndpointConfig
     }
 
     /**
-     * @return the deduplicatorCropRotation
-     */
-    public String getDeduplicatorCropRotation()
-    {
-        return deduplicatorCropRotation;
-    }
-
-    /**
-     * @param deduplicatorCropRotation the deduplicatorCropRotation to set
-     */
-    public void setDeduplicatorCropRotation( String deduplicatorCropRotation )
-    {
-        this.deduplicatorCropRotation= deduplicatorCropRotation;
-    }
-
-    /**
      * @return the cropRotationPeriod
      */
     public String getCropRotationPeriod()
@@ -948,21 +902,6 @@ public class EndpointConfig
         this.cropRotationPeriod= cropRotationPeriod;
     }
 
-    /**
-     * @return the noDeduplicator
-     */
-    public String getNoDeduplicator()
-    {
-        return noDeduplicator;
-    }
-
-    /**
-     * @param noDeduplicator the noDeduplicator to set
-     */
-    public void setNoDeduplicator( String noDeduplicator )
-    {
-        this.noDeduplicator= noDeduplicator;
-    }
 /*
     /**
      * @return the httpPort

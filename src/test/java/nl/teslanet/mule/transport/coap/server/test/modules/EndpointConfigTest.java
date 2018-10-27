@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.junit.After;
@@ -14,6 +13,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import nl.teslanet.mule.transport.coap.server.config.DeduplicatorType;
 import nl.teslanet.mule.transport.coap.server.config.EndpointConfig;
 import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
 
@@ -124,7 +124,14 @@ public class EndpointConfigTest
     {
         public enum PropertyName
         {
-            bindToHost, bindToPort, bindToSecurePort, ackTimeout, ackRandomFactor, ackTimeoutScale, maxRetransmit, exchangeLifetime, nonLifetime, maxTransmitWait, nstart, leisure, probingRate, keyStoreLocation, keyStorePassword, privateKeyAlias, trustStoreLocation, trustStorePassword, trustedRootCertificateAlias, useRandomMidStart, tokenSizeLimit, preferredBlockSize, maxMessageSize, blockwiseStatusLifetime, notificationCheckIntervalTime, notificationCheckIntervalCount, notificationReregistrationBackoff, useCongestionControl, congestionControlAlgorithm, protocolStageThreadCount, networkStageReceiverThreadCount, networkStageSenderThreadCount, udpConnectorDatagramSize, udpConnectorReceiveBuffer, udpConnectorSendBuffer, udpConnectorOutCapacity, deduplicator, deduplicatorMarkAndSweep, markAndSweepInterval, deduplicatorCropRotation, cropRotationPeriod, noDeduplicator,
+            bindToHost, bindToPort, bindToSecurePort, ackTimeout, ackRandomFactor, ackTimeoutScale, maxRetransmit, exchangeLifetime, nonLifetime, maxTransmitWait, nstart, leisure, probingRate, keyStoreLocation, keyStorePassword, privateKeyAlias, trustStoreLocation, trustStorePassword, trustedRootCertificateAlias, useRandomMidStart, tokenSizeLimit, preferredBlockSize, maxMessageSize, blockwiseStatusLifetime, notificationCheckIntervalTime, notificationCheckIntervalCount, notificationReregistrationBackoff, useCongestionControl, congestionControlAlgorithm, protocolStageThreadCount, networkStageReceiverThreadCount, networkStageSenderThreadCount, udpConnectorDatagramSize, udpConnectorReceiveBuffer, udpConnectorSendBuffer, udpConnectorOutCapacity, 
+            //
+            deduplicator, 
+            //deduplicatorMarkAndSweep, 
+            markAndSweepInterval, 
+            //deduplicatorCropRotation, 
+            cropRotationPeriod, 
+            //noDeduplicator,
             //httpPort,
             // httpServerSocketTimeout,
             // httpServerSocketBufferSize,
@@ -295,23 +302,26 @@ public class EndpointConfigTest
                     result= config.getUdpConnectorOutCapacity();
                     break;
                 case deduplicator:
-                    result= config.getDeduplicator();
+                    result= ( config.getDeduplicator() != null ? config.getDeduplicator().name() : null );
                     break;
-                case deduplicatorMarkAndSweep:
-                    result= config.getDeduplicatorMarkAndSweep();
-                    break;
+// used by californium as property value
+//                case deduplicatorMarkAndSweep:
+//                    result= config.getDeduplicatorMarkAndSweep();
+//                    break;
                 case markAndSweepInterval:
                     result= config.getMarkAndSweepInterval();
                     break;
-                case deduplicatorCropRotation:
-                    result= config.getDeduplicatorCropRotation();
-                    break;
+// used by californium as property value
+//                case deduplicatorCropRotation:
+//                    result= config.getDeduplicatorCropRotation();
+//                    break;
                 case cropRotationPeriod:
                     result= config.getCropRotationPeriod();
                     break;
-                case noDeduplicator:
-                    result= config.getNoDeduplicator();
-                    break;
+// used by californium as property value
+//                case noDeduplicator:
+//                    result= config.getNoDeduplicator();
+//                    break;
                 case healthStatusInterval:
                     result= config.getHealthStatusInterval();
                     break;
@@ -438,24 +448,26 @@ public class EndpointConfigTest
                     config.setUdpConnectorOutCapacity( value );
                     break;
                 case deduplicator:
-                    config.setDeduplicator( value );
+                    config.setDeduplicator( DeduplicatorType.valueOf( value ));
                     break;
-                case deduplicatorMarkAndSweep:
-                    config.setDeduplicatorMarkAndSweep( value );
-                    break;
+// used by californium as property value
+//                case deduplicatorMarkAndSweep:
+//                    config.setDeduplicatorMarkAndSweep( value );
+//                    break;
                 case markAndSweepInterval:
                     config.setMarkAndSweepInterval( value );
                     break;
-                case deduplicatorCropRotation:
-                    config.setDeduplicatorCropRotation( value );
-                    break;
+ // used by californium as property value
+//                case deduplicatorCropRotation:
+//                    config.setDeduplicatorCropRotation( value );
+//                    break;
                 case cropRotationPeriod:
                     config.setCropRotationPeriod( value );
                     break;
-                case noDeduplicator:
-                    config.setNoDeduplicator( value );
-                    break;
-
+ // used by californium as property value
+//                case noDeduplicator:
+//                    config.setNoDeduplicator( value );
+//                    break;
                 case healthStatusInterval:
                     config.setHealthStatusInterval( value );
                     break;
@@ -578,21 +590,24 @@ public class EndpointConfigTest
                 case deduplicator:
                     result= NetworkConfig.Keys.DEDUPLICATOR;
                     break;
-                case deduplicatorMarkAndSweep:
-                    result= NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP;
-                    break;
+                 // used by californium as property value
+//                case deduplicatorMarkAndSweep:
+//                    result= NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP;
+//                    break;
                 case markAndSweepInterval:
                     result= NetworkConfig.Keys.MARK_AND_SWEEP_INTERVAL;
                     break;
-                case deduplicatorCropRotation:
-                    result= NetworkConfig.Keys.DEDUPLICATOR_CROP_ROTATION;
-                    break;
+                 // used by californium as property value
+//                case deduplicatorCropRotation:
+//                    result= NetworkConfig.Keys.DEDUPLICATOR_CROP_ROTATION;
+//                    break;
                 case cropRotationPeriod:
                     result= NetworkConfig.Keys.CROP_ROTATION_PERIOD;
                     break;
-                case noDeduplicator:
-                    result= NetworkConfig.Keys.NO_DEDUPLICATOR;
-                    break;
+                 // used by californium as property value
+//                case noDeduplicator:
+//                    result= NetworkConfig.Keys.NO_DEDUPLICATOR;
+//                    break;
                 //case httpPort: result= NetworkConfig.Keys.httpPort ; break;
                 // case httpServerSocketTimeout: result= NetworkConfig.Keys.httpServerSocketTimeout ; break;
                 // case httpServerSocketBufferSize: result= NetworkConfig.Keys.httpServerSocketBufferSize ; break;
@@ -732,21 +747,24 @@ public class EndpointConfigTest
                 case deduplicator:
                     key= NetworkConfig.Keys.DEDUPLICATOR;
                     break;
-                case deduplicatorMarkAndSweep:
-                    key= NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP;
-                    break;
+                 // used by californium as property value
+//                case deduplicatorMarkAndSweep:
+//                    key= NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP;
+//                    break;
                 case markAndSweepInterval:
                     key= NetworkConfig.Keys.MARK_AND_SWEEP_INTERVAL;
                     break;
-                case deduplicatorCropRotation:
-                    key= NetworkConfig.Keys.DEDUPLICATOR_CROP_ROTATION;
-                    break;
+                 // used by californium as property value
+//                case deduplicatorCropRotation:
+//                    key= NetworkConfig.Keys.DEDUPLICATOR_CROP_ROTATION;
+//                    break;
                 case cropRotationPeriod:
                     key= NetworkConfig.Keys.CROP_ROTATION_PERIOD;
                     break;
-                case noDeduplicator:
-                    key= NetworkConfig.Keys.NO_DEDUPLICATOR;
-                    break;
+                 // used by californium as property value
+//                case noDeduplicator:
+//                    key= NetworkConfig.Keys.NO_DEDUPLICATOR;
+//                    break;
                 case healthStatusInterval:
                     key= NetworkConfig.Keys.HEALTH_STATUS_INTERVAL;
                     break;
@@ -793,7 +811,7 @@ public class EndpointConfigTest
         list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.notificationCheckIntervalCount, "100", "95" ) );
         list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.notificationReregistrationBackoff, "2000", "5002" ) );
         list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.useCongestionControl, "false", "true" ) );
-        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.congestionControlAlgorithm, "Cocoala", "Cocoala2" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.congestionControlAlgorithm, "Cocoa", "Cocoala2" ) );
         list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.protocolStageThreadCount, "4", "12" ) );
         list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.networkStageReceiverThreadCount, "1", "12" ) );
         list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.networkStageSenderThreadCount, "1", "18" ) );
@@ -801,12 +819,12 @@ public class EndpointConfigTest
         list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.udpConnectorReceiveBuffer, "0", "1000" ) );
         list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.udpConnectorSendBuffer, "0", "500" ) );
         list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.udpConnectorOutCapacity, "2147483647", "1007483647" ) );
-        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.deduplicator, "DEDUPLICATOR_MARK_AND_SWEEP", "SOMETHING_ELSE" ) );
-        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.deduplicatorMarkAndSweep, null, "deduplicatorMarkAndSweep2" ) );
+        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.deduplicator, DeduplicatorType.DEDUPLICATOR_MARK_AND_SWEEP.name(), DeduplicatorType.DEDUPLICATOR_CROP_ROTATION.name() ) );
+//        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.deduplicatorMarkAndSweep, null, "deduplicatorMarkAndSweep2" ) );
         list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.markAndSweepInterval, "10000", "22000" ) );
-        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.deduplicatorCropRotation, null, "deduplicatorCropRotation2" ) );
+//        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.deduplicatorCropRotation, null, "deduplicatorCropRotation2" ) );
         list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.cropRotationPeriod, "2000", "7800" ) );
-        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.noDeduplicator, null, "true" ) );
+//        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.noDeduplicator, null, "true" ) );
         list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.healthStatusInterval, "0", "100" ) );
 
         return list;
