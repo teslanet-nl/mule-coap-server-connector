@@ -62,4 +62,54 @@ public class ResponseCodeTest extends FunctionalTestCase
             }
         }
     }
+    
+    @Test
+    public void testPutResponse()
+    {
+        CoapResponse response;
+
+        for ( ResponseCode code : ResponseCode.values() )
+        {
+            if ( !code.name().startsWith( "_" ))
+            {
+                client= getClient( "/basic/always_" + code.name() );
+                response= client.put("put-payload", 0);
+                assertNotNull( "put gave no response", response );
+                assertEquals( "put didn't return response code: " + code.name(), code, response.getCode() );
+            }
+        }
+    }
+     
+    @Test
+    public void testPostResponse()
+    {
+        CoapResponse response;
+
+        for ( ResponseCode code : ResponseCode.values() )
+        {
+            if ( !code.name().startsWith( "_" ))
+            {
+                client= getClient( "/basic/always_" + code.name() );
+                response= client.post("post-payload", 0);
+                assertNotNull( "post gave no response", response );
+                assertEquals( "post didn't return response code: " + code.name(), code, response.getCode() );
+            }
+        }
+    }
+    @Test
+    public void testDeleteResponse()
+    {
+        CoapResponse response;
+
+        for ( ResponseCode code : ResponseCode.values() )
+        {
+            if ( !code.name().startsWith( "_" ))
+            {
+                client= getClient( "/basic/always_" + code.name() );
+                response= client.delete();
+                assertNotNull( "delete gave no response", response );
+                assertEquals( "delete didn't return response code: " + code.name(), code, response.getCode() );
+            }
+        }
+    }
 }

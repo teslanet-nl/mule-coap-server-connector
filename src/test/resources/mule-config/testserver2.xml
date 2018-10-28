@@ -46,8 +46,8 @@ http://www.mulesoft.org/schema/mule/coap-server http://www.teslanet.nl/schema/mu
                   delete="true"/>
                <coap-server:resource name="always_REQUEST_ENTITY_INCOMPLETE" get="true" put="true"
                   post="true" delete="true"/>
-               <coap-server:resource name="always_CONFLICT" get="true" put="true"
-                  post="true" delete="true"/>
+               <coap-server:resource name="always_CONFLICT" get="true" put="true" post="true"
+                  delete="true"/>
                <coap-server:resource name="always_PRECONDITION_FAILED" get="true" put="true"
                   post="true" delete="true"/>
                <coap-server:resource name="always_REQUEST_ENTITY_TOO_LARGE" get="true" put="true"
@@ -152,7 +152,8 @@ http://www.mulesoft.org/schema/mule/coap-server http://www.teslanet.nl/schema/mu
          <when
             expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_UNSUPPORTED_CONTENT_FORMAT' ]">
             <set-property propertyName="coap.response.code" value="UNSUPPORTED_CONTENT_FORMAT"/>
-         </when>         <when
+         </when>
+         <when
             expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_UNPROCESSABLE_ENTITY' ]">
             <set-property propertyName="coap.response.code" value="UNPROCESSABLE_ENTITY"/>
          </when>
