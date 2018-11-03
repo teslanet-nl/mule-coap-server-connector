@@ -1,4 +1,4 @@
-package nl.teslanet.mule.transport.coap.server.test.basic;
+package nl.teslanet.mule.transport.coap.server.test.properties;
 
 
 import static org.junit.Assert.assertEquals;
@@ -24,7 +24,7 @@ public class ResponseCodeTest extends FunctionalTestCase
     @Override
     protected String getConfigFile()
     {
-        return "mule-config/testserver2.xml";
+        return "mule-config/properties/testserver-ResponseCode.xml";
     };
 
     @Before
@@ -55,7 +55,7 @@ public class ResponseCodeTest extends FunctionalTestCase
         {
             if ( !code.name().startsWith( "_" ))
             {
-                client= getClient( "/basic/always_" + code.name() );
+                client= getClient( "/responsecode/always_" + code.name() );
                 response= client.get();
                 assertNotNull( "get gave no response", response );
                 assertEquals( "get didn't return response code: " + code.name(), code, response.getCode() );
@@ -72,7 +72,7 @@ public class ResponseCodeTest extends FunctionalTestCase
         {
             if ( !code.name().startsWith( "_" ))
             {
-                client= getClient( "/basic/always_" + code.name() );
+                client= getClient( "/responsecode/always_" + code.name() );
                 response= client.put("put-payload", 0);
                 assertNotNull( "put gave no response", response );
                 assertEquals( "put didn't return response code: " + code.name(), code, response.getCode() );
@@ -89,7 +89,7 @@ public class ResponseCodeTest extends FunctionalTestCase
         {
             if ( !code.name().startsWith( "_" ))
             {
-                client= getClient( "/basic/always_" + code.name() );
+                client= getClient( "/responsecode/always_" + code.name() );
                 response= client.post("post-payload", 0);
                 assertNotNull( "post gave no response", response );
                 assertEquals( "post didn't return response code: " + code.name(), code, response.getCode() );
@@ -105,7 +105,7 @@ public class ResponseCodeTest extends FunctionalTestCase
         {
             if ( !code.name().startsWith( "_" ))
             {
-                client= getClient( "/basic/always_" + code.name() );
+                client= getClient( "/responsecode/always_" + code.name() );
                 response= client.delete();
                 assertNotNull( "delete gave no response", response );
                 assertEquals( "delete didn't return response code: " + code.name(), code, response.getCode() );

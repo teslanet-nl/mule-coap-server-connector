@@ -24,7 +24,7 @@ public class DeleteMethodTest extends FunctionalTestCase
     @Override
     protected String getConfigFile()
     {
-        return "mule-config/testserver1.xml";
+        return "mule-config/basic/testserver1.xml";
     };
 
     @Before

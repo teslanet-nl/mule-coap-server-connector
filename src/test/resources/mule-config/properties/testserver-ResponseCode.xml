@@ -16,7 +16,7 @@ http://www.mulesoft.org/schema/mule/coap-server http://www.teslanet.nl/schema/mu
 
    <coap-server:config name="config" exchangeLifetime="1" logCoapMessages="true">
       <coap-server:resources>
-         <coap-server:resource name="basic">
+         <coap-server:resource name="responsecode">
             <coap-server:resources>
                <coap-server:resource name="always_CREATED" get="true" put="true" post="true"
                   delete="true"/>
@@ -82,107 +82,107 @@ http://www.mulesoft.org/schema/mule/coap-server http://www.teslanet.nl/schema/mu
       <set-payload value="#[NullPayload.getInstance()]"/>
       <choice>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_CREATED' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_CREATED' ]">
             <set-property propertyName="coap.response.code" value="CREATED"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_DELETED' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_DELETED' ]">
             <set-property propertyName="coap.response.code" value="DELETED"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_VALID' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_VALID' ]">
             <set-property propertyName="coap.response.code" value="VALID"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_CHANGED' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_CHANGED' ]">
             <set-property propertyName="coap.response.code" value="CHANGED"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_CONTENT' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_CONTENT' ]">
             <set-property propertyName="coap.response.code" value="CONTENT"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_CONTINUE' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_CONTINUE' ]">
             <set-property propertyName="coap.response.code" value="CONTINUE"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_BAD_REQUEST' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_BAD_REQUEST' ]">
             <set-property propertyName="coap.response.code" value="BAD_REQUEST"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_UNAUTHORIZED' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_UNAUTHORIZED' ]">
             <set-property propertyName="coap.response.code" value="UNAUTHORIZED"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_BAD_OPTION' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_BAD_OPTION' ]">
             <set-property propertyName="coap.response.code" value="BAD_OPTION"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_FORBIDDEN' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_FORBIDDEN' ]">
             <set-property propertyName="coap.response.code" value="FORBIDDEN"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_NOT_FOUND' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_NOT_FOUND' ]">
             <set-property propertyName="coap.response.code" value="NOT_FOUND"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_METHOD_NOT_ALLOWED' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_METHOD_NOT_ALLOWED' ]">
             <set-property propertyName="coap.response.code" value="METHOD_NOT_ALLOWED"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_NOT_ACCEPTABLE' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_NOT_ACCEPTABLE' ]">
             <set-property propertyName="coap.response.code" value="NOT_ACCEPTABLE"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_REQUEST_ENTITY_INCOMPLETE' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_REQUEST_ENTITY_INCOMPLETE' ]">
             <set-property propertyName="coap.response.code" value="REQUEST_ENTITY_INCOMPLETE"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_CONFLICT' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_CONFLICT' ]">
             <set-property propertyName="coap.response.code" value="CONFLICT"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_PRECONDITION_FAILED' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_PRECONDITION_FAILED' ]">
             <set-property propertyName="coap.response.code" value="PRECONDITION_FAILED"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_REQUEST_ENTITY_TOO_LARGE' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_REQUEST_ENTITY_TOO_LARGE' ]">
             <set-property propertyName="coap.response.code" value="REQUEST_ENTITY_TOO_LARGE"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_UNSUPPORTED_CONTENT_FORMAT' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_UNSUPPORTED_CONTENT_FORMAT' ]">
             <set-property propertyName="coap.response.code" value="UNSUPPORTED_CONTENT_FORMAT"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_UNPROCESSABLE_ENTITY' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_UNPROCESSABLE_ENTITY' ]">
             <set-property propertyName="coap.response.code" value="UNPROCESSABLE_ENTITY"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_INTERNAL_SERVER_ERROR' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_INTERNAL_SERVER_ERROR' ]">
             <set-property propertyName="coap.response.code" value="INTERNAL_SERVER_ERROR"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_NOT_IMPLEMENTED' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_NOT_IMPLEMENTED' ]">
             <set-property propertyName="coap.response.code" value="NOT_IMPLEMENTED"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_BAD_GATEWAY' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_BAD_GATEWAY' ]">
             <set-property propertyName="coap.response.code" value="BAD_GATEWAY"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_SERVICE_UNAVAILABLE' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_SERVICE_UNAVAILABLE' ]">
             <set-property propertyName="coap.response.code" value="SERVICE_UNAVAILABLE"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_GATEWAY_TIMEOUT' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_GATEWAY_TIMEOUT' ]">
             <set-property propertyName="coap.response.code" value="GATEWAY_TIMEOUT"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_FORBIDDEN' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_FORBIDDEN' ]">
             <set-property propertyName="coap.response.code" value="FORBIDDEN"/>
          </when>
          <when
-            expression="#[ message.inboundProperties.'coap.request.uri' == '/basic/always_PROXY_NOT_SUPPORTED' ]">
+            expression="#[ message.inboundProperties.'coap.request.uri' == '/responsecode/always_PROXY_NOT_SUPPORTED' ]">
             <set-property propertyName="coap.response.code" value="PROXY_NOT_SUPPORTED"/>
          </when>
          <otherwise>
