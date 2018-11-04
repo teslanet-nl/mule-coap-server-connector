@@ -47,7 +47,7 @@ public class ResponseCodeTest extends FunctionalTestCase
     }
 
     @Test
-    public void testGetResponse()
+    public void testGet()
     {
         CoapResponse response;
 
@@ -64,7 +64,7 @@ public class ResponseCodeTest extends FunctionalTestCase
     }
     
     @Test
-    public void testPutResponse()
+    public void testPut()
     {
         CoapResponse response;
 
@@ -81,7 +81,7 @@ public class ResponseCodeTest extends FunctionalTestCase
     }
      
     @Test
-    public void testPostResponse()
+    public void testPost()
     {
         CoapResponse response;
 
@@ -97,7 +97,7 @@ public class ResponseCodeTest extends FunctionalTestCase
         }
     }
     @Test
-    public void testDeleteResponse()
+    public void testDelete()
     {
         CoapResponse response;
 

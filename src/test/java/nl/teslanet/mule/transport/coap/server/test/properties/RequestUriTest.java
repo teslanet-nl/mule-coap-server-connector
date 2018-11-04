@@ -5,17 +5,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.net.InetAddress;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
+import org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.core.coap.CoAP.Code;
+import org.eclipse.californium.core.coap.CoAP.Type;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.tck.junit4.FunctionalTestCase;
 
 
-public class RequestCodeTest extends FunctionalTestCase
+public class RequestUriTest extends FunctionalTestCase
 {
     URI uri= null;
 
@@ -24,7 +29,7 @@ public class RequestCodeTest extends FunctionalTestCase
     @Override
     protected String getConfigFile()
     {
-        return "mule-config/properties/testserver-RequestCode.xml";
+        return "mule-config/properties/testserver-RequestUri.xml";
     };
 
     @Before
@@ -41,7 +46,7 @@ public class RequestCodeTest extends FunctionalTestCase
 
     private CoapClient getClient( String path )
     {
-        CoapClient client= new CoapClient( uri.resolve( "/requestcode" + path ) );
+        CoapClient client= new CoapClient( uri.resolve( "/requesturi" + path ) );
         client.setTimeout( 1000L );
         return client;
     }
@@ -50,7 +55,7 @@ public class RequestCodeTest extends FunctionalTestCase
     public void testGet()
     {
         String path= "/get_me";
-        String expected= "GET";
+        String expected= "/requesturi/get_me";
 
         CoapClient client= getClient( path );
 
@@ -60,12 +65,12 @@ public class RequestCodeTest extends FunctionalTestCase
         assertTrue( "response indicates failure", response.isSuccess() );
         assertEquals( "echoed request code has wrong value", expected, response.getResponseText() );
     }
-
+    
     @Test
     public void testPut()
     {
         String path= "/put_me";
-        String expected= "PUT";
+        String expected= "/requesturi/put_me";
 
         CoapClient client= getClient( path );
 
@@ -80,7 +85,7 @@ public class RequestCodeTest extends FunctionalTestCase
     public void testPost()
     {
         String path= "/post_me";
-        String expected= "POST";
+        String expected= "/requesturi/post_me";
 
         CoapClient client= getClient( path );
 
@@ -95,7 +100,7 @@ public class RequestCodeTest extends FunctionalTestCase
     public void testDelete()
     {
         String path= "/delete_me";
-        String expected= "DELETE";
+        String expected= "/requesturi/delete_me";
 
         CoapClient client= getClient( path );
 

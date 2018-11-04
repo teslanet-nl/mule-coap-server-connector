@@ -15,16 +15,17 @@ import org.junit.Test;
 import org.mule.tck.junit4.FunctionalTestCase;
 
 
-public class RequestCodeTest extends FunctionalTestCase
+public class RequestAddressTest extends FunctionalTestCase
 {
     URI uri= null;
 
     CoapClient client= null;
+    String expected= "0.0.0.0/0.0.0.0:5683";
 
     @Override
     protected String getConfigFile()
     {
-        return "mule-config/properties/testserver-RequestCode.xml";
+        return "mule-config/properties/testserver-RequestAddress.xml";
     };
 
     @Before
@@ -41,7 +42,7 @@ public class RequestCodeTest extends FunctionalTestCase
 
     private CoapClient getClient( String path )
     {
-        CoapClient client= new CoapClient( uri.resolve( "/requestcode" + path ) );
+        CoapClient client= new CoapClient( uri.resolve( "/requestaddress" + path ) );
         client.setTimeout( 1000L );
         return client;
     }
@@ -50,7 +51,6 @@ public class RequestCodeTest extends FunctionalTestCase
     public void testGet()
     {
         String path= "/get_me";
-        String expected= "GET";
 
         CoapClient client= getClient( path );
 
@@ -58,14 +58,13 @@ public class RequestCodeTest extends FunctionalTestCase
 
         assertNotNull( "get gave no response", response );
         assertTrue( "response indicates failure", response.isSuccess() );
-        assertEquals( "echoed request code has wrong value", expected, response.getResponseText() );
+        assertEquals( "echoed request address has wrong value", expected, response.getResponseText() );
     }
 
     @Test
     public void testPut()
     {
         String path= "/put_me";
-        String expected= "PUT";
 
         CoapClient client= getClient( path );
 
@@ -73,14 +72,13 @@ public class RequestCodeTest extends FunctionalTestCase
 
         assertNotNull( "put gave no response", response );
         assertTrue( "response indicates failure", response.isSuccess() );
-        assertEquals( "echoed request code has wrong value", expected, response.getResponseText() );
+        assertEquals( "echoed request address has wrong value", expected, response.getResponseText() );
     }
 
     @Test
     public void testPost()
     {
         String path= "/post_me";
-        String expected= "POST";
 
         CoapClient client= getClient( path );
 
@@ -88,14 +86,13 @@ public class RequestCodeTest extends FunctionalTestCase
 
         assertNotNull( "post gave no response", response );
         assertTrue( "response indicates failure", response.isSuccess() );
-        assertEquals( "echoed request code has wrong value", expected, response.getResponseText() );
+        assertEquals( "echoed request address has wrong value", expected, response.getResponseText() );
     }
 
     @Test
     public void testDelete()
     {
         String path= "/delete_me";
-        String expected= "DELETE";
 
         CoapClient client= getClient( path );
 
@@ -103,6 +100,6 @@ public class RequestCodeTest extends FunctionalTestCase
 
         assertNotNull( "delete gave no response", response );
         assertTrue( "response indicates failure", response.isSuccess() );
-        assertEquals( "echoed request code has wrong value", expected, response.getResponseText() );
+        assertEquals( "echoed request address has wrong value", expected, response.getResponseText() );
     }
 }
