@@ -12,20 +12,33 @@ import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mule.tck.junit4.FunctionalTestCase;
+import org.mule.munit.runner.functional.FunctionalMunitSuite;
 
 
-public class PutMethodTest extends FunctionalTestCase
+public class PutMethodTest extends FunctionalMunitSuite
 {
     URI uri= null;
 
     CoapClient client= null;
 
     @Override
-    protected String getConfigFile()
+    protected String getConfigResources()
     {
         return "mule-config/basic/testserver1.xml";
     };
+
+    @Override
+    protected boolean haveToDisableInboundEndpoints()
+    {
+        return false;
+    }
+
+    @Override
+    protected boolean haveToMockMuleConnectors()
+    {
+        return false;
+    }
+
 
     @Before
     public void setUp() throws Exception

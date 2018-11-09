@@ -458,7 +458,7 @@ public class ResourceRegistryTest
         exception.expectMessage( uri4 );
         exception.expectMessage( "resource does not exist" );
 
-        assertNotEquals( "registry must not contain resource4", uri4, registry.getResource( uri4 ).getURI() );
+        assertFalse( "registry must not contain resource4", uri4.equals( registry.getResource( uri4 ).getURI()) );
 
     }
 

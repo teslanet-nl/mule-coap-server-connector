@@ -15,20 +15,32 @@ import org.eclipse.californium.core.coap.Request;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mule.tck.junit4.FunctionalTestCase;
+import org.mule.munit.runner.functional.FunctionalMunitSuite;
 
 
-public class RequestConfirmableTest extends FunctionalTestCase
+public class RequestConfirmableTest extends FunctionalMunitSuite
 {
     URI uri= null;
 
     CoapClient client= null;
 
     @Override
-    protected String getConfigFile()
+    protected String getConfigResources()
     {
         return "mule-config/properties/testserver-RequestConfirmable.xml";
     };
+
+    @Override
+    protected boolean haveToDisableInboundEndpoints()
+    {
+        return false;
+    }
+
+    @Override
+    protected boolean haveToMockMuleConnectors()
+    {
+        return false;
+    }
 
     @Before
     public void setUp() throws Exception
@@ -94,7 +106,6 @@ public class RequestConfirmableTest extends FunctionalTestCase
         assertEquals( "echoed request confirmable has wrong value", expected, response.getResponseText() );
     }
 
-
     @Test
     public void testPutNon()
     {
@@ -154,7 +165,7 @@ public class RequestConfirmableTest extends FunctionalTestCase
         assertTrue( "response indicates failure", response.isSuccess() );
         assertEquals( "echoed request confirmable has wrong value", expected, response.getResponseText() );
     }
-    
+
     @Test
     public void testDeleteNon()
     {

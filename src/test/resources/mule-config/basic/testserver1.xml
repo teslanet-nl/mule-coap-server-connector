@@ -12,8 +12,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 http://www.mulesoft.org/schema/mule/coap-server http://www.teslanet.nl/schema/mule/coap-server/2.0/mule-coap-server.xsd 
    ">
 
-   <context:property-placeholder location="test1.properties" ignore-resource-not-found="true"/>
-
+  
    <coap-server:config name="config" exchangeLifetime="1" logCoapMessages="true">
       <coap-server:resources>
          <coap-server:resource name="basic">

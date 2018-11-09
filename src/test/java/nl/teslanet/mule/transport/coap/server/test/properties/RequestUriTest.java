@@ -17,20 +17,32 @@ import org.eclipse.californium.core.coap.CoAP.Type;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mule.tck.junit4.FunctionalTestCase;
+import org.mule.munit.runner.functional.FunctionalMunitSuite;
 
 
-public class RequestUriTest extends FunctionalTestCase
+public class RequestUriTest extends FunctionalMunitSuite
 {
     URI uri= null;
 
     CoapClient client= null;
 
     @Override
-    protected String getConfigFile()
+    protected String getConfigResources()
     {
         return "mule-config/properties/testserver-RequestUri.xml";
     };
+
+    @Override
+    protected boolean haveToDisableInboundEndpoints()
+    {
+        return false;
+    }
+
+    @Override
+    protected boolean haveToMockMuleConnectors()
+    {
+        return false;
+    }
 
     @Before
     public void setUp() throws Exception
@@ -65,7 +77,7 @@ public class RequestUriTest extends FunctionalTestCase
         assertTrue( "response indicates failure", response.isSuccess() );
         assertEquals( "echoed request code has wrong value", expected, response.getResponseText() );
     }
-    
+
     @Test
     public void testPut()
     {

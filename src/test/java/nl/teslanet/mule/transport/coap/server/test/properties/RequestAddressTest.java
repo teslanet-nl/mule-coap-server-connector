@@ -12,21 +12,34 @@ import org.eclipse.californium.core.CoapResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mule.tck.junit4.FunctionalTestCase;
+import org.mule.munit.runner.functional.FunctionalMunitSuite;
 
 
-public class RequestAddressTest extends FunctionalTestCase
+public class RequestAddressTest extends FunctionalMunitSuite
 {
     URI uri= null;
 
     CoapClient client= null;
+
     String expected= "0.0.0.0/0.0.0.0:5683";
 
     @Override
-    protected String getConfigFile()
+    protected String getConfigResources()
     {
         return "mule-config/properties/testserver-RequestAddress.xml";
     };
+
+    @Override
+    protected boolean haveToDisableInboundEndpoints()
+    {
+        return false;
+    }
+
+    @Override
+    protected boolean haveToMockMuleConnectors()
+    {
+        return false;
+    }
 
     @Before
     public void setUp() throws Exception

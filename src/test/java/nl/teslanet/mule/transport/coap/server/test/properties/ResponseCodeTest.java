@@ -12,20 +12,32 @@ import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mule.tck.junit4.FunctionalTestCase;
+import org.mule.munit.runner.functional.FunctionalMunitSuite;
 
 
-public class ResponseCodeTest extends FunctionalTestCase
+public class ResponseCodeTest extends FunctionalMunitSuite
 {
     URI uri= null;
 
     CoapClient client= null;
 
     @Override
-    protected String getConfigFile()
+    protected String getConfigResources()
     {
         return "mule-config/properties/testserver-ResponseCode.xml";
     };
+
+    @Override
+    protected boolean haveToDisableInboundEndpoints()
+    {
+        return false;
+    }
+
+    @Override
+    protected boolean haveToMockMuleConnectors()
+    {
+        return false;
+    }
 
     @Before
     public void setUp() throws Exception
@@ -53,7 +65,7 @@ public class ResponseCodeTest extends FunctionalTestCase
 
         for ( ResponseCode code : ResponseCode.values() )
         {
-            if ( !code.name().startsWith( "_" ))
+            if ( !code.name().startsWith( "_" ) )
             {
                 client= getClient( "/responsecode/always_" + code.name() );
                 response= client.get();
@@ -62,7 +74,7 @@ public class ResponseCodeTest extends FunctionalTestCase
             }
         }
     }
-    
+
     @Test
     public void testPut()
     {
@@ -70,16 +82,16 @@ public class ResponseCodeTest extends FunctionalTestCase
 
         for ( ResponseCode code : ResponseCode.values() )
         {
-            if ( !code.name().startsWith( "_" ))
+            if ( !code.name().startsWith( "_" ) )
             {
                 client= getClient( "/responsecode/always_" + code.name() );
-                response= client.put("put-payload", 0);
+                response= client.put( "put-payload", 0 );
                 assertNotNull( "put gave no response", response );
                 assertEquals( "put didn't return response code: " + code.name(), code, response.getCode() );
             }
         }
     }
-     
+
     @Test
     public void testPost()
     {
@@ -87,15 +99,16 @@ public class ResponseCodeTest extends FunctionalTestCase
 
         for ( ResponseCode code : ResponseCode.values() )
         {
-            if ( !code.name().startsWith( "_" ))
+            if ( !code.name().startsWith( "_" ) )
             {
                 client= getClient( "/responsecode/always_" + code.name() );
-                response= client.post("post-payload", 0);
+                response= client.post( "post-payload", 0 );
                 assertNotNull( "post gave no response", response );
                 assertEquals( "post didn't return response code: " + code.name(), code, response.getCode() );
             }
         }
     }
+
     @Test
     public void testDelete()
     {
@@ -103,7 +116,7 @@ public class ResponseCodeTest extends FunctionalTestCase
 
         for ( ResponseCode code : ResponseCode.values() )
         {
-            if ( !code.name().startsWith( "_" ))
+            if ( !code.name().startsWith( "_" ) )
             {
                 client= getClient( "/responsecode/always_" + code.name() );
                 response= client.delete();

@@ -2,7 +2,6 @@ package nl.teslanet.mule.transport.coap.server.test.basic;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.net.URI;
@@ -13,20 +12,32 @@ import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mule.tck.junit4.FunctionalTestCase;
+import org.mule.munit.runner.functional.FunctionalMunitSuite;
 
 
-public class GetMethodTest extends FunctionalTestCase
+public class GetMethodTest extends FunctionalMunitSuite
 {
     URI uri= null;
 
     CoapClient client= null;
 
     @Override
-    protected String getConfigFile()
+    protected String getConfigResources()
     {
         return "mule-config/basic/testserver1.xml";
     };
+
+    @Override
+    protected boolean haveToDisableInboundEndpoints()
+    {
+        return false;
+    }
+
+    @Override
+    protected boolean haveToMockMuleConnectors()
+    {
+        return false;
+    }
 
     @Before
     public void setUp() throws Exception
@@ -59,7 +70,7 @@ public class GetMethodTest extends FunctionalTestCase
     public void testNoGetAllowed()
     {
         String path= "/basic/do_not_get_me";
-        
+
         client= new CoapClient( uri.resolve( path ) );
         client.setTimeout( 1000L );
 
