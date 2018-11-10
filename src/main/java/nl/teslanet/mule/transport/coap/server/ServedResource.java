@@ -233,10 +233,11 @@ public class ServedResource extends CoapResource
 
         props.put( PropertyNames.COAP_REQUEST_CODE, exchange.getRequestCode().toString() );
         props.put( PropertyNames.COAP_REQUEST_CONFIRMABLE, exchange.advanced().getRequest().isConfirmable() );
-        props.put( PropertyNames.COAP_REQUEST_ADDRESS, exchange.advanced().getEndpoint().getAddress() );
+        //TODO: separate host + port String in stead of address
+        props.put( PropertyNames.COAP_REQUEST_ADDRESS, exchange.advanced().getEndpoint().getAddress().toString() );
         props.put( PropertyNames.COAP_REQUEST_URI, this.getURI() );
         props.put( PropertyNames.COAP_REQUEST_RELATION, ( exchange.advanced().getRelation() != null ? exchange.advanced().getRelation().getKey() : null ) );
-        props.put( PropertyNames.COAP_REQUEST_SOURCE_HOST, exchange.getSourceAddress() );
+        props.put( PropertyNames.COAP_REQUEST_SOURCE_HOST, exchange.getSourceAddress().toString() );
         props.put( PropertyNames.COAP_REQUEST_SOURCE_PORT, exchange.getSourcePort() );
 
         Options.fillPropertyMap( exchange.getRequestOptions(), props );

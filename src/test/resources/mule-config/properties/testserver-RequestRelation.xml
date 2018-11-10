@@ -19,7 +19,7 @@
 
    <coap-server:config name="config" exchangeLifetime="1" logCoapMessages="true">
       <coap-server:resources>
-         <coap-server:resource name="requestaddress">
+         <coap-server:resource name="requesturi">
             <coap-server:resources>
                <coap-server:resource name="get_me" get="true"/>
                <coap-server:resource name="put_me" put="true"/>
@@ -34,8 +34,7 @@
 
    <flow name="listen-all">
       <coap-server:listen uri="/*" config-ref="config"/>
-      <set-payload value="#[message.inboundProperties.'coap.request.address']"/>
-      <validation:is-true message="property class is not String" expression="#[ payload.getClass().isInstance( new java.lang.String() )]" doc:name="validate String class"/>
+      <set-payload value="#[message.inboundProperties.'coap.request.relation']"/>
+      <validation:is-null message="property is not null" value="#[ payload ]" doc:name="validate nullPayload"/>
    </flow>
-    
 </mule>

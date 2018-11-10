@@ -5,11 +5,14 @@
    xmlns:context="http://www.springframework.org/schema/context"
    xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:validation="http://www.mulesoft.org/schema/mule/validation" 
+   
    xsi:schemaLocation="
-http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd 
-http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/3.9/mule.xsd 
-http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd 
-http://www.mulesoft.org/schema/mule/coap-server http://www.teslanet.nl/schema/mule/coap-server/2.0/mule-coap-server.xsd 
+   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd 
+   http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/3.9/mule.xsd 
+   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd 
+   http://www.mulesoft.org/schema/mule/coap-server http://www.teslanet.nl/schema/mule/coap-server/2.0/mule-coap-server.xsd 
+   http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/3.9/mule-validation.xsd
    ">
 
   
@@ -32,5 +35,6 @@ http://www.mulesoft.org/schema/mule/coap-server http://www.teslanet.nl/schema/mu
    <flow name="listen-all">
       <coap-server:listen uri="/*" config-ref="config"/>
       <set-payload value="#[message.inboundProperties.'coap.request.confirmable']"/>
+      <validation:is-true message="property class is not String" expression="#[ payload.getClass().isInstance( new java.lang.Boolean( true ) )]" doc:name="validate String class"/>
    </flow>
 </mule>
