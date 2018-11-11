@@ -5,16 +5,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.net.InetAddress;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
-import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.CoAP.Code;
-import org.eclipse.californium.core.coap.CoAP.Type;
+import org.eclipse.californium.core.coap.Request;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -81,7 +78,7 @@ public class OptAcceptTest extends FunctionalMunitSuite
         assertTrue( "response indicates failure", response.isSuccess() );
         Object payload= SerializationUtils.deserialize( response.getPayload());
         assertEquals( "option has wrong class", expectedClass, payload.getClass() );
-        assertEquals( "option has wrong value", expected, (Integer) payload );
+        assertEquals( "option has wrong value", expected, payload );
     }
 
     @Test
@@ -99,7 +96,7 @@ public class OptAcceptTest extends FunctionalMunitSuite
         assertTrue( "response indicates failure", response.isSuccess() );
         Object payload= SerializationUtils.deserialize( response.getPayload());
         assertEquals( "option has wrong class", expectedClass, payload.getClass() );
-        assertEquals( "option has wrong value", expected, (Integer) payload );
+        assertEquals( "option has wrong value", expected, payload );
     }
 
     @Test
@@ -117,7 +114,7 @@ public class OptAcceptTest extends FunctionalMunitSuite
         assertTrue( "response indicates failure", response.isSuccess() );
         Object payload= SerializationUtils.deserialize( response.getPayload());
         assertEquals( "option has wrong class", expectedClass, payload.getClass() );
-        assertEquals( "option has wrong value", expected, (Integer) payload );
+        assertEquals( "option has wrong value", expected, payload );
     }
 
     @Test
@@ -135,6 +132,6 @@ public class OptAcceptTest extends FunctionalMunitSuite
         assertTrue( "response indicates failure", response.isSuccess() );
         Object payload= SerializationUtils.deserialize( response.getPayload());
         assertEquals( "option has wrong class", expectedClass, payload.getClass() );
-        assertEquals( "option has wrong value", expected, (Integer) payload );
+        assertEquals( "option has wrong value", expected, payload );
     }
 }
