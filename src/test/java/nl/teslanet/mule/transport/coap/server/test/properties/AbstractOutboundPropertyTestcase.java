@@ -18,22 +18,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mule.api.MuleEvent;
-import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.transport.PropertyScope;
 import org.mule.munit.common.mocking.MessageProcessorMocker;
-import org.mule.munit.common.mocking.SpyProcess;
 import org.mule.munit.runner.functional.FunctionalMunitSuite;
 
 
-public abstract class AbstractInboundOutboundPropertyTestcase< T > extends FunctionalMunitSuite
+public abstract class AbstractOutboundPropertyTestcase extends FunctionalMunitSuite
 {
     URI uri= null;
-
-    CoapClient client= null;
-
-    private boolean spyActivated;
 
     private static HashMap< Code, String > calls;
 
@@ -74,18 +67,15 @@ public abstract class AbstractInboundOutboundPropertyTestcase< T > extends Funct
     @After
     public void tearDown() throws Exception
     {
-        if ( client != null ) client.shutdown();
     }
-
-    abstract protected void addOption( OptionSet options );
 
     abstract protected Object fetchOption( OptionSet options );
 
     abstract protected String getPropertyName();
 
     abstract protected Object getPropertyValue();
-    
-    abstract protected Object getExpectedPropertyValue();
+
+    abstract protected Object getExpectedOptionValue();
 
     private CoapClient getClient( String path )
     {
@@ -94,24 +84,7 @@ public abstract class AbstractInboundOutboundPropertyTestcase< T > extends Funct
         return client;
     }
 
-    private void spyMessage( final String propertyName, final Object expected )
-    {
-        SpyProcess beforeSpy= new SpyProcess()
-            {
-                @Override
-                public void spy( MuleEvent event ) throws MuleException
-                {
-                    Object prop= event.getMessage().getInboundProperty( propertyName );
-                    assertEquals( "property has wrong class", expected.getClass(), prop.getClass() );
-                    assertEquals( "property has wrong value", expected, prop );
-                    spyActivated= true;
-                }
-            };
-
-        spyMessageProcessor( "set-payload" ).ofNamespace( "mule" ).before( beforeSpy );
-    }
-
-    private void injectMessage( String propertyName, Object propertyValue )
+    private void mockMessage( String propertyName, Object propertyValue )
     {
         HashMap< String, Object > props= new HashMap< String, Object >();
         props.put( propertyName, propertyValue );
@@ -123,29 +96,9 @@ public abstract class AbstractInboundOutboundPropertyTestcase< T > extends Funct
     }
 
     @Test
-    public void testInbound()
+    public void testOutbound()
     {
-        spyMessage( getPropertyName(), getExpectedPropertyValue() );
-
-        for ( Entry< Code, String > entry : calls.entrySet() )
-        {
-            spyActivated= false;
-            CoapClient client= getClient( entry.getValue() );
-            Request request= new Request( entry.getKey() );
-            addOption( request.setPayload( "nothing important" ).getOptions() );
-
-            CoapResponse response= client.advanced( request );
-
-            assertNotNull( "get gave no response", response );
-            assertTrue( "response indicates failure", response.isSuccess() );
-            assertTrue( "spy was not activated", spyActivated );
-        }
-    }
-
-    @Test
-    public void testOutbound1()
-    {
-        injectMessage( getPropertyName(), getPropertyValue() );
+        mockMessage( getPropertyName(), getPropertyValue() );
 
         for ( Entry< Code, String > entry : calls.entrySet() )
         {
@@ -157,7 +110,9 @@ public abstract class AbstractInboundOutboundPropertyTestcase< T > extends Funct
 
             assertNotNull( "get gave no response", response );
             assertTrue( "response indicates failure", response.isSuccess() );
-            assertEquals( "option has wrong value", getExpectedPropertyValue(), fetchOption( response.getOptions() ) );
+            assertEquals( "option has wrong value", getExpectedOptionValue(), fetchOption( response.getOptions() ) );
+            
+            client.shutdown();
         }
     }
 }
