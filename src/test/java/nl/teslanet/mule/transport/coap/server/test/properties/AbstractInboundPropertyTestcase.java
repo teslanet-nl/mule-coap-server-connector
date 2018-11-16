@@ -23,6 +23,8 @@ import org.mule.api.MuleException;
 import org.mule.munit.common.mocking.SpyProcess;
 import org.mule.munit.runner.functional.FunctionalMunitSuite;
 
+import nl.teslanet.mule.transport.coap.commons.options.InvalidETagException;
+
 
 public abstract class AbstractInboundPropertyTestcase extends FunctionalMunitSuite
 {
@@ -74,11 +76,11 @@ public abstract class AbstractInboundPropertyTestcase extends FunctionalMunitSui
         if ( client != null ) client.shutdown();
     }
 
-    abstract protected void addOption( OptionSet options );
+    abstract protected void addOption( OptionSet options ) throws Exception;
 
     abstract protected String getPropertyName();
 
-    abstract protected Object getExpectedPropertyValue();
+    abstract protected Object getExpectedPropertyValue() throws Exception;
 
     private CoapClient getClient( String path )
     {
@@ -105,7 +107,7 @@ public abstract class AbstractInboundPropertyTestcase extends FunctionalMunitSui
     }
 
     @Test
-    public void testInbound()
+    public void testInbound() throws Exception
     {
         spyMessage( getPropertyName(), getExpectedPropertyValue() );
 

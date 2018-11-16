@@ -4,7 +4,7 @@ package nl.teslanet.mule.transport.coap.server.test.properties;
 import org.eclipse.californium.core.coap.OptionSet;
 
 
-public class OptContentFormatOutboundTest extends AbstractOutboundPropertyTestcase
+public class OptContentFormatOutbound1Test extends AbstractOutboundPropertyTestcase
 {
     @Override
     protected String getPropertyName()
