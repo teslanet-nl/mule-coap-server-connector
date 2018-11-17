@@ -23,8 +23,6 @@ import org.mule.api.MuleException;
 import org.mule.munit.common.mocking.SpyProcess;
 import org.mule.munit.runner.functional.FunctionalMunitSuite;
 
-import nl.teslanet.mule.transport.coap.commons.options.InvalidETagException;
-
 
 public abstract class AbstractInboundPropertyTestcase extends FunctionalMunitSuite
 {
