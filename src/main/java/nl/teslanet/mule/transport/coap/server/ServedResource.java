@@ -197,8 +197,11 @@ public class ServedResource extends CoapResource
                     responseCode= ResponseCode.valueOf( outboundProperties.get( PropertyNames.COAP_RESPONSE_CODE ).toString() );
                 }
                 Response response= new Response( responseCode );
-                Options options= new Options( outboundProperties );
-                response.setOptions( options.getOptionSet() );
+                Options.fillOptionSet( response.getOptions(), outboundProperties, false );
+                //TODO setOptions uses copyconstructor of OptionSet that does not copy size1 and size2 option (bug)
+                //using copyconstructor is inefficient anyhow
+                //Options options= new Options( outboundProperties );
+                //response.setOptions( options.getOptionSet() );
 
                 if ( byte[].class.isInstance( outboundPayload ) )
                 {
