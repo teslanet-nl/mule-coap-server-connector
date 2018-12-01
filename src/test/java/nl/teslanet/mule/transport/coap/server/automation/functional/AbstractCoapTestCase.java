@@ -3,22 +3,19 @@
  */
 package nl.teslanet.mule.transport.coap.server.automation.functional;
 
-import static org.junit.Assert.*;
-import nl.teslanet.mule.transport.coap.server.CoapServerConnector;
-import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
-
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
+
+import nl.teslanet.mule.transport.coap.server.CoapServerConnector;
 
 /**
  * @author rogier
  *
  */
-public class AbstractTestCases extends AbstractTestCase< CoapServerConnector >
+public class AbstractCoapTestCase extends AbstractTestCase< CoapServerConnector >
 {
-    public AbstractTestCases( )
+    public AbstractCoapTestCase( )
     {
         super( CoapServerConnector.class );
     }
@@ -26,13 +23,13 @@ public class AbstractTestCases extends AbstractTestCase< CoapServerConnector >
     @Before
     public void setup()
     {
-        // TODO
+        // nop
     }
 
     @After
     public void tearDown()
     {
-        // TODO
+        // nop
     }
 
 }

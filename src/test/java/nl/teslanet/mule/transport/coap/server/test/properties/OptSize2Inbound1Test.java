@@ -3,26 +3,26 @@ package nl.teslanet.mule.transport.coap.server.test.properties;
 
 import org.eclipse.californium.core.coap.OptionSet;
 
-//TODO configuration option isProxy and automatic  5.05 (Proxying Not Supported (when false)) 
-public class OptProxyUri1Test extends AbstractInboundPropertyTestcase
+//TODO add observe functionality test
+public class OptSize2Inbound1Test extends AbstractInboundPropertyTestcase
 {
 
     @Override
     protected void addOption( OptionSet options )
     {
-        options.setProxyUri( "coap://some.server.org/test" );
+        options.setSize2( 456 );
     }
 
     @Override
     protected String getPropertyName()
     {
-        return "coap.opt.proxy_uri";
+        return "coap.opt.size2";
     }
 
     @Override
     protected Object getExpectedPropertyValue()
     {
-        return new String( "coap://some.server.org/test" );
+        return new Integer( 456 );
     }
 
 }

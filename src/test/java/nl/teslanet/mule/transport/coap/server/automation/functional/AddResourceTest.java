@@ -1,35 +1,20 @@
 package nl.teslanet.mule.transport.coap.server.automation.functional;
 
 
-import static org.junit.Assert.*;
-import nl.teslanet.mule.transport.coap.server.CoapServerConnector;
-import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
+import static org.junit.Assert.assertEquals;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
+
+import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
 
 
-public class AddResourceTest extends AbstractTestCases
+public class AddResourceTest extends AbstractCoapTestCase
 {
 
     public AddResourceTest()
     {
         super( );
-    }
-
-    @Before
-    public void setup()
-    {
-        // TODO
-    }
-
-    @After
-    public void tearDown()
-    {
-        // TODO
     }
 
     @Ignore
