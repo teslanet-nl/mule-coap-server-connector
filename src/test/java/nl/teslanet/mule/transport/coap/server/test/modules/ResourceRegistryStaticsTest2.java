@@ -1,23 +1,18 @@
 package nl.teslanet.mule.transport.coap.server.test.modules;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import java.util.List;
-
-import org.eclipse.californium.core.CoapResource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import nl.teslanet.mule.transport.coap.server.Listener;
 import nl.teslanet.mule.transport.coap.server.ResourceRegistry;
-import nl.teslanet.mule.transport.coap.server.ServedResource;
-import nl.teslanet.mule.transport.coap.server.config.ResourceConfig;
 import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
-import nl.teslanet.mule.transport.coap.server.generated.sources.ListenMessageSource;
 
 
 public class ResourceRegistryStaticsTest2
