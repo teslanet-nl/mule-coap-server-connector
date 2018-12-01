@@ -15,25 +15,19 @@
    http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/3.9/mule-validation.xsd
    ">
 
-  
-
    <coap-server:config name="config" exchangeLifetime="1" logCoapMessages="true">
       <coap-server:resources>
-         <coap-server:resource name="opt_accept">
+         <coap-server:resource name="service">
             <coap-server:resources>
-               <coap-server:resource name="get_me" get="true"/>
-               <coap-server:resource name="put_me" put="true"/>
-               <coap-server:resource name="post_me" post="true"/>
-               <coap-server:resource name="delete_me" delete="true"/>
+               <coap-server:resource name="call_me" get="true" put="true" post="true"  delete="true"/>
             </coap-server:resources>
          </coap-server:resource>
       </coap-server:resources>
-
    </coap-server:config>
 
-
-   <flow name="listen-all">
-      <coap-server:listen uri="/*" config-ref="config"/>
-      <set-payload value="#[org.apache.commons.lang3.SerializationUtils.serialize( message.inboundProperties.'coap.opt.accept')]"/>
+   <flow name="listen">
+      <coap-server:listen uri="/service/*" config-ref="config"/>
+      <set-payload value="mock_or_spy"/>
    </flow>
+
 </mule>

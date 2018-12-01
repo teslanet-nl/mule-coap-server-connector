@@ -2,13 +2,13 @@ package nl.teslanet.mule.transport.coap.server.test.properties;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
-
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP.Code;
@@ -32,7 +32,8 @@ public abstract class AbstractInboundPropertyTestcase extends FunctionalMunitSui
 
     private boolean spyActivated;
 
-    private static HashMap< Code, String > calls;
+    private static ArrayList< Code > calls;
+    private static HashMap< Code, String > paths;
 
     @Override
     protected String getConfigResources()
@@ -55,11 +56,17 @@ public abstract class AbstractInboundPropertyTestcase extends FunctionalMunitSui
     @BeforeClass
     static public void setUpClass() throws Exception
     {
-        calls= new HashMap< Code, String >();
-        calls.put( Code.GET, "/get_me" );
-        calls.put( Code.PUT, "/put_me" );
-        calls.put( Code.POST, "/post_me" );
-        calls.put( Code.DELETE, "/delete_me" );
+        calls= new ArrayList< Code >();
+        calls.add( Code.GET );
+        calls.add( Code.PUT );
+        calls.add( Code.POST );
+        calls.add( Code.DELETE );
+        
+        paths= new HashMap< Code, String >();
+        paths.put( Code.GET, "/service/get_me" );
+        paths.put( Code.PUT, "/service/put_me" );
+        paths.put( Code.POST, "/service/post_me" );
+        paths.put( Code.DELETE, "/service/delete_me" );
     }
 
     @Before
@@ -80,10 +87,15 @@ public abstract class AbstractInboundPropertyTestcase extends FunctionalMunitSui
 
     abstract protected Object getExpectedPropertyValue() throws Exception;
 
+    protected Boolean propertyValueIsByteArray()
+    {
+        return Boolean.FALSE;
+    }
+    
     private CoapClient getClient( String path )
     {
-        CoapClient client= new CoapClient( uri.resolve( "/service" + path ) );
-        client.setTimeout( 1000L );
+        CoapClient client= new CoapClient( uri.resolve( path ) );
+        client.setTimeout( 2000L );
         return client;
     }
 
@@ -96,7 +108,14 @@ public abstract class AbstractInboundPropertyTestcase extends FunctionalMunitSui
                 {
                     Object prop= event.getMessage().getInboundProperty( propertyName );
                     assertEquals( "property has wrong class", expected.getClass(), prop.getClass() );
-                    assertEquals( "property has wrong value", expected, prop );
+                    if ( propertyValueIsByteArray())
+                    {
+                        assertArrayEquals( "property has wrong value", (byte[])expected, (byte[])prop );
+                    }
+                    else
+                    {
+                        assertEquals( "property has wrong value", expected, prop );
+                    }
                     spyActivated= true;
                 }
             };
@@ -104,16 +123,16 @@ public abstract class AbstractInboundPropertyTestcase extends FunctionalMunitSui
         spyMessageProcessor( "set-payload" ).ofNamespace( "mule" ).before( beforeSpy );
     }
 
-    @Test
+    @Test(timeout=2000L)
     public void testInbound() throws Exception
     {
         spyMessage( getPropertyName(), getExpectedPropertyValue() );
 
-        for ( Entry< Code, String > entry : calls.entrySet() )
+        for ( Code call : calls )
         {
             spyActivated= false;
-            CoapClient client= getClient( entry.getValue() );
-            Request request= new Request( entry.getKey() );
+            CoapClient client= getClient( getPath( call ) );
+            Request request= new Request( call );
             addOption( request.setPayload( "nothing important" ).getOptions() );
 
             CoapResponse response= client.advanced( request );
@@ -124,5 +143,10 @@ public abstract class AbstractInboundPropertyTestcase extends FunctionalMunitSui
             
             client.shutdown();
         }
+    }
+
+    protected String getPath( Code call )
+    {
+        return paths.get( call );
     }
 }
