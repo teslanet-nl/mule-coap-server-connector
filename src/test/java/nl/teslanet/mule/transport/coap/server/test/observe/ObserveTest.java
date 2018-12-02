@@ -119,12 +119,12 @@ public class ObserveTest extends FunctionalMunitSuite
         for ( int i= 0; i < contents.size(); i++ )
         {
             response= observations.get( i );
-            assertNotNull( "observations nr: " + i + " is empty", response );
-            assertTrue( "observations nr: " + i + " indicates failure", response.isSuccess() );
-            assertEquals( "observations nr: " + i + " has wrong content", contents.get( i ), response.getResponseText() );
+            assertNotNull( "observation nr: " + i + " is empty", response );
+            assertTrue( "observation nr: " + i + " indicates failure", response.isSuccess() );
+            assertEquals( "observation nr: " + i + " has wrong content", contents.get( i ), response.getResponseText() );
         }
 
-        relation.reactiveCancel();;
+        relation.reactiveCancel();
         client.shutdown();
     }
 }
