@@ -31,8 +31,6 @@
    
    <flow name="listen">
       <coap-server:listen uri="/service/*" config-ref="config"/>
-      <logger level="WARN"/>
-      <logger level="WARN" message="#[payload.size()]"/>
       <set-payload value="mock_or_spy"/>
    </flow>
    

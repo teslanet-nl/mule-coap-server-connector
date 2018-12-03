@@ -16,7 +16,6 @@ import org.eclipse.californium.core.coap.Request;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
@@ -52,7 +51,7 @@ public class BlockwiseTest extends FunctionalMunitSuite
     {
         return false;
     }
-
+    //TODO look into difference with non-blockwise 
     @BeforeClass
     static public void setUpClass() throws Exception
     {
@@ -60,13 +59,13 @@ public class BlockwiseTest extends FunctionalMunitSuite
         //calls.add( Code.GET );
         calls.add( Code.PUT );
         calls.add( Code.POST );
-        calls.add( Code.DELETE );
+        //calls.add( Code.DELETE );
         
         paths= new HashMap< Code, String >();
         //paths.put( Code.GET, "/service/get_me" );
         paths.put( Code.PUT, "/service/put_me" );
         paths.put( Code.POST, "/service/post_me" );
-        paths.put( Code.DELETE, "/service/delete_me" );
+        //paths.put( Code.DELETE, "/service/delete_me" );
     }
 
     @Before
@@ -89,7 +88,7 @@ public class BlockwiseTest extends FunctionalMunitSuite
     private CoapClient getClient( String path )
     {
         CoapClient client= new CoapClient( uri.resolve( path ) );
-        client.setTimeout( 20000000L );
+        client.setTimeout( 2000L );
         return client;
     }
 
@@ -110,8 +109,7 @@ public class BlockwiseTest extends FunctionalMunitSuite
         spyMessageProcessor( "set-payload" ).ofNamespace( "mule" ).before( beforeSpy );
     }
 
-    @Ignore //not ready yet
-    @Test(timeout=2000000L)
+    @Test(timeout=20000L)
     public void testLargeRequest() throws Exception
     {
         spyMessage( );
@@ -120,19 +118,43 @@ public class BlockwiseTest extends FunctionalMunitSuite
         {
             spyActivated= false;
             CoapClient client= getClient( getPath( call ) );
+            client.useLateNegotiation();
             Request request= new Request( call );
             request.setPayload( LargeContent.get() );
 
             CoapResponse response= client.advanced( request );
 
             assertNotNull( "get gave no response", response );
-            assertTrue( "response indicates failure", response.isSuccess() );
+            assertTrue( "response indicates failure: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
             assertTrue( "spy was not activated", spyActivated );
             
             client.shutdown();
         }
     }
 
+    @Test(timeout=20000L)
+    public void testLargeRequestEarlyNegotiation() throws Exception
+    {
+        spyMessage( );
+
+        for ( Code call : calls )
+        {
+            spyActivated= false;
+            CoapClient client= getClient( getPath( call ) );
+            client.useEarlyNegotiation(32);
+            Request request= new Request( call );
+            request.setPayload( LargeContent.get() );
+
+            CoapResponse response= client.advanced( request );
+
+            assertNotNull( "get gave no response", response );
+            assertTrue( "response indicates failure: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
+            assertTrue( "spy was not activated", spyActivated );
+            
+            client.shutdown();
+        }
+    }
+    
     protected String getPath( Code call )
     {
         return paths.get( call );
