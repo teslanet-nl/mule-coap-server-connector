@@ -1,6 +1,8 @@
 package nl.teslanet.mule.transport.coap.server.test.utils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 
 import org.apache.commons.io.IOUtils;
@@ -15,12 +17,23 @@ public class Data
     /**
      * Read resource as string.
      *
-     * @param filePath the file path
+     * @param resourcePath the resource path
      * @return the string
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static String readResourceAsString(String filePath) throws java.io.IOException {
-        return IOUtils.resourceToString( filePath, Charset.defaultCharset() );
+    public static String readResourceAsString(String resourcePath) throws java.io.IOException {
+        return IOUtils.resourceToString( resourcePath, Charset.defaultCharset() );
+    }
+
+    /**
+     * Read resource as inputstream.
+     *
+     * @param resourcePath the resource path
+     * @return the string
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static InputStream readResourceAsStream(String resourcePath) throws java.io.IOException {
+        return new ByteArrayInputStream( IOUtils.resourceToByteArray( resourcePath ) );
     }
 
 

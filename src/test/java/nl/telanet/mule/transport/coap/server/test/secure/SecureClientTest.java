@@ -1,14 +1,18 @@
 package nl.telanet.mule.transport.coap.server.test.secure;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.io.InputStream;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
@@ -16,11 +20,12 @@ import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.CoapEndpoint.CoapEndpointBuilder;
-import org.eclipse.californium.core.network.Endpoint;
-import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig.Builder;
+import org.eclipse.californium.scandium.dtls.pskstore.InMemoryPskStore;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,9 +41,9 @@ import nl.teslanet.mule.transport.coap.server.test.utils.Data;
 
 public class SecureClientTest extends FunctionalMunitSuite
 {
-    URI uri= null;
+    private static URI uri= null;
 
-    CoapClient client= null;
+    private CoapClient client= null;
 
     private boolean spyActivated;
 
@@ -47,6 +52,8 @@ public class SecureClientTest extends FunctionalMunitSuite
     private static ArrayList< Code > outboundCalls;
 
     private static HashMap< Code, String > paths;
+
+    private static CoapEndpoint endpoint;
 
     @Override
     protected String getConfigResources()
@@ -66,7 +73,6 @@ public class SecureClientTest extends FunctionalMunitSuite
         return false;
     }
 
-    //TODO look into difference with non-blockwise 
     @BeforeClass
     static public void setUpClass() throws Exception
     {
@@ -86,38 +92,72 @@ public class SecureClientTest extends FunctionalMunitSuite
         paths.put( Code.PUT, "/service/put_me" );
         paths.put( Code.POST, "/service/post_me" );
         paths.put( Code.DELETE, "/service/delete_me" );
+
+        uri= new URI( "coaps", "127.0.0.1", null, null, null );
+
+        //keyStore
+        KeyStore keyStore= KeyStore.getInstance( "JKS" );
+        InputStream in= Data.readResourceAsStream( "/certs/keyStore.jks" );
+        keyStore.load( in, "endPass".toCharArray() );
+        //in.close();
+
+        //trustStore
+        KeyStore trustStore= KeyStore.getInstance( "JKS" );
+        in= Data.readResourceAsStream( "/certs/trustStore.jks" );
+        trustStore.load( in, "rootPass".toCharArray() );
+        //in.close();
+
+        // You can load multiple certificates if needed
+        Certificate[] trustedCertificates= new Certificate [1];
+        trustedCertificates[0]= trustStore.getCertificate( "root" );
+
+        //pskStore
+        InMemoryPskStore pskStore= new InMemoryPskStore();
+
+        //dtls builder
+        Builder dtlsBuilder= new DtlsConnectorConfig.Builder();
+
+        dtlsBuilder.setPskStore( pskStore );
+        dtlsBuilder.setIdentity( (PrivateKey) keyStore.getKey( "client", "endPass".toCharArray() ), keyStore.getCertificateChain( "client" ), true );
+        dtlsBuilder.setTrustStore( trustedCertificates );
+        dtlsBuilder.setEnableAddressReuse( false );
+        dtlsBuilder.setConnectionThreadCount( 1 );
+
+        //connector
+
+        DTLSConnector dtlsConnector= new DTLSConnector( dtlsBuilder.build() );
+
+        //endpoint
+
+        CoapEndpointBuilder endpointBuilder= new CoapEndpoint.CoapEndpointBuilder();
+        endpointBuilder.setConnector( dtlsConnector );
+        endpoint= endpointBuilder.build();
+    }
+
+    @AfterClass
+    static public void tearDownClass()
+    {
+        endpoint.destroy();
     }
 
     @Before
     public void setUp() throws Exception
     {
-        uri= new URI( "coaps", "127.0.0.1", null, null, null );
+        client= new CoapClient();
+        client.setTimeout( 2000000L );
+        client.setEndpoint( endpoint );
     }
 
     @After
     public void tearDown() throws Exception
     {
         if ( client != null ) client.shutdown();
+        client= null;
     }
 
     protected String getPath( Code call )
     {
         return paths.get( call );
-    }
-
-    private CoapClient getClient( String path )
-    {
-        CoapClient client= new CoapClient( uri.resolve( path ) );
-        client.setTimeout( 2000L );
-        Builder dtlsBuilder = new DtlsConnectorConfig.Builder();
-        dtlsBuilder.setPskStore( Data.readResourceAsString( filePath ));
-        DtlsConnectorConfig dtlsConfig = new DtlsConnectorConfig.Builder();
-        CoapEndpointBuilder endpointBuilder= new CoapEndpoint.CoapEndpointBuilder();
-        NetworkConfig config= new NetworkConfig();
-        endpointBuilder.setNetworkConfig( config );
-        endpointBuilder.setConnector( new  )
-        client.setEndpoint( endpointBuilder.build() );
-        return client;
     }
 
     private void spyRequestMessage()
@@ -129,7 +169,7 @@ public class SecureClientTest extends FunctionalMunitSuite
                 {
                     Object payload= event.getMessage().getPayload();
                     assertEquals( "payload has wrong class", byte[].class, payload.getClass() );
-                    assertArrayEquals( "content invalid", new String( "test-payload").getBytes(), (byte[])payload);
+                    assertArrayEquals( "content invalid", new String( "test-payload" ).getBytes(), (byte[]) payload );
                     spyActivated= true;
                 }
             };
@@ -144,7 +184,7 @@ public class SecureClientTest extends FunctionalMunitSuite
         mocker.thenReturn( messageToBeReturned );
     }
 
-    @Test
+    @Test( timeout= 2000000L)
     public void testInboundRequest() throws Exception
     {
         spyRequestMessage();
@@ -152,9 +192,9 @@ public class SecureClientTest extends FunctionalMunitSuite
         for ( Code call : inboundCalls )
         {
             spyActivated= false;
-            CoapClient client= getClient( getPath( call ) );
             client.useLateNegotiation();
             Request request= new Request( call );
+            request.setURI( uri.resolve( getPath( call ) ) );
             request.setPayload( "test-payload" );
 
             CoapResponse response= client.advanced( request );
@@ -167,45 +207,22 @@ public class SecureClientTest extends FunctionalMunitSuite
         }
     }
 
-    @Test(timeout= 20000L)
-    public void testLargeInboundRequestEarlyNegotiation() throws Exception
-    {
-        spyRequestMessage();
-
-        for ( Code call : inboundCalls )
-        {
-            spyActivated= false;
-            CoapClient client= getClient( getPath( call ) );
-            client.useEarlyNegotiation( 32 );
-            Request request= new Request( call );
-            request.setPayload( LargeContent.get() );
-
-            CoapResponse response= client.advanced( request );
-
-            assertNotNull( "get gave no response", response );
-            assertTrue( "response indicates failure: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
-            assertTrue( "spy was not activated", spyActivated );
-
-            client.shutdown();
-        }
-    }
-
-    @Test(timeout= 2000000L)
-    public void testLargeOutboundRequest() throws Exception
+    @Test
+    public void testOutboundRequest() throws Exception
     {
         mockResponseMessage();
 
         for ( Code call : outboundCalls )
         {
-            CoapClient client= getClient( getPath( call ) );
             Request request= new Request( call );
+            request.setURI( uri.resolve( getPath( call ) ) );
             request.setPayload( "nothing important" );
 
             CoapResponse response= client.advanced( request );
 
             assertNotNull( "get gave no response", response );
             assertTrue( "response indicates failure: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
-            assertTrue( "wrong payload in response", LargeContent.validate( response.getPayload() ) );
+            assertTrue( "wrong payload in response", Data.validateLargeContent( response.getPayload() ) );
 
             client.shutdown();
         }

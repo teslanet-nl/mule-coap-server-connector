@@ -14,7 +14,6 @@
 
 package nl.teslanet.mule.transport.coap.server;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
