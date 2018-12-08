@@ -130,6 +130,12 @@
 		</dependency>
       
    		<!-- Test Dependencies -->
+ 		<dependency>
+		    <groupId>org.eclipse.californium</groupId>
+		    <artifactId>demo-certs</artifactId>
+		    <version>${californium.version}</version>
+		    <scope>test</scope>
+		</dependency>
 	     <dependency>
              <groupId>com.mulesoft.munit</groupId>
              <artifactId>mule-munit-support</artifactId>
@@ -183,6 +189,12 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.6</version>
 			<scope>test</scope>
 		</dependency>
     </dependencies>

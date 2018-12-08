@@ -15,7 +15,7 @@
    http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/3.9/mule-validation.xsd
    ">
    
-   <coap-server:config name="config" exchangeLifetime="10" logCoapMessages="true">
+   <coap-server:config name="config" exchangeLifetime="20" logCoapMessages="true">
       <coap-server:resources>
          <coap-server:resource name="service">
             <coap-server:resources>
