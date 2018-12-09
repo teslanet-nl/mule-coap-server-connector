@@ -98,13 +98,13 @@ public class SecureClientTest extends FunctionalMunitSuite
 
         //keyStore
         KeyStore keyStore= KeyStore.getInstance( "JKS" );
-        InputStream in= Data.readResourceAsStream( "/certs/keyStore.jks" );
+        InputStream in= Data.readResourceAsStream( "certs/keyStore.jks" );
         keyStore.load( in, "endPass".toCharArray() );
         //in.close();
 
         //trustStore
         KeyStore trustStore= KeyStore.getInstance( "JKS" );
-        in= Data.readResourceAsStream( "/certs/trustStore.jks" );
+        in= Data.readResourceAsStream( "certs/trustStore.jks" );
         trustStore.load( in, "rootPass".toCharArray() );
         //in.close();
 

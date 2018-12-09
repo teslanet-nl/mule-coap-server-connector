@@ -1,11 +1,10 @@
 package nl.teslanet.mule.transport.coap.server.test.utils;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 
-import org.apache.commons.io.IOUtils;
+import org.mule.util.IOUtils;
+
 
 public class Data
 {
@@ -22,7 +21,7 @@ public class Data
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public static String readResourceAsString(String resourcePath) throws java.io.IOException {
-        return IOUtils.resourceToString( resourcePath, Charset.defaultCharset() );
+        return IOUtils.getResourceAsString( resourcePath, Data.class );
     }
 
     /**
@@ -33,7 +32,7 @@ public class Data
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public static InputStream readResourceAsStream(String resourcePath) throws java.io.IOException {
-        return new ByteArrayInputStream( IOUtils.resourceToByteArray( resourcePath ) );
+        return IOUtils.getResourceAsStream( resourcePath, Data.class, true, true );
     }
 
 
