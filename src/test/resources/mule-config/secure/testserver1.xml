@@ -16,8 +16,9 @@
    ">
    
    <coap-server:config 
+   	
    	name="config" 
-   	exchangeLifetime="20" 
+   	exchangeLifetime="20000" 
    	logCoapMessages="true"
    	secure="true"
 	keyStoreLocation="certs/keyStore.jks" 
@@ -25,7 +26,8 @@
 	privateKeyAlias="server"
 	trustStoreLocation="certs/trustStore.jks" 
 	trustStorePassword="rootPass"
-	trustedRootCertificateAlias="root">
+	trustedRootCertificateAlias="root"
+	>
 		<coap-server:resources>
 		   <coap-server:resource name="service">
 		      <coap-server:resources>

@@ -20,6 +20,7 @@ import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.CoapEndpoint.CoapEndpointBuilder;
+import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig.Builder;
@@ -58,7 +59,7 @@ public class SecureClientTest extends FunctionalMunitSuite
     @Override
     protected String getConfigResources()
     {
-        return "mule-config/blockwise/testserver1.xml";
+        return "mule-config/secure/testserver1.xml";
     };
 
     @Override
@@ -131,12 +132,19 @@ public class SecureClientTest extends FunctionalMunitSuite
 
         CoapEndpointBuilder endpointBuilder= new CoapEndpoint.CoapEndpointBuilder();
         endpointBuilder.setConnector( dtlsConnector );
+        NetworkConfig config= NetworkConfig.createStandardWithoutFile();
+        config.setInt(NetworkConfig.Keys.ACK_TIMEOUT, 20000 );
+        config.setLong(NetworkConfig.Keys.EXCHANGE_LIFETIME, 30000L );
+        //config.setLong(NetworkConfig.Keys.DTLS_AUTO_RESUME_TIMEOUT, 30000L );
+        endpointBuilder.setNetworkConfig( config );
         endpoint= endpointBuilder.build();
+        endpoint.start();
     }
 
     @AfterClass
     static public void tearDownClass()
     {
+        endpoint.stop();
         endpoint.destroy();
     }
 
@@ -144,7 +152,7 @@ public class SecureClientTest extends FunctionalMunitSuite
     public void setUp() throws Exception
     {
         client= new CoapClient();
-        client.setTimeout( 2000000L );
+        client.setTimeout( 200000L );
         client.setEndpoint( endpoint );
     }
 
@@ -169,7 +177,7 @@ public class SecureClientTest extends FunctionalMunitSuite
                 {
                     Object payload= event.getMessage().getPayload();
                     assertEquals( "payload has wrong class", byte[].class, payload.getClass() );
-                    assertArrayEquals( "content invalid", new String( "test-payload" ).getBytes(), (byte[]) payload );
+                    assertArrayEquals( "content invalid", "test-payload".getBytes(), (byte[]) payload );
                     spyActivated= true;
                 }
             };
@@ -222,7 +230,7 @@ public class SecureClientTest extends FunctionalMunitSuite
 
             assertNotNull( "get gave no response", response );
             assertTrue( "response indicates failure: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
-            assertTrue( "wrong payload in response", Data.validateLargeContent( response.getPayload() ) );
+            assertArrayEquals( "wrong payload in response", "test-payload".getBytes(), response.getPayload() );
 
             client.shutdown();
         }

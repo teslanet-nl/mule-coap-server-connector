@@ -20,6 +20,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.List;
 
@@ -174,6 +175,7 @@ public class CoapServerConnector
             try
             {
                 in= IOUtils.getResourceAsStream( config.getKeyStoreLocation(), server.getClass(), true, true );
+                //TODO test for null
             }
             catch ( IOException e1 )
             {
@@ -211,20 +213,14 @@ public class CoapServerConnector
                 }
 
                 // You can load multiple certificates if needed
+                Certificate[] trustedCertificates = new Certificate[1];
+                trustedCertificates[0] = trustStore.getCertificate( config.getTrustedRootCertificateAlias());
+                
                 DtlsConnectorConfig.Builder dtlsBuilder= new DtlsConnectorConfig.Builder();
                 dtlsBuilder.setAddress( config.getInetSocketAddress() );
                 dtlsBuilder.setPskStore( pskStore );
                 try
                 {
-                    dtlsBuilder.setTrustStore( trustStore.getCertificateChain( config.getTrustedRootCertificateAlias() ) );
-                }
-                catch ( Exception e )
-                {
-                    throw new EndpointConstructionException( "certificate chain with alias { " + config.getTrustedRootCertificateAlias() + " } not found in truststore", e );
-                }
-                try
-                {
-
                     dtlsBuilder.setIdentity(
                         (PrivateKey) keyStore.getKey( config.getPrivateKeyAlias(), config.getKeyStorePassword().toCharArray() ),
                         keyStore.getCertificateChain( config.getPrivateKeyAlias() ),
@@ -234,6 +230,15 @@ public class CoapServerConnector
                 {
                     throw new EndpointConstructionException( "identity with private key alias { " + config.getPrivateKeyAlias() + " } could not be set" );
                 }
+                try
+                {
+                    dtlsBuilder.setTrustStore( trustedCertificates );
+                }
+                catch ( Exception e )
+                {
+                    throw new EndpointConstructionException( "certificate chain with alias { " + config.getTrustedRootCertificateAlias() + " } not found in truststore", e );
+                }
+
                 DTLSConnector dtlsConnector= new DTLSConnector( dtlsBuilder.build() );
 
                 CoapEndpoint.CoapEndpointBuilder builder= new CoapEndpoint.CoapEndpointBuilder();
@@ -242,6 +247,10 @@ public class CoapServerConnector
                 server.addEndpoint( builder.build() );
             }
             catch ( IOException e1 )
+            {
+                throw new EndpointConstructionException( "cannot load truststore from { " + config.getTrustStoreLocation() + " }", e1 );
+            }
+            catch ( KeyStoreException e1 )
             {
                 throw new EndpointConstructionException( "cannot load truststore from { " + config.getTrustStoreLocation() + " }", e1 );
             }
