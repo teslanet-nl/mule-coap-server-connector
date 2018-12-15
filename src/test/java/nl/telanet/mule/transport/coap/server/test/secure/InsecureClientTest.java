@@ -116,7 +116,6 @@ public class InsecureClientTest extends FunctionalMunitSuite
         spyMessageProcessor( "set-payload" ).ofNamespace( "mule" ).before( beforeSpy );
     }
 
-
     @Test()
     public void testInsecureClientGet() throws Exception
     {
@@ -136,7 +135,6 @@ public class InsecureClientTest extends FunctionalMunitSuite
         client.shutdown();
 
     }
-
 
     @Test()
     public void testInsecureClientPost() throws Exception

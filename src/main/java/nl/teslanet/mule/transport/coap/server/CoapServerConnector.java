@@ -175,9 +175,9 @@ public class CoapServerConnector
             try
             {
                 in= IOUtils.getResourceAsStream( config.getKeyStoreLocation(), server.getClass(), true, true );
-                //TODO test for null
+                if ( in == null ) throw new EndpointConstructionException( "resource not found");
             }
-            catch ( IOException e1 )
+            catch ( Exception e1 )
             {
                 throw new EndpointConstructionException( "cannot load keystore from { " + config.getKeyStoreLocation() + " }", e1 );
             }
@@ -203,14 +203,8 @@ public class CoapServerConnector
             try ( InputStream inTrust= IOUtils.getResourceAsStream( config.getTrustStoreLocation(), server.getClass(), true, true ); )
 
             {
-                try
-                {
-                    trustStore.load( inTrust, config.getTrustStorePassword().toCharArray() );
-                }
-                catch ( NoSuchAlgorithmException | CertificateException | IOException e1 )
-                {
-                    throw new EndpointConstructionException( "cannot load truststore from { " + config.getTrustStoreLocation() + " } using passwd ***", e1 );
-                }
+                if ( inTrust == null ) throw new EndpointConstructionException( "resource not found");
+                trustStore.load( inTrust, config.getTrustStorePassword().toCharArray() );
 
                 // You can load multiple certificates if needed
                 Certificate[] trustedCertificates = new Certificate[1];
@@ -250,12 +244,11 @@ public class CoapServerConnector
             {
                 throw new EndpointConstructionException( "cannot load truststore from { " + config.getTrustStoreLocation() + " }", e1 );
             }
-            catch ( KeyStoreException e1 )
+            catch ( Exception e1 )
             {
                 throw new EndpointConstructionException( "cannot load truststore from { " + config.getTrustStoreLocation() + " }", e1 );
             }
         }
-
     }
 
     /**
