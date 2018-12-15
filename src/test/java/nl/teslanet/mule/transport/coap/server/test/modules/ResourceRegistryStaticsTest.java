@@ -15,7 +15,7 @@ import nl.teslanet.mule.transport.coap.server.ResourceRegistry;
 import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
 
 
-public class ResourceRegistryStaticsTest2
+public class ResourceRegistryStaticsTest
 {
     @Rule
     public ExpectedException exception= ExpectedException.none();
