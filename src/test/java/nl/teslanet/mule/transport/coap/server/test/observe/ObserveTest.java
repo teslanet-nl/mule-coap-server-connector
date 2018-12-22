@@ -178,5 +178,6 @@ public class ObserveTest extends FunctionalMunitSuite
 
         relation.reactiveCancel();
         client.shutdown();
+        client2.shutdown();
     }
 }

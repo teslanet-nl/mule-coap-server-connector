@@ -284,23 +284,25 @@ public class ServedResource extends CoapResource
             //connector.getContext().getExceptionListener().handleException( new MessagingException( muleEvent, ex ));
         }
 
-        if ( ( responseEvent != null ) )
+        if ( responseEvent != null && responseEvent.getMessage() != null && responseEvent.getMessage().getExceptionPayload() == null )
         {
             MuleMessage responseMessage= responseEvent.getMessage();
-            if ( responseMessage != null )
+            response= responseMessage.getPayload();
+            for ( String propName : responseEvent.getMessage().getOutboundPropertyNames() )
             {
-                response= responseMessage.getPayload();
-                for ( String propName : responseEvent.getMessage().getOutboundPropertyNames() )
-                {
-                    outboundProperties.put( propName, responseEvent.getMessage().getOutboundProperty( propName ) );
-                } ;
-
-                if ( !outboundProperties.containsKey( PropertyNames.COAP_OPT_CONTENTFORMAT ) )
-                {
-                    String mimeType= responseMessage.getDataType().getMimeType();
-                    outboundProperties.put( PropertyNames.COAP_OPT_CONTENTFORMAT, MediaTypeRegistry.parse( mimeType ) );
-                }
+                outboundProperties.put( propName, responseEvent.getMessage().getOutboundProperty( propName ) );
             } ;
+
+            if ( !outboundProperties.containsKey( PropertyNames.COAP_OPT_CONTENTFORMAT ) )
+            {
+                String mimeType= responseMessage.getDataType().getMimeType();
+                outboundProperties.put( PropertyNames.COAP_OPT_CONTENTFORMAT, MediaTypeRegistry.parse( mimeType ) );
+            }
+        }
+        else
+        {
+            outboundProperties.put( PropertyNames.COAP_RESPONSE_CODE, "INTERNAL_SERVER_ERROR" );
+            response= new String( "EXCEPTION IN PROCESSING FLOW" );
         }
 
         return response;
