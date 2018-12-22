@@ -20,7 +20,7 @@
 	<coap-server:config name="config" exchangeLifetime="1"
 		logCoapMessages="true">
 		<coap-server:resources>
-			<coap-server:resource name="service">
+			<coap-server:resource name="service" post="true">
 				<coap-server:resources>
 					<coap-server:resource name="observe_me" get="true"
 						put="true" observable="true" />
@@ -28,24 +28,60 @@
 			</coap-server:resource>
 		</coap-server:resources>
 	</coap-server:config>
-
-	<flow name="listen">
-		<coap-server:listen uri="/service/observe_me" config-ref="config" />
+	
+	<flow name="listen_service">
+		<coap-server:listen uri="/service" config-ref="config" />
 
 		<set-variable variableName="method"
 			value="#[ message.inboundProperties['coap.request.code']]" doc:name="set method" />
+			<!-- TODO: prepending '/' not needed in the future  -->
+		<set-variable variableName="resource_path"
+			value="#[ '/' + message.inboundProperties['coap.opt.location_path']]" doc:name="set resource_path" />
 			
 		<choice doc:name="by method">
+
+			<when expression="#[ flowVars.method == 'POST' ]">
+				<byte-array-to-string-transformer/>				
+				<invoke object-ref="storage" method="put" methodArguments="#[ flowVars.resource_path ], #[payload]"/>
+				<coap-server:add-resource
+					config-ref="config" 
+					uri="#[flowVars.resource_path]"
+					get="true"
+					put="true" 
+					observable="true" 
+					doc:name="add resource" />
+				<set-property propertyName="coap.opt.location_path" value="#[flowVars.resource_path ]"/>
+				<set-property propertyName="coap.response.code" value="CREATED"/>
+				
+			</when>
+			<otherwise>
+				<set-payload value="not expected" doc:name="Set Payload" />
+            	<set-property propertyName="coap.response.code" value="BAD_REQUEST"/>
+			</otherwise>
+		</choice>
+	</flow>
+	
+	
+	<flow name="listen_resource">
+		<coap-server:listen uri="/service/*" config-ref="config" />
+
+		<set-variable variableName="method"
+			value="#[ message.inboundProperties['coap.request.code']]" doc:name="set method" />
+		<set-variable variableName="uri"
+			value="#[ message.inboundProperties['coap.request.uri']]" doc:name="set method" />
+		
+		
+		<choice doc:name="by method">
 			<when expression="#[ flowVars.method == 'GET']">
-				<invoke object-ref="storage" method="get" methodArguments="'payload'"/>
+				<invoke object-ref="storage" method="get" methodArguments="#[ flowVars.uri ]"/>
 		
 			</when>
 			<when expression="#[ flowVars.method == 'PUT']">
 				<byte-array-to-string-transformer/>				
-				<invoke object-ref="storage" method="put" methodArguments="'payload', #[payload]"/>
+				<invoke object-ref="storage" method="put" methodArguments="#[ flowVars.uri ], #[payload]"/>
 				<coap-server:resource-changed
-					config-ref="config" uri="/service/observe_me"
-					doc:name="changed /service/observe_me" />
+					config-ref="config" uri="#[ flowVars.uri ]"
+					doc:name="resourc changed" />
 				<message-properties-transformer
 					overwrite="true" doc:name="responsecode = changed">
 					<add-message-property key="coap.response.code"
@@ -54,6 +90,11 @@
 			</when>
 			<otherwise>
 				<set-payload value="not expected" doc:name="Set Payload" />
+				<message-properties-transformer
+					overwrite="true" doc:name="responsecode = BAD_REQUEST">
+					<add-message-property key="coap.response.code"
+						value="BAD_REQUEST" /> 
+				</message-properties-transformer>
 			</otherwise>
 		</choice>
 	</flow>

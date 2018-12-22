@@ -1,4 +1,4 @@
-package nl.teslanet.mule.transport.coap.server.test.config;
+package nl.teslanet.mule.transport.coap.server.test.utils;
 
 
 import org.junit.After;
