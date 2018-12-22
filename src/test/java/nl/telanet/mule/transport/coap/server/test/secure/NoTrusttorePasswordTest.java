@@ -13,7 +13,7 @@ import org.mule.api.ConnectionException;
 import org.mule.api.lifecycle.LifecycleException;
 
 import nl.teslanet.mule.transport.coap.server.error.EndpointConstructionException;
-import nl.teslanet.mule.transport.coap.server.test.config.AbstractMuleStartTestCase;
+import nl.teslanet.mule.transport.coap.server.test.utils.AbstractMuleStartTestCase;
 
 
 public class NoTrusttorePasswordTest extends AbstractMuleStartTestCase
