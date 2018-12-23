@@ -72,6 +72,15 @@ public class ServedResource extends CoapResource
         earlyAck= resourceConfig.isEarlyAck();
 
         setObservable( resourceConfig.isObservable() );
+        if ( resourceConfig.isObservable())
+        {
+            setObservable( true );
+            getAttributes().setObservable();
+        }
+        else
+        {
+            setObservable( false );
+        }
 
         if ( resourceConfig.getTitle() != null )
         {
