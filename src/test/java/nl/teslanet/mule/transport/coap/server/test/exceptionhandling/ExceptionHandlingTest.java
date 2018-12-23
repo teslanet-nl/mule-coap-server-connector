@@ -75,7 +75,7 @@ public class ExceptionHandlingTest extends FunctionalMunitSuite
     private CoapClient getClient( String path )
     {
         CoapClient client= new CoapClient( uri.resolve( path ) );
-        client.setTimeout( 1000000L );
+        client.setTimeout( 1000L );
         return client;
     }
 
@@ -98,7 +98,7 @@ public class ExceptionHandlingTest extends FunctionalMunitSuite
         client.shutdown();
     }
 
-    @Test(timeout= 2000000L)
+    @Test(timeout= 2000L)
     public void testUnhandledException() throws Exception
     {
         CoapClient client= getClient( "/service/unhandled_exception" );

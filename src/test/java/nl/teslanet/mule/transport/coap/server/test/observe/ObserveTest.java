@@ -137,7 +137,7 @@ public class ObserveTest extends FunctionalMunitSuite
         CoapResponse response= client.put( contents.get( 0 ), 0 );
         assertNotNull( "put nr: 0 gave no response", response );
         assertFalse( "response nr: 0 indicates failure", response.isSuccess() );
-        assertEquals( "get gave wrong content", ResponseCode.NOT_FOUND, response.getCode() );
+        assertEquals( "get gave wrong response", ResponseCode.NOT_FOUND, response.getCode() );
 
         CoapClient client2= getClient( "/service" );
         Request request= new Request( Code.POST );
