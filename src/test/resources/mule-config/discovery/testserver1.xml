@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+   xmlns:coap-server="http://www.mulesoft.org/schema/mule/coap-server"
+   xmlns:spring="http://www.springframework.org/schema/beans"
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+   xsi:schemaLocation="
+   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd 
+   http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/3.9/mule.xsd 
+   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd 
+   http://www.mulesoft.org/schema/mule/coap-server http://www.teslanet.nl/schema/mule/coap-server/2.0/mule-coap-server.xsd 
+   http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/3.9/mule-validation.xsd
+   ">
+
+   <coap-server:config name="config" exchangeLifetime="1" logCoapMessages="true">
+      <coap-server:resources>
+         <coap-server:resource name="service">
+            <coap-server:resources>
+               <coap-server:resource name="add_resources" post="true"/>
+               <coap-server:resource name="resource_with_ct" get="true" ct="0,41"/>
+               <coap-server:resource name="resource_with_if" get="true" ifdesc="if1,if2"/>
+               <coap-server:resource name="resource_with_obs" get="true" observable="true"/>
+               <coap-server:resource name="resource_with_rt" get="true" rt="rt1,rt2"/>
+               <coap-server:resource name="resource_with_sz" get="true" sz="123456"/>
+               <coap-server:resource name="resource_with_title" get="true"
+                  title="a resource with a title"/>
+            </coap-server:resources>
+         </coap-server:resource>
+      </coap-server:resources>
+   </coap-server:config>
+
+   <flow name="listen_add_resources">
+      <coap-server:listen uri="/service/add_resources" config-ref="config"/>
+
+      <coap-server:add-resource config-ref="config" uri="/service/resource2_with_ct" get="true" ct="0,41"/>
+      <coap-server:add-resource config-ref="config" uri="/service/resource2_with_if" get="true" ifdesc="if1,if2"/>
+      <coap-server:add-resource config-ref="config" uri="/service/resource2_with_obs" get="true" observable="true"/>
+      <coap-server:add-resource config-ref="config" uri="/service/resource2_with_rt" get="true" rt="rt1,rt2"/>
+      <coap-server:add-resource config-ref="config" uri="/service/resource2_with_sz" get="true" sz="123456"/>
+      <coap-server:add-resource config-ref="config" uri="/service/resource2_with_title" get="true"
+         title="another resource with a title"/>   
+   </flow>
+
+   <flow name="listen_service_resource">
+      <coap-server:listen uri="/service/*" config-ref="config"/>
+      <set-payload value="some content" doc:name="Set Payload"/>
+   </flow>
+
+</mule>
