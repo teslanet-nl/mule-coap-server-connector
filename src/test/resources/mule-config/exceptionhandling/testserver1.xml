@@ -39,7 +39,7 @@
       <coap-server:listen uri="/service/handled_exception" config-ref="config"/>
       <set-payload value="server response"/>
       <validation:is-true expression="#[ true == false ]"/>
-      <catch-exception-strategy>
+      <catch-exception-strategy logException="false">
          <set-payload value="exception catched"/>
       </catch-exception-strategy>
    </flow>
