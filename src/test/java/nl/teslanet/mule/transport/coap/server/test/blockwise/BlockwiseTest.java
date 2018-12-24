@@ -1,9 +1,7 @@
 package nl.teslanet.mule.transport.coap.server.test.blockwise;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -40,6 +38,8 @@ public class BlockwiseTest extends FunctionalMunitSuite
     private static ArrayList< Code > outboundCalls;
 
     private static HashMap< Code, String > paths;
+    
+    private final String smallMessage= "small message";
 
     @Override
     protected String getConfigResources()
@@ -64,12 +64,10 @@ public class BlockwiseTest extends FunctionalMunitSuite
     static public void setUpClass() throws Exception
     {
         inboundCalls= new ArrayList< Code >();
-        //TODO californium seems not to suppport blockwise for GET
-        //calls.add( Code.GET );
+        inboundCalls.add( Code.GET );
         inboundCalls.add( Code.PUT );
         inboundCalls.add( Code.POST );
-        //TODO californium seems not to suppport blockwise for GET
-        //calls.add( Code.DELETE );
+        inboundCalls.add( Code.DELETE );
         outboundCalls= new ArrayList< Code >();
         outboundCalls.add( Code.GET );
         outboundCalls.add( Code.PUT );
@@ -107,7 +105,7 @@ public class BlockwiseTest extends FunctionalMunitSuite
         return client;
     }
 
-    private void spyRequestMessage()
+    private void spyRequestLargeMessage()
     {
         SpyProcess beforeSpy= new SpyProcess()
             {
@@ -124,20 +122,51 @@ public class BlockwiseTest extends FunctionalMunitSuite
         spyMessageProcessor( "set-payload" ).ofNamespace( "mule" ).before( beforeSpy );
     }
 
-    private void mockResponseMessage()
+    
+    private void mockResponseLargeMessage()
     {
         MuleMessage messageToBeReturned= muleMessageWithPayload( Data.getLargeContent() );
         MessageProcessorMocker mocker= whenMessageProcessor( "set-payload" ).ofNamespace( "mule" );
         mocker.thenReturn( messageToBeReturned );
     }
 
+    private void spyRequestSmallMessage()
+    {
+        SpyProcess beforeSpy= new SpyProcess()
+            {
+                @Override
+                public void spy( MuleEvent event ) throws MuleException
+                {
+                    Object payload= event.getMessage().getPayload();
+                    assertEquals( "payload has wrong class", byte[].class, payload.getClass() );
+                    assertArrayEquals( "content invalid", smallMessage.getBytes(), (byte[]) payload );
+                    spyActivated= true;
+                }
+            };
+
+        spyMessageProcessor( "set-payload" ).ofNamespace( "mule" ).before( beforeSpy );
+    }
+
+    private void mockResponseSmallMessage()
+    {
+        MuleMessage messageToBeReturned= muleMessageWithPayload( smallMessage );
+        MessageProcessorMocker mocker= whenMessageProcessor( "set-payload" ).ofNamespace( "mule" );
+        mocker.thenReturn( messageToBeReturned );
+    }
+    
+    
     @Test(timeout= 20000L)
     public void testLargeInboundRequest() throws Exception
     {
-        spyRequestMessage();
+        spyRequestLargeMessage();
 
         for ( Code call : inboundCalls )
         {
+            //TODO californium seems not to support inbound blockwise for GET
+            if ( call == Code.GET ) continue;
+            //TODO californium seems not to support inbound blockwise for DELETE
+            if ( call == Code.DELETE ) continue;
+            
             spyActivated= false;
             CoapClient client= getClient( getPath( call ) );
             client.useLateNegotiation();
@@ -146,9 +175,9 @@ public class BlockwiseTest extends FunctionalMunitSuite
 
             CoapResponse response= client.advanced( request );
 
-            assertNotNull( "get gave no response", response );
-            assertTrue( "response indicates failure: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
-            assertTrue( "spy was not activated", spyActivated );
+            assertNotNull( "no response on: " + call, response );
+            assertTrue( "response indicates failure on : " + call +" response: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
+            assertTrue( "spy was not activated on: " + call, spyActivated );
 
             client.shutdown();
         }
@@ -157,10 +186,15 @@ public class BlockwiseTest extends FunctionalMunitSuite
     @Test(timeout= 20000L)
     public void testLargeInboundRequestEarlyNegotiation() throws Exception
     {
-        spyRequestMessage();
+        spyRequestLargeMessage();
 
         for ( Code call : inboundCalls )
         {
+            //TODO californium seems not to support inbound blockwise for GET
+            if ( call == Code.GET ) continue;
+            //TODO californium seems not to support inbound blockwise for DELETE
+            if ( call == Code.DELETE ) continue;
+            
             spyActivated= false;
             CoapClient client= getClient( getPath( call ) );
             client.useEarlyNegotiation( 32 );
@@ -169,18 +203,18 @@ public class BlockwiseTest extends FunctionalMunitSuite
 
             CoapResponse response= client.advanced( request );
 
-            assertNotNull( "get gave no response", response );
-            assertTrue( "response indicates failure: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
-            assertTrue( "spy was not activated", spyActivated );
+            assertNotNull( "no response on: " + call, response );
+            assertTrue( "response indicates failure on : " + call +" response: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
+            assertTrue( "spy was not activated on: " + call, spyActivated );
 
             client.shutdown();
         }
     }
 
-    @Test(timeout= 2000000L)
+    @Test(timeout= 20000L)
     public void testLargeOutboundRequest() throws Exception
     {
-        mockResponseMessage();
+        mockResponseLargeMessage();
 
         for ( Code call : outboundCalls )
         {
@@ -190,12 +224,125 @@ public class BlockwiseTest extends FunctionalMunitSuite
 
             CoapResponse response= client.advanced( request );
 
-            assertNotNull( "get gave no response", response );
-            assertTrue( "response indicates failure: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
-            assertTrue( "wrong payload in response", Data.validateLargeContent( response.getPayload() ) );
+            assertNotNull( "no response on: " + call, response );
+            assertTrue( "response indicates failure on : " + call +" response: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
+            assertTrue( "wrong payload in response on: " + call, Data.validateLargeContent( response.getPayload() ) );
+
+            client.shutdown();
+        }
+    }
+    
+    @Test(timeout= 20000L)
+    public void testLargeOutboundRequestEarlyNegotiation() throws Exception
+    {
+        mockResponseLargeMessage();
+
+        for ( Code call : outboundCalls )
+        {
+            CoapClient client= getClient( getPath( call ) );
+            client.useEarlyNegotiation( 32 );
+
+            Request request= new Request( call );
+            request.setPayload( "nothing important" );
+
+            CoapResponse response= client.advanced( request );
+
+            assertNotNull( "no response on: " + call, response );
+            assertTrue( "response indicates failure on : " + call +" response: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
+            assertTrue( "wrong payload in response on: " + call, Data.validateLargeContent( response.getPayload() ) );
 
             client.shutdown();
         }
     }
 
+    
+    @Test(timeout= 20000L)
+    public void testSmallInboundRequest() throws Exception
+    {
+        spyRequestSmallMessage();
+
+        for ( Code call : inboundCalls )
+        {
+            spyActivated= false;
+            CoapClient client= getClient( getPath( call ) );
+            client.useLateNegotiation();
+            Request request= new Request( call );
+            request.setPayload( smallMessage );
+
+            CoapResponse response= client.advanced( request );
+
+            assertNotNull( "no response on: " + call, response );
+            assertTrue( "response indicates failure on : " + call +" response: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
+            assertTrue( "spy was not activated on: " + call, spyActivated );
+
+            client.shutdown();
+        }
+    }
+
+    @Test(timeout= 20000L)
+    public void testSmallInboundRequestEarlyNegotiation() throws Exception
+    {
+        spyRequestSmallMessage();
+
+        for ( Code call : inboundCalls )
+        {
+            spyActivated= false;
+            CoapClient client= getClient( getPath( call ) );
+            client.useEarlyNegotiation( 32 );
+            Request request= new Request( call );
+            request.setPayload( smallMessage );
+
+            CoapResponse response= client.advanced( request );
+
+            assertNotNull( "no response on: " + call, response );
+            assertTrue( "response indicates failure on : " + call +" response: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
+            assertTrue( "spy was not activated on: " + call, spyActivated );
+
+            client.shutdown();
+        }
+    }
+
+    @Test(timeout= 20000L)
+    public void testSmallOutboundRequest() throws Exception
+    {
+        mockResponseSmallMessage();
+
+        for ( Code call : outboundCalls )
+        {
+            CoapClient client= getClient( getPath( call ) );
+            Request request= new Request( call );
+            request.setPayload( "nothing important" );
+
+            CoapResponse response= client.advanced( request );
+
+            assertNotNull( "no response on: " + call, response );
+            assertTrue( "response indicates failure on : " + call +" response: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
+            assertArrayEquals( "wrong payload in response on: " + call, smallMessage.getBytes(), response.getPayload() );
+
+            client.shutdown();
+        }
+    }
+    
+    @Test(timeout= 20000L)
+    public void testSmallOutboundRequestEarlyNegotiation() throws Exception
+    {
+        mockResponseSmallMessage();
+
+        for ( Code call : outboundCalls )
+        {
+            CoapClient client= getClient( getPath( call ) );
+            client.useEarlyNegotiation( 32 );
+
+            Request request= new Request( call );
+            request.setPayload( "nothing important" );
+
+            CoapResponse response= client.advanced( request );
+
+            assertNotNull( "no response on: " + call, response );
+            assertTrue( "response indicates failure: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
+            assertArrayEquals( "wrong payload in response on: " + call, smallMessage.getBytes(), response.getPayload() );
+
+            client.shutdown();
+        }
+    }
 }

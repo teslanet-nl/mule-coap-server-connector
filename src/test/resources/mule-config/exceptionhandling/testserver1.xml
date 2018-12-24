@@ -22,6 +22,8 @@
                   delete="true"/>
                <coap-server:resource name="handled_exception" get="true" put="true" post="true"
                   delete="true"/>
+               <coap-server:resource name="no_handler" get="true" put="true" post="true"
+                  delete="true"/>
             </coap-server:resources>
          </coap-server:resource>
       </coap-server:resources>

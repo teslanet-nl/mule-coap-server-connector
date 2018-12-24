@@ -110,11 +110,31 @@ public class ExceptionHandlingTest extends FunctionalMunitSuite
             CoapResponse response= client.advanced( request );
 
             assertNotNull( "get gave no response on: " + call.toString(), response );
-            assertFalse( "response does not indicates failure on: " + call.toString(), response.isSuccess() );
+            assertFalse( "response does not indicate failure on: " + call.toString(), response.isSuccess() );
             assertEquals( "wrong responsecode on: " + call.toString(), ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
             assertEquals( "wrong response payload on: " + call.toString(), "EXCEPTION IN PROCESSING FLOW", response.getResponseText() );
         }
         client.shutdown();
     }
+    
+    @Test(timeout= 2000L)
+    public void testNoHandlerException() throws Exception
+    {
+        CoapClient client= getClient( "/service/no_handler" );
+        for ( Code call : calls )
+        {
+            Request request= new Request( call );
+            request.setPayload( "nothing important" );
+
+            CoapResponse response= client.advanced( request );
+
+            assertNotNull( "get gave no response on: " + call.toString(), response );
+            assertFalse( "response does not indicate failure on: " + call.toString(), response.isSuccess() );
+            assertEquals( "wrong responsecode on: " + call.toString(), ResponseCode.INTERNAL_SERVER_ERROR, response.getCode() );
+            assertEquals( "wrong response payload on: " + call.toString(), "NO LISTENER", response.getResponseText() );
+        }
+        client.shutdown();
+    }
+
 
 }
