@@ -16,17 +16,18 @@ import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.munit.runner.functional.FunctionalMunitSuite;
 
 
-public class ObserveTest extends FunctionalMunitSuite
+public class ObserveConCheckTest extends FunctionalMunitSuite
 {
     private URI uri= null;
 
     private AtomicInteger handlerErrors= new AtomicInteger();
 
-    private CopyOnWriteArrayList< CoapResponse > observations= new CopyOnWriteArrayList< CoapResponse >();
+    private CopyOnWriteArrayList< ReceivedNotification > observations= new CopyOnWriteArrayList< ReceivedNotification >();
 
     private ArrayList< String > contents= new ArrayList< String >();
 
@@ -55,11 +56,10 @@ public class ObserveTest extends FunctionalMunitSuite
         handlerErrors.set( 0 );
         observations.clear();
         contents.clear();
-        contents.add( "first" );
-        contents.add( "second" );
-        contents.add( "third" );
-        contents.add( "fourth" );
-        contents.add( "fifth" );
+        for ( int i= 0; i < 16; ++i )
+        {
+            contents.add( Integer.toString( i ) );
+        }
     }
 
     private CoapClient getClient( String path )
@@ -82,15 +82,15 @@ public class ObserveTest extends FunctionalMunitSuite
                 @Override
                 public void onLoad( CoapResponse response )
                 {
-                    observations.add( response );
+                    observations.add( new ReceivedNotification( response ) );
                 }
 
             };
         return handler;
     }
 
-    @Test(timeout= 10000L)
-    public void testObserve() throws Exception
+    @Test(timeout= 20000L)
+    public void testConCheckOnCount() throws Exception
     {
 
         CoapClient client= getClient( "/service/observe_me" );
@@ -119,46 +119,35 @@ public class ObserveTest extends FunctionalMunitSuite
 
         for ( int i= 0; i < observations.size(); i++ )
         {
-            response= observations.get( i );
+            response= observations.get( i ).response;
             assertNotNull( "observation nr: " + i + " is empty", response );
             assertTrue( "observation nr: " + i + " indicates failure", response.isSuccess() );
             assertEquals( "observation nr: " + i + " has wrong content", contents.get( i ), response.getResponseText() );
-        }
+            assertEquals( "observation nr: " + i + " is unexpected confirmable", i != 0 && ( i + 1 ) % 5 == 0, response.advanced().isConfirmable() );
 
+        }
         relation.reactiveCancel();
-        client.shutdown();
     }
-    
-    @Test(timeout= 10000000L)
-    public void testObserveOnAddedResource() throws Exception
+
+    @Test(timeout= 20000L)
+    public void testConCheckOnTime() throws Exception
     {
 
-        CoapClient client= getClient( "/service/observe_me_too" );
+        CoapClient client= getClient( "/service/observe_me" );
         CoapResponse response= client.put( contents.get( 0 ), 0 );
         assertNotNull( "put nr: 0 gave no response", response );
-        assertFalse( "response nr: 0 indicates failure", response.isSuccess() );
-        assertEquals( "get gave wrong response", ResponseCode.NOT_FOUND, response.getCode() );
-
-        CoapClient client2= getClient( "/service" );
-        Request request= new Request( Code.POST );
-        request.setPayload( contents.get( 0 ));
-        request.getOptions().addLocationPath( "service" ).addLocationPath( "observe_me_too" );
-        response= client2.advanced( request );
-        assertNotNull( "post gave no response", response );
-        assertTrue( "post response indicates failure", response.isSuccess() );
-        assertEquals( "post gave wrong response", ResponseCode.CREATED, response.getCode() );
+        assertTrue( "response nr: 0 indicates failure", response.isSuccess() );
 
         response= client.get();
         assertNotNull( "get gave no response", response );
         assertTrue( "get response indicates failure", response.isSuccess() );
-        assertEquals( "get gave wrong response", ResponseCode.CONTENT, response.getCode() );
         assertEquals( "get gave wrong content", contents.get( 0 ), response.getResponseText() );
 
         CoapObserveRelation relation= client.observe( getHandler() );
 
         for ( int i= 1; i < contents.size(); i++ )
         {
-            Thread.sleep( 100 );
+            Thread.sleep( 350 );
             response= client.put( contents.get( i ), 0 );
             assertNotNull( "put nr: " + i + " gave no response", response );
             assertTrue( "response nr: " + i + " indicates failure", response.isSuccess() );
@@ -167,17 +156,34 @@ public class ObserveTest extends FunctionalMunitSuite
         Thread.sleep( 100 );
         assertEquals( "handler errors count ", 0, handlerErrors.get() );
         assertEquals( "wrong count of observations", contents.size(), observations.size() );
-
+        long ts1= observations.get( 0 ).ts;
+        long ts2= 0;
         for ( int i= 0; i < observations.size(); i++ )
         {
-            response= observations.get( i );
+            response= observations.get( i ).response;
+            ts2= observations.get( i ).ts ;
+            boolean expectConfirmable= ( i != 0 && ( ts2 - ts1 ) >= 650 );
+            if ( expectConfirmable ) ts1= ts2;
             assertNotNull( "observation nr: " + i + " is empty", response );
             assertTrue( "observation nr: " + i + " indicates failure", response.isSuccess() );
             assertEquals( "observation nr: " + i + " has wrong content", contents.get( i ), response.getResponseText() );
+            assertEquals( "observation nr: " + i + " is unexpected confirmable", expectConfirmable, response.advanced().isConfirmable() );
+        }
+        relation.reactiveCancel();
+    }
+
+    public class ReceivedNotification
+    {
+        public long ts;
+
+        public CoapResponse response;
+
+        public ReceivedNotification( CoapResponse response )
+        {
+            this.ts= System.currentTimeMillis();
+            this.response= response;
         }
 
-        relation.reactiveCancel();
-        client.shutdown();
-        client2.shutdown();
     }
+
 }

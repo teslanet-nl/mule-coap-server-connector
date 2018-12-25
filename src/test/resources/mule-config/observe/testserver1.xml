@@ -17,7 +17,8 @@
 		<spring:bean  id="storage" class="java.util.HashMap"/>
 	</spring:beans>
 	
-	<coap-server:config name="config" exchangeLifetime="1"
+	<coap-server:config name="config" exchangeLifetime="1" notificationCheckIntervalCount="5"
+		notificationCheckIntervalTime="650" 
 		logCoapMessages="true">
 		<coap-server:resources>
 			<coap-server:resource name="service" post="true">
