@@ -51,41 +51,43 @@ public class EndpointConfig
 
 
     /**
-     * The acknowledgment timeout in milliseconds [ms])
+     * The acknowledgement timeout in milliseconds [ms].
+     * On a Confirmable CoAP message an Acknowledgement 
+     * must be received within this period of time.
      */
     @Configurable
     @Default( value= "2000")
-    @Placement(tab= "Ackowledgement", group= "Ackowledgement")
+    @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String ackTimeout= null;
 
     @Configurable
     @Optional
-    @Placement(tab= "Ackowledgement", group= "Ackowledgement")
+    @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String ackRandomFactor= null;
 
     @Configurable
     @Optional
-    @Placement(tab= "Ackowledgement", group= "Ackowledgement")
+    @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String ackTimeoutScale= null;
 
     @Configurable
     @Optional
-    @Placement(tab= "Ackowledgement", group= "Ackowledgement")
+    @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String maxRetransmit= null;
 
     @Configurable
     @Optional
-    @Placement(tab= "Ackowledgement", group= "Ackowledgement")
+    @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String exchangeLifetime= null;
 
     @Configurable
     @Optional
-    @Placement(tab= "Ackowledgement", group= "Ackowledgement")
+    @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String nonLifetime= null;
 
     @Configurable
     @Optional
-    @Placement(tab= "Ackowledgement", group= "Ackowledgement")
+    @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String maxTransmitWait= null;
 
     //-----------------
@@ -164,13 +166,27 @@ public class EndpointConfig
     private String blockwiseStatusLifetime= null;
 
     //---------------
+
+    /**
+     * The time in milliseconds [ms] that may pass sending only 
+     * Non-Confirmable notifications to an observing client.
+     * After this period the first notification will be Confirmable 
+     * to verify the client is listening. When this notification isn't 
+     * acknowledged, the CoAP relation is considered stale and removed.
+     */
     @Configurable
-    @Optional
+    @Default( value= "86400000")
     @Placement(tab= "Notifcation", group= "Notifcation")
     private String notificationCheckIntervalTime= null;
 
+    /**
+     * Once in this notification count a Confirmable notification 
+     * must be sent to an observing client, to verify that this client 
+     * is listening. When this notification isn't acknowledged, 
+     * the CoAP relation is considered stale and removed.
+     */
     @Configurable
-    @Optional
+    @Default( value= "100")
     @Placement(tab= "Notifcation", group= "Notifcation")
     private String notificationCheckIntervalCount= null;
 
