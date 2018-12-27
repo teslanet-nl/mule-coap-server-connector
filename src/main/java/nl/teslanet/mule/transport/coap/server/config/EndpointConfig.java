@@ -49,59 +49,93 @@ public class EndpointConfig
     private String bindToSecurePort= null;
 
 
-
+    //TODO: rename acknowledgment group name to transmission
     /**
-     * The acknowledgement timeout in milliseconds [ms].
-     * On a Confirmable CoAP message an Acknowledgement 
-     * must be received within this period of time.
+     * The minimum (in milliseconds [ms]) spacing before retransmission. is
      */
     @Configurable
     @Default( value= "2000")
     @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String ackTimeout= null;
 
+    /**
+     * Factor for spreading retransmission timing.
+     */
     @Configurable
-    @Optional
+    @Default( value= "1.5")
     @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String ackRandomFactor= null;
 
+    /**
+     * The backoff factor for retransmissions.
+     */
     @Configurable
-    @Optional
+    @Default( value= "2.0")
     @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String ackTimeoutScale= null;
 
+    /**
+     * The maximum number of retransmissions that are attempted 
+     * when no acknowledgement is received.
+     */
     @Configurable
-    @Optional
+    @Default( value= "4" )
     @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String maxRetransmit= null;
 
+    /**
+     * The time (in milliseconds [ms]) from starting to send a Confirmable
+     * message to the time when an acknowledgement is no longer expected.
+     */
     @Configurable
-    @Optional
+    @Default( value= "247000" )
     @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String exchangeLifetime= null;
 
+    /**
+     * The time (in milliseconds [ms]) from sending a Non-confirmable 
+     * message to the time its Message ID can be safely reused.  
+     */
     @Configurable
-    @Optional
+    @Default( value="145000")
     @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String nonLifetime= null;
 
+    //TODO: does Cf use this?
+    /**
+     * 
+     */
     @Configurable
-    @Optional
+    @Default( value="93000")
     @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String maxTransmitWait= null;
 
     //-----------------
+    
+    /**
+     * Maximum number of simultaneous outstanding interactions with a peer.
+     */
     @Configurable
-    @Optional
+    @Default( value="1")
     @Placement(tab= "Threads", group= "Threads")
     private String nstart= null;
 
     //-----------------
+    
+    //TODO: used by Cf?
+    /**
+     * Period of time (in milliseconds [ms]) of the spreading of responses to a multicast request,
+     * for netork congestion prevention.
+     */
     @Configurable
-    @Optional
+    @Default( value="5000")
     @Placement(tab= "Endpoint", group="Endpoint")
     private String leisure= null;
 
+    //TODO: used by Cf?
+    /**
+     * 
+     */
     @Configurable
     @Optional
     @Placement(tab= "Endpoint", group="Endpoint")
@@ -157,32 +191,51 @@ public class EndpointConfig
     private String trustedRootCertificateAlias= null;
 
     //-----------------
+    /**
+     * When {@code true} the message IDs will start at a random index. 
+     * Otherwise the first message ID returned will be {@code 0}.
+     */
     @Configurable
-    @Optional
+    @Default( value="true")
     @Placement(tab= "Token", group= "Token")
     private String useRandomMidStart= null;
 
+    /**
+     * The maximum token length (bytes).
+     */
     @Configurable
-    @Optional
+    @Default( value="8")
     @Placement(tab= "Token", group= "Token")
     private String tokenSizeLimit= null;
 
     //---------------
+    /**
+     * The block size (in bytes) to use when doing a blockwise
+     * transfer. This value serves as the upper limit for block size in
+     * blockwise transfers.
+     */
     @Configurable
     @Optional
     @Placement(tab= "Blockwise", group= "Blockwise")
     private String preferredBlockSize= null;
 
     /**
-     * The maximum message size that can be transferred.
+     * The maximum payload size (in bytes) that can be transferred in a
+     * single message, i.e. without requiring a blockwise transfer.
+     * This value cannot exceed the network's MTU.
      */
     @Configurable
-    @Optional
+    @Default( value= "1024")
     @Placement(tab= "Blockwise", group= "Blockwise")
     private String maxMessageSize= null;
 
+    /**
+     * The maximum amount of time (in milliseconds [ms]) allowed between
+     * transfers of individual blocks in a blockwise transfer before the
+     * blockwise transfer state is discarded.
+     */
     @Configurable
-    @Optional
+    @Default( value= "300000")
     @Placement(tab= "Blockwise", group= "Blockwise")
     private String blockwiseStatusLifetime= null;
 
@@ -211,8 +264,14 @@ public class EndpointConfig
     @Placement(tab= "Notifcation", group= "Notifcation")
     private String notificationCheckIntervalCount= null;
 
+    //TODO: Cf not implemented
+    //TODO: rfc7641: random between 5 and 15 seconds
+    /**
+     * The time a client waits for re-registration after Max-Age is
+     * expired, to reduce collisions with other clients.
+     */
     @Configurable
-    @Optional
+    @Default( value="2000")
     @Placement(tab= "Notifcation", group= "Notifcation")
     private String notificationReregistrationBackoff= null;
 
@@ -1060,7 +1119,7 @@ public class EndpointConfig
 
         if ( this.preferredBlockSize != null ) config.setInt(NetworkConfig.Keys.PREFERRED_BLOCK_SIZE, Integer.valueOf( this.preferredBlockSize )); // 512);
         if ( this.maxMessageSize != null ) config.setInt(NetworkConfig.Keys.MAX_MESSAGE_SIZE, Integer.valueOf( this.maxMessageSize )); // 1024);
-        if ( this.blockwiseStatusLifetime != null ) config.setInt(NetworkConfig.Keys.BLOCKWISE_STATUS_LIFETIME, Integer.valueOf( this.blockwiseStatusLifetime )); // 10 * 60 * 1000); // ms
+        if ( this.blockwiseStatusLifetime != null ) config.setInt(NetworkConfig.Keys.BLOCKWISE_STATUS_LIFETIME, Integer.valueOf( this.blockwiseStatusLifetime )); // 5 * 60 * 1000); // ms (5min)
 
         if ( this.notificationCheckIntervalTime != null ) config.setLong(NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_TIME, Long.valueOf( this.notificationCheckIntervalTime )); // 24 * 60 * 60 * 1000); // ms
         if ( this.notificationCheckIntervalCount != null ) config.setInt(NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_COUNT, Integer.valueOf( this.notificationCheckIntervalCount )); // 100);
