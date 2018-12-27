@@ -108,31 +108,49 @@ public class EndpointConfig
     private String probingRate= null;
 
     //-----------------
+    /**
+     * The path and filename of the keystore on the filesystem or classpath.
+     */
     @Configurable
     @Optional
     @Placement(tab= "Security", group="Security", order= 1 )
     private String keyStoreLocation= null;
 
+    /**
+     * The password to access the keystore.
+     */
     @Configurable
     @Optional
     @Placement(tab= "Security", group="Security", order= 2 )
     private String keyStorePassword= null;
 
+    /**
+     * Alias of the private key to use from the keystore.
+     */
     @Configurable
     @Optional
     @Placement(tab= "Security", group="Security", order= 3 )
     private String privateKeyAlias= null;
 
+    /**
+     * The path and filename of the truststore on the filesystem or classpath.
+     */
     @Configurable
     @Optional
     @Placement(tab= "Security", group="Security", order= 4 )
     private String trustStoreLocation= null;
 
+    /**
+     * The password to access the truststore.
+     */
     @Configurable
     @Optional
     @Placement(tab= "Security", group="Security", order= 5 )
     private String trustStorePassword= null;
 
+    /**
+     * The alias of the certificate to use from the truststore.
+     */
     @Configurable
     @Optional
     @Placement(tab= "Security", group="Security", order= 6 )
@@ -155,6 +173,9 @@ public class EndpointConfig
     @Placement(tab= "Blockwise", group= "Blockwise")
     private String preferredBlockSize= null;
 
+    /**
+     * The maximum message size that can be transferred.
+     */
     @Configurable
     @Optional
     @Placement(tab= "Blockwise", group= "Blockwise")
