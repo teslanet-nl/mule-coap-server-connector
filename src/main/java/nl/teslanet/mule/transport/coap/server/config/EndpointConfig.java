@@ -276,66 +276,116 @@ public class EndpointConfig
     private String notificationReregistrationBackoff= null;
 
     //---------------
+    /**
+     * When {@code true} congestion controll is active.
+     */
     @Configurable
-    @Optional
+    @Default( value="false")
     @Placement(tab= "Congestion", group= "Congestion")
     private String useCongestionControl= null;
 
+    //TODO enum
+    /**
+     * The congestion control algorithm to use. Valid values are
+     * {@code Cocoa}, 
+     * {@code CocoaStrong}, 
+     * {@code BasicRto}, 
+     * {@code LinuxRto}, 
+     * {@code PeakhopperRto}.
+     */
     @Configurable
-    @Optional
+    @Default( value="Cocoa")
     @Placement(tab= "Congestion", group= "Congestion")
     private String congestionControlAlgorithm= null;
 
     //-----------------
+    //TODO: UDP group?
+    /**
+     * Thread pool size of endpoint executor.
+     * Default value is equal to the number of cores. 
+     */
     @Configurable
     @Optional
     @Placement(tab= "Threads", group= "Threads")
     private String protocolStageThreadCount= null;
 
+    //TODO: UDP group?
+    /**
+     * Receiver thread pool size.
+     * Default value is 1, or equal to the number of cores on Windows. 
+     */
     @Configurable
     @Optional
     @Placement(tab= "Threads", group= "Threads")
     private String networkStageReceiverThreadCount= null;
 
+    //TODO: UDP group?
+    /**
+     * Sender thread pool size.
+     * Default value is 1, or equal to the number of cores on Windows. 
+     */
     @Configurable
     @Optional
     @Placement(tab= "Threads", group= "Threads")
     private String networkStageSenderThreadCount= null;
 
     //---------------
+    /**
+     * UDP datagram size (bytes)
+     */
     @Configurable
-    @Optional
+    @Default( value="2048")
     @Placement(tab= "UDP", group= "UDP")
     private String udpConnectorDatagramSize= null;
 
+    /**
+     * UDP receive buffer size (bytes)
+     */
     @Configurable
     @Optional
     @Placement(tab= "UDP", group= "UDP")
     private String udpConnectorReceiveBuffer= null;
 
+    /**
+     * UDP send buffer size (bytes)
+     */
     @Configurable
     @Optional
     @Placement(tab= "UDP", group= "UDP")
     private String udpConnectorSendBuffer= null;
 
+    //TODO: used by Cf?
+    /**
+     * 
+     */
     @Configurable
     @Optional
     @Placement(tab= "UDP", group= "UDP")
     private String udpConnectorOutCapacity= null;
 
     //---------------
+    /**
+     * The deduplicator type used to deduplicate incoming messages.
+     * Available deduplicators are MARK_AND_SWEEP and CROP_ROTATION.
+     */
     @Configurable
-    @Optional
+    @Default( value="DEDUPLICATOR_MARK_AND_SWEEP" )
     @Placement(tab= "Deduplicator", group= "Deduplicator")
     private DeduplicatorType deduplicator= null;
 
+    /**
+     * The period of MARK_AND_SWEEP deduplicators cleanup cycle (milliseconds [ms]).
+     */
     @Configurable
-    @Optional
+    @Default( value="10000" )
     @Placement(tab= "Deduplicator", group= "Deduplicator")
     private String markAndSweepInterval= null;
 
+    /**
+     * The period of CROP_ROTATION deduplicators cleanup cycle (milliseconds [ms]).
+     */
     @Configurable
-    @Optional
+    @Default( value="2000" )
     @Placement(tab= "Deduplicator", group= "Deduplicator")
     private String cropRotationPeriod= null;
 
@@ -368,8 +418,12 @@ public class EndpointConfig
 */
     //---------------
 
+    /**
+     * When healthStatusInterval > 0 additional status information 
+     * is logged with this interval (seconds [s])
+     */
     @Configurable
-    @Optional
+    @Default( value="0")
     @Placement(tab= "Status", group= "Status")
     private String healthStatusInterval= null;
 
@@ -1148,7 +1202,7 @@ public class EndpointConfig
         if ( this.httpCacheResponseMaxAge != null ) config.setInt(NetworkConfig.Keys.HTTP_CACHE_RESPONSE_MAX_AGE, Integer.valueOf( this.httpCacheResponseMaxAge )); // 86400);
         if ( this.httpCacheSize != null ) config.setInt(NetworkConfig.Keys.HTTP_CACHE_SIZE, Integer.valueOf( this.httpCacheSize )); // 32);
         */
-        if ( this.healthStatusInterval != null ) config.setInt(NetworkConfig.Keys.HEALTH_STATUS_INTERVAL, Integer.valueOf( this.healthStatusInterval )); // 60); // s
+        if ( this.healthStatusInterval != null ) config.setInt(NetworkConfig.Keys.HEALTH_STATUS_INTERVAL, Integer.valueOf( this.healthStatusInterval )); // 0); // s
         return config;
     }
 
