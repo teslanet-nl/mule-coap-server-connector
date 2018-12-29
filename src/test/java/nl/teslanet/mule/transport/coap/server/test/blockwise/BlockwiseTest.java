@@ -1,7 +1,9 @@
 package nl.teslanet.mule.transport.coap.server.test.blockwise;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -10,7 +12,10 @@ import java.util.HashMap;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP.Code;
+import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.core.network.CoapEndpoint.CoapEndpointBuilder;
+import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -27,6 +32,13 @@ import nl.teslanet.mule.transport.coap.server.test.utils.Data;
 
 public class BlockwiseTest extends FunctionalMunitSuite
 {
+    /**
+     * Size of large testcontent
+     */
+    private final int SMALL_CONTENT_SIZE= 10;
+    private final int LARGE_CONTENT_SIZE= 8192;
+    private final int EXTRA_LARGE_CONTENT_SIZE= 16000;
+
     URI uri= null;
 
     CoapClient client= null;
@@ -39,8 +51,6 @@ public class BlockwiseTest extends FunctionalMunitSuite
 
     private static HashMap< Code, String > paths;
     
-    private final String smallMessage= "small message";
-
     @Override
     protected String getConfigResources()
     {
@@ -102,9 +112,38 @@ public class BlockwiseTest extends FunctionalMunitSuite
     {
         CoapClient client= new CoapClient( uri.resolve( path ) );
         client.setTimeout( 2000L );
+        NetworkConfig config= NetworkConfig.createStandardWithoutFile();
+        config.setInt( NetworkConfig.Keys.MAX_RESOURCE_BODY_SIZE, EXTRA_LARGE_CONTENT_SIZE );
+        CoapEndpointBuilder endpointBuilder= new CoapEndpointBuilder();
+        endpointBuilder.setNetworkConfig( config );
+        client.setEndpoint( endpointBuilder.build());
         return client;
     }
 
+    private void spyRequestExtraLargeMessage()
+    {
+        SpyProcess beforeSpy= new SpyProcess()
+            {
+                @Override
+                public void spy( MuleEvent event ) throws MuleException
+                {
+                    Object payload= event.getMessage().getPayload();
+                    assertEquals( "payload has wrong class", byte[].class, payload.getClass() );
+                    assertTrue( "content invalid", Data.validateContent( (byte[]) payload, EXTRA_LARGE_CONTENT_SIZE ) );
+                    spyActivated= true;
+                }
+            };
+
+        spyMessageProcessor( "set-payload" ).ofNamespace( "mule" ).before( beforeSpy );
+    }
+
+    private void mockResponseExtraLargeMessage()
+    {
+        MuleMessage messageToBeReturned= muleMessageWithPayload( Data.getContent(EXTRA_LARGE_CONTENT_SIZE) );
+        MessageProcessorMocker mocker= whenMessageProcessor( "set-payload" ).ofNamespace( "mule" );
+        mocker.thenReturn( messageToBeReturned );
+    }
+    
     private void spyRequestLargeMessage()
     {
         SpyProcess beforeSpy= new SpyProcess()
@@ -114,7 +153,7 @@ public class BlockwiseTest extends FunctionalMunitSuite
                 {
                     Object payload= event.getMessage().getPayload();
                     assertEquals( "payload has wrong class", byte[].class, payload.getClass() );
-                    assertTrue( "content invalid", Data.validateLargeContent( (byte[]) payload ) );
+                    assertTrue( "content invalid", Data.validateContent( (byte[]) payload, LARGE_CONTENT_SIZE ) );
                     spyActivated= true;
                 }
             };
@@ -125,7 +164,7 @@ public class BlockwiseTest extends FunctionalMunitSuite
     
     private void mockResponseLargeMessage()
     {
-        MuleMessage messageToBeReturned= muleMessageWithPayload( Data.getLargeContent() );
+        MuleMessage messageToBeReturned= muleMessageWithPayload( Data.getContent(LARGE_CONTENT_SIZE) );
         MessageProcessorMocker mocker= whenMessageProcessor( "set-payload" ).ofNamespace( "mule" );
         mocker.thenReturn( messageToBeReturned );
     }
@@ -139,7 +178,7 @@ public class BlockwiseTest extends FunctionalMunitSuite
                 {
                     Object payload= event.getMessage().getPayload();
                     assertEquals( "payload has wrong class", byte[].class, payload.getClass() );
-                    assertArrayEquals( "content invalid", smallMessage.getBytes(), (byte[]) payload );
+                    assertTrue( "content invalid", Data.validateContent( (byte[]) payload, SMALL_CONTENT_SIZE ));
                     spyActivated= true;
                 }
             };
@@ -149,11 +188,56 @@ public class BlockwiseTest extends FunctionalMunitSuite
 
     private void mockResponseSmallMessage()
     {
-        MuleMessage messageToBeReturned= muleMessageWithPayload( smallMessage );
+        MuleMessage messageToBeReturned= muleMessageWithPayload( Data.getContent( SMALL_CONTENT_SIZE ) );
         MessageProcessorMocker mocker= whenMessageProcessor( "set-payload" ).ofNamespace( "mule" );
         mocker.thenReturn( messageToBeReturned );
     }
     
+    @Test(timeout= 20000L)
+    public void testExtraLargeInboundRequest() throws Exception
+    {
+        spyRequestExtraLargeMessage();
+
+        for ( Code call : inboundCalls )
+        {
+            //TODO californium seems not to support inbound blockwise for GET
+            if ( call == Code.GET ) continue;
+            //TODO californium seems not to support inbound blockwise for DELETE
+            if ( call == Code.DELETE ) continue;
+            
+            spyActivated= false;
+            CoapClient client= getClient( getPath( call ) );
+            client.useLateNegotiation();
+            Request request= new Request( call );
+            request.setPayload( Data.getContent(EXTRA_LARGE_CONTENT_SIZE) );
+
+            CoapResponse response= client.advanced( request );
+
+            assertNotNull( "no response on: " + call, response );
+            assertEquals( "response is not REQUEST_ENTITY_TOO_LARGE : " + call +" response: " + response.getCode() + " msg: " + response.getResponseText(), ResponseCode.REQUEST_ENTITY_TOO_LARGE, response.getCode() );
+        }
+    }
+    
+    @Test(timeout= 20000L)
+    public void testExtraLargeOutboundRequest() throws Exception
+    {
+        mockResponseExtraLargeMessage();
+
+        for ( Code call : outboundCalls )
+        {
+            CoapClient client= getClient( getPath( call ) );
+            Request request= new Request( call );
+            request.setPayload( "nothing important" );
+
+            CoapResponse response= client.advanced( request );
+
+            assertNotNull( "no response on: " + call, response );
+            assertTrue( "response indicates failure on : " + call +" response: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
+            assertTrue( "wrong payload in response on: " + call, Data.validateContent( response.getPayload(),EXTRA_LARGE_CONTENT_SIZE ) );
+
+            client.shutdown();
+        }
+    }
     
     @Test(timeout= 20000L)
     public void testLargeInboundRequest() throws Exception
@@ -171,7 +255,7 @@ public class BlockwiseTest extends FunctionalMunitSuite
             CoapClient client= getClient( getPath( call ) );
             client.useLateNegotiation();
             Request request= new Request( call );
-            request.setPayload( Data.getLargeContent() );
+            request.setPayload( Data.getContent(LARGE_CONTENT_SIZE) );
 
             CoapResponse response= client.advanced( request );
 
@@ -199,7 +283,7 @@ public class BlockwiseTest extends FunctionalMunitSuite
             CoapClient client= getClient( getPath( call ) );
             client.useEarlyNegotiation( 32 );
             Request request= new Request( call );
-            request.setPayload( Data.getLargeContent() );
+            request.setPayload( Data.getContent(LARGE_CONTENT_SIZE) );
 
             CoapResponse response= client.advanced( request );
 
@@ -226,7 +310,7 @@ public class BlockwiseTest extends FunctionalMunitSuite
 
             assertNotNull( "no response on: " + call, response );
             assertTrue( "response indicates failure on : " + call +" response: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
-            assertTrue( "wrong payload in response on: " + call, Data.validateLargeContent( response.getPayload() ) );
+            assertTrue( "wrong payload in response on: " + call, Data.validateContent( response.getPayload(),LARGE_CONTENT_SIZE ) );
 
             client.shutdown();
         }
@@ -249,7 +333,7 @@ public class BlockwiseTest extends FunctionalMunitSuite
 
             assertNotNull( "no response on: " + call, response );
             assertTrue( "response indicates failure on : " + call +" response: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
-            assertTrue( "wrong payload in response on: " + call, Data.validateLargeContent( response.getPayload() ) );
+            assertTrue( "wrong payload in response on: " + call, Data.validateContent( response.getPayload(),LARGE_CONTENT_SIZE ) );
 
             client.shutdown();
         }
@@ -267,7 +351,7 @@ public class BlockwiseTest extends FunctionalMunitSuite
             CoapClient client= getClient( getPath( call ) );
             client.useLateNegotiation();
             Request request= new Request( call );
-            request.setPayload( smallMessage );
+            request.setPayload( Data.getContent( SMALL_CONTENT_SIZE ) );
 
             CoapResponse response= client.advanced( request );
 
@@ -290,7 +374,7 @@ public class BlockwiseTest extends FunctionalMunitSuite
             CoapClient client= getClient( getPath( call ) );
             client.useEarlyNegotiation( 32 );
             Request request= new Request( call );
-            request.setPayload( smallMessage );
+            request.setPayload( Data.getContent( SMALL_CONTENT_SIZE ) );
 
             CoapResponse response= client.advanced( request );
 
@@ -317,7 +401,7 @@ public class BlockwiseTest extends FunctionalMunitSuite
 
             assertNotNull( "no response on: " + call, response );
             assertTrue( "response indicates failure on : " + call +" response: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
-            assertArrayEquals( "wrong payload in response on: " + call, smallMessage.getBytes(), response.getPayload() );
+            assertTrue( "wrong payload in response on: " + call, Data.validateContent( response.getPayload(), SMALL_CONTENT_SIZE) );
 
             client.shutdown();
         }
@@ -340,7 +424,7 @@ public class BlockwiseTest extends FunctionalMunitSuite
 
             assertNotNull( "no response on: " + call, response );
             assertTrue( "response indicates failure: " + response.getCode() + " msg: " + response.getResponseText(), response.isSuccess() );
-            assertArrayEquals( "wrong payload in response on: " + call, smallMessage.getBytes(), response.getPayload() );
+            assertTrue( "wrong payload in response on: " + call, Data.validateContent( response.getPayload(), SMALL_CONTENT_SIZE) );
 
             client.shutdown();
         }

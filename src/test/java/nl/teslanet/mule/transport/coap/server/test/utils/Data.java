@@ -9,11 +9,6 @@ import org.mule.util.IOUtils;
 public class Data
 {
     /**
-     * Size of large testcontent
-     */
-    private static final int LARGE_CONTENT_SIZE= 8192;
-
-    /**
      * Read resource as string.
      *
      * @param resourcePath the resource path
@@ -37,13 +32,14 @@ public class Data
 
 
     /**
-     * Create large test content of standard size 
+     * Create test content of given size 
+     * @param size the content size
      * @return the test content
      */
-    public static byte[] getLargeContent()
+    public static byte[] getContent( int size )
     {
-        byte[] content= new byte [LARGE_CONTENT_SIZE];
-        for ( int i= 0; i < LARGE_CONTENT_SIZE; i++ )
+        byte[] content= new byte [ size ];
+        for ( int i= 0; i < content.length; i++ )
         {
             content[i]= (byte) ( i % ( Byte.MAX_VALUE + 1 ) );
         }
@@ -53,11 +49,13 @@ public class Data
     /**
      * Validates the test content of standard size
      * @param content to validate
+     * @param size the content size
      * @return true when the content is as expected, otherwise false
      */
-    public static boolean validateLargeContent( byte[] content )
+    public static boolean validateContent( byte[] content, int size )
     {
-        for ( int i= 0; i < LARGE_CONTENT_SIZE; i++ )
+        if ( content.length != size  ) return false;
+        for ( int i= 0; i < content.length; i++ )
         {
             if ( content[i] != (byte) ( i % ( Byte.MAX_VALUE + 1 ) ) )
             {
