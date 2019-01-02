@@ -51,7 +51,7 @@ public class EndpointConfig
 
     //TODO: rename acknowledgment group name to transmission
     /**
-     * The minimum (in milliseconds [ms]) spacing before retransmission. is
+     * The minimum (in milliseconds [ms]) spacing before retransmission is tried.
      */
     @Configurable
     @Default( value= "2000")
@@ -67,7 +67,8 @@ public class EndpointConfig
     private String ackRandomFactor= null;
 
     /**
-     * The backoff factor for retransmissions.
+     * The back-off factor for retransmissions. Every subsequent retransmission time spacing
+     * is enlarged using this factor.
      */
     @Configurable
     @Default( value= "2.0")

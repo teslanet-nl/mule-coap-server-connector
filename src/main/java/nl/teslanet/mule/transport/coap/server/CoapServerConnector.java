@@ -66,8 +66,10 @@ import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
  * The CoapServer Connector can be used in Mule applications to implement CoAP servers.
  * A CoAP server is defined by means of a set resources on which requests can be done like GET, POST, PUT etc. .
  * The server CoAP endpoint has a number of configuration parameters that can be used to tune behavior of the server. 
- * These parameters have sensible defaults and need only to be set for specific needs.     
+ * These parameters have sensible defaults and need only to be set for specific needs.
+ * @Author Rogier Cobben     
  */
+
 @Connector(
     name= "coap-server", 
     friendlyName= "CoAP Server", 
