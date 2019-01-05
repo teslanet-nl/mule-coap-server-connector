@@ -21,6 +21,7 @@ import org.mule.api.annotations.display.Placement;
 import org.mule.api.annotations.param.Default;
 import org.mule.api.annotations.param.Optional;
 
+
 public class EndpointConfig
 {
     /**
@@ -29,32 +30,31 @@ public class EndpointConfig
      */
     @Configurable
     @Optional
-    @Placement(tab= "Endpoint", group="Endpoint")
+    @Placement(tab= "Endpoint", group= "Endpoint")
     private String bindToHost= null;
 
     /**
      * The port the CoAP server will listen on when secure == false.
      */
     @Configurable
-    @Default( value= "5683")
-    @Placement(tab= "Endpoint", group="Endpoint")
+    @Default(value= "5683")
+    @Placement(tab= "Endpoint", group= "Endpoint")
     private String bindToPort= null;
 
     /**
      * The port the CoAP server will listen on when secure == true.
      */
     @Configurable
-    @Default( value= "5684")
-    @Placement(tab= "Endpoint", group="Endpoint")
+    @Default(value= "5684")
+    @Placement(tab= "Endpoint", group= "Endpoint")
     private String bindToSecurePort= null;
-
 
     //TODO: rename acknowledgment group name to transmission
     /**
      * The minimum (in milliseconds [ms]) spacing before retransmission is tried.
      */
     @Configurable
-    @Default( value= "2000")
+    @Default(value= "2000")
     @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String ackTimeout= null;
 
@@ -62,7 +62,7 @@ public class EndpointConfig
      * Factor for spreading retransmission timing.
      */
     @Configurable
-    @Default( value= "1.5")
+    @Default(value= "1.5")
     @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String ackRandomFactor= null;
 
@@ -71,7 +71,7 @@ public class EndpointConfig
      * is enlarged using this factor.
      */
     @Configurable
-    @Default( value= "2.0")
+    @Default(value= "2.0")
     @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String ackTimeoutScale= null;
 
@@ -80,7 +80,7 @@ public class EndpointConfig
      * when no acknowledgement is received.
      */
     @Configurable
-    @Default( value= "4" )
+    @Default(value= "4")
     @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String maxRetransmit= null;
 
@@ -89,7 +89,7 @@ public class EndpointConfig
      * message to the time when an acknowledgement is no longer expected.
      */
     @Configurable
-    @Default( value= "247000" )
+    @Default(value= "247000")
     @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String exchangeLifetime= null;
 
@@ -98,7 +98,7 @@ public class EndpointConfig
      * message to the time its Message ID can be safely reused.  
      */
     @Configurable
-    @Default( value="145000")
+    @Default(value= "145000")
     @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String nonLifetime= null;
 
@@ -107,30 +107,30 @@ public class EndpointConfig
      * 
      */
     @Configurable
-    @Default( value="93000")
+    @Default(value= "93000")
     @Placement(tab= "Acknowledgement", group= "Acknowledgement")
     private String maxTransmitWait= null;
 
     //-----------------
-    
+
     /**
      * Maximum number of simultaneous outstanding interactions with a peer.
      */
     @Configurable
-    @Default( value="1")
+    @Default(value= "1")
     @Placement(tab= "Threads", group= "Threads")
     private String nstart= null;
 
     //-----------------
-    
+
     //TODO: used by Cf?
     /**
      * Period of time (in milliseconds [ms]) of the spreading of responses to a multicast request,
      * for netork congestion prevention.
      */
     @Configurable
-    @Default( value="5000")
-    @Placement(tab= "Endpoint", group="Endpoint")
+    @Default(value= "5000")
+    @Placement(tab= "Endpoint", group= "Endpoint")
     private String leisure= null;
 
     //TODO: used by Cf?
@@ -139,7 +139,7 @@ public class EndpointConfig
      */
     @Configurable
     @Optional
-    @Placement(tab= "Endpoint", group="Endpoint")
+    @Placement(tab= "Endpoint", group= "Endpoint")
     private String probingRate= null;
 
     //-----------------
@@ -148,7 +148,7 @@ public class EndpointConfig
      */
     @Configurable
     @Optional
-    @Placement(tab= "Security", group="Security", order= 1 )
+    @Placement(tab= "Security", group= "Security", order= 1)
     private String keyStoreLocation= null;
 
     /**
@@ -156,7 +156,7 @@ public class EndpointConfig
      */
     @Configurable
     @Optional
-    @Placement(tab= "Security", group="Security", order= 2 )
+    @Placement(tab= "Security", group= "Security", order= 2)
     private String keyStorePassword= null;
 
     /**
@@ -164,7 +164,7 @@ public class EndpointConfig
      */
     @Configurable
     @Optional
-    @Placement(tab= "Security", group="Security", order= 3 )
+    @Placement(tab= "Security", group= "Security", order= 3)
     private String privateKeyAlias= null;
 
     /**
@@ -172,7 +172,7 @@ public class EndpointConfig
      */
     @Configurable
     @Optional
-    @Placement(tab= "Security", group="Security", order= 4 )
+    @Placement(tab= "Security", group= "Security", order= 4)
     private String trustStoreLocation= null;
 
     /**
@@ -180,7 +180,7 @@ public class EndpointConfig
      */
     @Configurable
     @Optional
-    @Placement(tab= "Security", group="Security", order= 5 )
+    @Placement(tab= "Security", group= "Security", order= 5)
     private String trustStorePassword= null;
 
     /**
@@ -188,7 +188,7 @@ public class EndpointConfig
      */
     @Configurable
     @Optional
-    @Placement(tab= "Security", group="Security", order= 6 )
+    @Placement(tab= "Security", group= "Security", order= 6)
     private String trustedRootCertificateAlias= null;
 
     //-----------------
@@ -197,7 +197,7 @@ public class EndpointConfig
      * Otherwise the first message ID returned will be {@code 0}.
      */
     @Configurable
-    @Default( value="true")
+    @Default(value= "true")
     @Placement(tab= "Token", group= "Token")
     private String useRandomMidStart= null;
 
@@ -205,7 +205,7 @@ public class EndpointConfig
      * The maximum token length (bytes).
      */
     @Configurable
-    @Default( value="8")
+    @Default(value= "8")
     @Placement(tab= "Token", group= "Token")
     private String tokenSizeLimit= null;
 
@@ -226,9 +226,22 @@ public class EndpointConfig
      * This value cannot exceed the network's MTU.
      */
     @Configurable
-    @Default( value= "1024")
+    @Default(value= "1024")
     @Placement(tab= "Blockwise", group= "Blockwise")
     private String maxMessageSize= null;
+
+    /**
+     * The maximum size of a resource body (in bytes) that will be accepted
+     * as the payload of a POST/PUT or the response to a GET request in a
+     * <em>transparent</em> blockwise transfer.
+     * Note that this option does not prevent local clients or resource
+     * implementations from sending large bodies as part of a request or
+     * response to a peer.
+     */
+    @Configurable
+    @Default(value= "8192")
+    @Placement(tab= "Blockwise", group= "Blockwise")
+    private String maxResourceBodySize= null;
 
     /**
      * The maximum amount of time (in milliseconds [ms]) allowed between
@@ -236,7 +249,7 @@ public class EndpointConfig
      * blockwise transfer state is discarded.
      */
     @Configurable
-    @Default( value= "300000")
+    @Default(value= "300000")
     @Placement(tab= "Blockwise", group= "Blockwise")
     private String blockwiseStatusLifetime= null;
 
@@ -250,7 +263,7 @@ public class EndpointConfig
      * acknowledged, the CoAP relation is considered stale and removed.
      */
     @Configurable
-    @Default( value= "86400000")
+    @Default(value= "86400000")
     @Placement(tab= "Notifcation", group= "Notifcation")
     private String notificationCheckIntervalTime= null;
 
@@ -261,7 +274,7 @@ public class EndpointConfig
      * the CoAP relation is considered stale and removed.
      */
     @Configurable
-    @Default( value= "100")
+    @Default(value= "100")
     @Placement(tab= "Notifcation", group= "Notifcation")
     private String notificationCheckIntervalCount= null;
 
@@ -272,7 +285,7 @@ public class EndpointConfig
      * expired, to reduce collisions with other clients.
      */
     @Configurable
-    @Default( value="2000")
+    @Default(value= "2000")
     @Placement(tab= "Notifcation", group= "Notifcation")
     private String notificationReregistrationBackoff= null;
 
@@ -281,7 +294,7 @@ public class EndpointConfig
      * When {@code true} congestion controll is active.
      */
     @Configurable
-    @Default( value="false")
+    @Default(value= "false")
     @Placement(tab= "Congestion", group= "Congestion")
     private String useCongestionControl= null;
 
@@ -295,7 +308,7 @@ public class EndpointConfig
      * {@code PeakhopperRto}.
      */
     @Configurable
-    @Default( value="Cocoa")
+    @Default(value= "Cocoa")
     @Placement(tab= "Congestion", group= "Congestion")
     private String congestionControlAlgorithm= null;
 
@@ -335,7 +348,7 @@ public class EndpointConfig
      * UDP datagram size (bytes)
      */
     @Configurable
-    @Default( value="2048")
+    @Default(value= "2048")
     @Placement(tab= "UDP", group= "UDP")
     private String udpConnectorDatagramSize= null;
 
@@ -370,7 +383,7 @@ public class EndpointConfig
      * Available deduplicators are MARK_AND_SWEEP and CROP_ROTATION.
      */
     @Configurable
-    @Default( value="DEDUPLICATOR_MARK_AND_SWEEP" )
+    @Default(value= "DEDUPLICATOR_MARK_AND_SWEEP")
     @Placement(tab= "Deduplicator", group= "Deduplicator")
     private DeduplicatorType deduplicator= null;
 
@@ -378,7 +391,7 @@ public class EndpointConfig
      * The period of MARK_AND_SWEEP deduplicators cleanup cycle (milliseconds [ms]).
      */
     @Configurable
-    @Default( value="10000" )
+    @Default(value= "10000")
     @Placement(tab= "Deduplicator", group= "Deduplicator")
     private String markAndSweepInterval= null;
 
@@ -386,37 +399,37 @@ public class EndpointConfig
      * The period of CROP_ROTATION deduplicators cleanup cycle (milliseconds [ms]).
      */
     @Configurable
-    @Default( value="2000" )
+    @Default(value= "2000")
     @Placement(tab= "Deduplicator", group= "Deduplicator")
     private String cropRotationPeriod= null;
 
-/*
+    /*
     //---------------
     @Configurable
     @Optional
     @Placement(tab= "HTTP", group= "HTTP")
     private String httpPort= null;
-
+    
     @Configurable
     @Optional
     @Placement(tab= "HTTP", group= "HTTP")
     private String httpServerSocketTimeout= null;
-
+    
     @Configurable
     @Optional
     @Placement(tab= "HTTP", group= "HTTP")
     private String httpServerSocketBufferSize= null;
-
+    
     @Configurable
     @Optional
     @Placement(tab= "HTTP", group= "HTTP")
     private String httpCacheResponseMaxAge= null;
-
+    
     @Configurable
     @Optional
     @Placement(tab= "HTTP", group= "HTTP")
     private String httpCacheSize= null;
-*/
+    */
     //---------------
 
     /**
@@ -424,7 +437,7 @@ public class EndpointConfig
      * is logged with this interval (seconds [s])
      */
     @Configurable
-    @Default( value="0")
+    @Default(value= "0")
     @Placement(tab= "Status", group= "Status")
     private String healthStatusInterval= null;
 
@@ -492,7 +505,6 @@ public class EndpointConfig
         this.keyStoreLocation= keyStoreLocation;
     }
 
-
     /**
      * @return the keyStorePassword
      */
@@ -540,7 +552,7 @@ public class EndpointConfig
     {
         this.trustStorePassword= trustStorePassword;
     }
-    
+
     /**
      * @return the privateKeyAlias
      */
@@ -795,6 +807,22 @@ public class EndpointConfig
     public void setMaxMessageSize( String maxMessageSize )
     {
         this.maxMessageSize= maxMessageSize;
+    }
+
+    /**
+     * @return the maxResourceBodySize
+     */
+    public String getMaxResourceBodySize()
+    {
+        return maxResourceBodySize;
+    }
+
+    /**
+     * @param maxResourceBodySize the maxResourceBodySize to set
+     */
+    public void setMaxResourceBodySize( String maxResourceBodySize )
+    {
+        this.maxResourceBodySize= maxResourceBodySize;
     }
 
     /**
@@ -1053,7 +1081,7 @@ public class EndpointConfig
         this.cropRotationPeriod= cropRotationPeriod;
     }
 
-/*
+    /*
     /**
      * @return the httpPort
      * /
@@ -1061,7 +1089,7 @@ public class EndpointConfig
     {
         return httpPort;
     }
-
+    
     /**
      * @param httpPort the httpPort to set
      * /
@@ -1069,7 +1097,7 @@ public class EndpointConfig
     {
         this.httpPort= httpPort;
     }
-
+    
     /**
      * @return the httpServerSocketTimeout
      * /
@@ -1077,7 +1105,7 @@ public class EndpointConfig
     {
         return httpServerSocketTimeout;
     }
-
+    
     /**
      * @param httpServerSocketTimeout the httpServerSocketTimeout to set
      * /
@@ -1085,7 +1113,7 @@ public class EndpointConfig
     {
         this.httpServerSocketTimeout= httpServerSocketTimeout;
     }
-
+    
     /**
      * @return the httpServerSocketBufferSize
      * /
@@ -1093,7 +1121,7 @@ public class EndpointConfig
     {
         return httpServerSocketBufferSize;
     }
-
+    
     /**
      * @param httpServerSocketBufferSize the httpServerSocketBufferSize to set
      * /
@@ -1101,7 +1129,7 @@ public class EndpointConfig
     {
         this.httpServerSocketBufferSize= httpServerSocketBufferSize;
     }
-
+    
     /**
      * @return the httpCacheResponseMaxAge
      * /
@@ -1109,7 +1137,7 @@ public class EndpointConfig
     {
         return httpCacheResponseMaxAge;
     }
-
+    
     /**
      * @param httpCacheResponseMaxAge the httpCacheResponseMaxAge to set
      * /
@@ -1117,7 +1145,7 @@ public class EndpointConfig
     {
         this.httpCacheResponseMaxAge= httpCacheResponseMaxAge;
     }
-
+    
     /**
      * @return the httpCacheSize
      * /
@@ -1125,7 +1153,7 @@ public class EndpointConfig
     {
         return httpCacheSize;
     }
-
+    
     /**
      * @param httpCacheSize the httpCacheSize to set
      * /
@@ -1133,7 +1161,7 @@ public class EndpointConfig
     {
         this.httpCacheSize= httpCacheSize;
     }
-*/
+    */
 
     /**
      * @return the healthStatusInterval
@@ -1154,47 +1182,53 @@ public class EndpointConfig
     public NetworkConfig getNetworkConfig()
     {
         NetworkConfig config= NetworkConfig.createStandardWithoutFile();
-               
-        if ( this.bindToPort != null ) config.setInt(NetworkConfig.Keys.COAP_PORT, Integer.valueOf( this.bindToPort )); // CoAP.DEFAULT_COAP_PORT);
-        if ( this.bindToSecurePort != null ) config.setInt(NetworkConfig.Keys.COAP_SECURE_PORT, Integer.valueOf( this.bindToSecurePort )); // CoAP.DEFAULT_COAP_SECURE_PORT);
-                
-        if ( this.ackTimeout != null ) config.setInt(NetworkConfig.Keys.ACK_TIMEOUT, Integer.valueOf( this.ackTimeout )); // 2000);
-        if ( this.ackRandomFactor != null ) config.setFloat(NetworkConfig.Keys.ACK_RANDOM_FACTOR, Float.valueOf( this.ackRandomFactor )); // 1.5f); Float.va
-        if ( this.ackTimeoutScale != null ) config.setFloat(NetworkConfig.Keys.ACK_TIMEOUT_SCALE, Float.valueOf( this.ackTimeoutScale )); // 2f);
-        if ( this.maxRetransmit != null ) config.setInt(NetworkConfig.Keys.MAX_RETRANSMIT, Integer.valueOf( this.maxRetransmit )); // 4);
-        if ( this.exchangeLifetime != null ) config.setLong(NetworkConfig.Keys.EXCHANGE_LIFETIME, Long.valueOf( this.exchangeLifetime )); // 247 * 1000); // ms
-        if ( this.nonLifetime != null ) config.setLong(NetworkConfig.Keys.NON_LIFETIME, Long.valueOf( this.nonLifetime )); // 145 * 1000); // ms
-        if ( this.maxTransmitWait != null ) config.setLong(NetworkConfig.Keys.MAX_TRANSMIT_WAIT, Long.valueOf( this.maxTransmitWait )); // 93 * 1000);
-        if ( this.nstart != null ) config.setInt(NetworkConfig.Keys.NSTART, Integer.valueOf( this.nstart )); // 1);
-        if ( this.leisure != null ) config.setInt(NetworkConfig.Keys.LEISURE, Integer.valueOf( this.leisure )); // 5000);
-        if ( this.probingRate != null ) config.setFloat(NetworkConfig.Keys.PROBING_RATE, Float.valueOf( this.probingRate )); // 1f);
 
-        if ( this.useRandomMidStart != null ) config.setBoolean(NetworkConfig.Keys.USE_RANDOM_MID_START, Boolean.valueOf( this.useRandomMidStart )); // true);
-        if ( this.tokenSizeLimit != null ) config.setInt(NetworkConfig.Keys.TOKEN_SIZE_LIMIT, Integer.valueOf( this.tokenSizeLimit )); // 8);
+        if ( this.bindToPort != null ) config.setInt( NetworkConfig.Keys.COAP_PORT, Integer.valueOf( this.bindToPort ) ); // CoAP.DEFAULT_COAP_PORT);
+        if ( this.bindToSecurePort != null ) config.setInt( NetworkConfig.Keys.COAP_SECURE_PORT, Integer.valueOf( this.bindToSecurePort ) ); // CoAP.DEFAULT_COAP_SECURE_PORT);
 
-        if ( this.preferredBlockSize != null ) config.setInt(NetworkConfig.Keys.PREFERRED_BLOCK_SIZE, Integer.valueOf( this.preferredBlockSize )); // 512);
-        if ( this.maxMessageSize != null ) config.setInt(NetworkConfig.Keys.MAX_MESSAGE_SIZE, Integer.valueOf( this.maxMessageSize )); // 1024);
-        if ( this.blockwiseStatusLifetime != null ) config.setInt(NetworkConfig.Keys.BLOCKWISE_STATUS_LIFETIME, Integer.valueOf( this.blockwiseStatusLifetime )); // 5 * 60 * 1000); // ms (5min)
+        if ( this.ackTimeout != null ) config.setInt( NetworkConfig.Keys.ACK_TIMEOUT, Integer.valueOf( this.ackTimeout ) ); // 2000);
+        if ( this.ackRandomFactor != null ) config.setFloat( NetworkConfig.Keys.ACK_RANDOM_FACTOR, Float.valueOf( this.ackRandomFactor ) ); // 1.5f); Float.va
+        if ( this.ackTimeoutScale != null ) config.setFloat( NetworkConfig.Keys.ACK_TIMEOUT_SCALE, Float.valueOf( this.ackTimeoutScale ) ); // 2f);
+        if ( this.maxRetransmit != null ) config.setInt( NetworkConfig.Keys.MAX_RETRANSMIT, Integer.valueOf( this.maxRetransmit ) ); // 4);
+        if ( this.exchangeLifetime != null ) config.setLong( NetworkConfig.Keys.EXCHANGE_LIFETIME, Long.valueOf( this.exchangeLifetime ) ); // 247 * 1000); // ms
+        if ( this.nonLifetime != null ) config.setLong( NetworkConfig.Keys.NON_LIFETIME, Long.valueOf( this.nonLifetime ) ); // 145 * 1000); // ms
+        if ( this.maxTransmitWait != null ) config.setLong( NetworkConfig.Keys.MAX_TRANSMIT_WAIT, Long.valueOf( this.maxTransmitWait ) ); // 93 * 1000);
+        if ( this.nstart != null ) config.setInt( NetworkConfig.Keys.NSTART, Integer.valueOf( this.nstart ) ); // 1);
+        if ( this.leisure != null ) config.setInt( NetworkConfig.Keys.LEISURE, Integer.valueOf( this.leisure ) ); // 5000);
+        if ( this.probingRate != null ) config.setFloat( NetworkConfig.Keys.PROBING_RATE, Float.valueOf( this.probingRate ) ); // 1f);
 
-        if ( this.notificationCheckIntervalTime != null ) config.setLong(NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_TIME, Long.valueOf( this.notificationCheckIntervalTime )); // 24 * 60 * 60 * 1000); // ms
-        if ( this.notificationCheckIntervalCount != null ) config.setInt(NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_COUNT, Integer.valueOf( this.notificationCheckIntervalCount )); // 100);
-        if ( this.notificationReregistrationBackoff != null ) config.setLong(NetworkConfig.Keys.NOTIFICATION_REREGISTRATION_BACKOFF, Long.valueOf( this.notificationReregistrationBackoff )); // 2000); // ms
-                
-        if ( this.useCongestionControl != null ) config.setBoolean(NetworkConfig.Keys.USE_CONGESTION_CONTROL, Boolean.valueOf( this.useCongestionControl )); // false);
-        if ( this.congestionControlAlgorithm != null ) config.setString(NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, String.valueOf( this.congestionControlAlgorithm )); // "Cocoa"); // see org.eclipse.californium.core.network.stack.congestioncontrol
-                
-        if ( this.protocolStageThreadCount != null ) config.setInt(NetworkConfig.Keys.PROTOCOL_STAGE_THREAD_COUNT, Integer.valueOf( this.protocolStageThreadCount )); // CORES);
-        if ( this.networkStageReceiverThreadCount != null ) config.setInt(NetworkConfig.Keys.NETWORK_STAGE_RECEIVER_THREAD_COUNT, Integer.valueOf( this.networkStageReceiverThreadCount )); // WINDOWS ? CORES : 1);
-        if ( this.networkStageSenderThreadCount != null ) config.setInt(NetworkConfig.Keys.NETWORK_STAGE_SENDER_THREAD_COUNT, Integer.valueOf( this.networkStageSenderThreadCount )); // WINDOWS ? CORES : 1);
-                
-        if ( this.udpConnectorDatagramSize != null ) config.setInt(NetworkConfig.Keys.UDP_CONNECTOR_DATAGRAM_SIZE, Integer.valueOf( this.udpConnectorDatagramSize )); // 2048);
-        if ( this.udpConnectorReceiveBuffer != null ) config.setInt(NetworkConfig.Keys.UDP_CONNECTOR_RECEIVE_BUFFER, Integer.valueOf( this.udpConnectorReceiveBuffer )); // UDPConnector.UNDEFINED);
-        if ( this.udpConnectorSendBuffer != null ) config.setInt(NetworkConfig.Keys.UDP_CONNECTOR_SEND_BUFFER, Integer.valueOf( this.udpConnectorSendBuffer )); // UDPConnector.UNDEFINED);
-        if ( this.udpConnectorOutCapacity != null ) config.setInt(NetworkConfig.Keys.UDP_CONNECTOR_OUT_CAPACITY, Integer.valueOf( this.udpConnectorOutCapacity )); // Integer.MAX_VALUE); // unbounded
+        if ( this.useRandomMidStart != null ) config.setBoolean( NetworkConfig.Keys.USE_RANDOM_MID_START, Boolean.valueOf( this.useRandomMidStart ) ); // true);
+        if ( this.tokenSizeLimit != null ) config.setInt( NetworkConfig.Keys.TOKEN_SIZE_LIMIT, Integer.valueOf( this.tokenSizeLimit ) ); // 8);
 
-        if ( this.deduplicator != null ) config.setString(NetworkConfig.Keys.DEDUPLICATOR, String.valueOf( this.deduplicator )); // NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP);
-        if ( this.markAndSweepInterval != null ) config.setLong(NetworkConfig.Keys.MARK_AND_SWEEP_INTERVAL, Long.valueOf( this.markAndSweepInterval )); // 10 * 1000);
-        if ( this.cropRotationPeriod != null ) config.setInt(NetworkConfig.Keys.CROP_ROTATION_PERIOD, Integer.valueOf( this.cropRotationPeriod )); // 2000);
+        if ( this.preferredBlockSize != null ) config.setInt( NetworkConfig.Keys.PREFERRED_BLOCK_SIZE, Integer.valueOf( this.preferredBlockSize ) ); // 512);
+        if ( this.maxMessageSize != null ) config.setInt( NetworkConfig.Keys.MAX_MESSAGE_SIZE, Integer.valueOf( this.maxMessageSize ) ); // 1024);
+        //TODO: only transparent blockwise is supported: value > 0
+        if ( this.maxResourceBodySize != null && Integer.valueOf( this.maxResourceBodySize ) > 0 ) config.setInt( NetworkConfig.Keys.MAX_RESOURCE_BODY_SIZE, Integer.valueOf( this.maxResourceBodySize ) ); // 8192 bytes);
+        if ( this.blockwiseStatusLifetime != null ) config.setInt( NetworkConfig.Keys.BLOCKWISE_STATUS_LIFETIME, Integer.valueOf( this.blockwiseStatusLifetime ) ); // 5 * 60 * 1000); // ms (5min)
+
+        if ( this.notificationCheckIntervalTime != null ) config.setLong( NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_TIME, Long.valueOf( this.notificationCheckIntervalTime ) ); // 24 * 60 * 60 * 1000); // ms
+        if ( this.notificationCheckIntervalCount != null )
+            config.setInt( NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_COUNT, Integer.valueOf( this.notificationCheckIntervalCount ) ); // 100);
+        if ( this.notificationReregistrationBackoff != null )
+            config.setLong( NetworkConfig.Keys.NOTIFICATION_REREGISTRATION_BACKOFF, Long.valueOf( this.notificationReregistrationBackoff ) ); // 2000); // ms
+
+        if ( this.useCongestionControl != null ) config.setBoolean( NetworkConfig.Keys.USE_CONGESTION_CONTROL, Boolean.valueOf( this.useCongestionControl ) ); // false);
+        if ( this.congestionControlAlgorithm != null ) config.setString( NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, String.valueOf( this.congestionControlAlgorithm ) ); // "Cocoa"); // see org.eclipse.californium.core.network.stack.congestioncontrol
+
+        if ( this.protocolStageThreadCount != null ) config.setInt( NetworkConfig.Keys.PROTOCOL_STAGE_THREAD_COUNT, Integer.valueOf( this.protocolStageThreadCount ) ); // CORES);
+        if ( this.networkStageReceiverThreadCount != null )
+            config.setInt( NetworkConfig.Keys.NETWORK_STAGE_RECEIVER_THREAD_COUNT, Integer.valueOf( this.networkStageReceiverThreadCount ) ); // WINDOWS ? CORES : 1);
+        if ( this.networkStageSenderThreadCount != null )
+            config.setInt( NetworkConfig.Keys.NETWORK_STAGE_SENDER_THREAD_COUNT, Integer.valueOf( this.networkStageSenderThreadCount ) ); // WINDOWS ? CORES : 1);
+
+        if ( this.udpConnectorDatagramSize != null ) config.setInt( NetworkConfig.Keys.UDP_CONNECTOR_DATAGRAM_SIZE, Integer.valueOf( this.udpConnectorDatagramSize ) ); // 2048);
+        if ( this.udpConnectorReceiveBuffer != null ) config.setInt( NetworkConfig.Keys.UDP_CONNECTOR_RECEIVE_BUFFER, Integer.valueOf( this.udpConnectorReceiveBuffer ) ); // UDPConnector.UNDEFINED);
+        if ( this.udpConnectorSendBuffer != null ) config.setInt( NetworkConfig.Keys.UDP_CONNECTOR_SEND_BUFFER, Integer.valueOf( this.udpConnectorSendBuffer ) ); // UDPConnector.UNDEFINED);
+        if ( this.udpConnectorOutCapacity != null ) config.setInt( NetworkConfig.Keys.UDP_CONNECTOR_OUT_CAPACITY, Integer.valueOf( this.udpConnectorOutCapacity ) ); // Integer.MAX_VALUE); // unbounded
+
+        if ( this.deduplicator != null ) config.setString( NetworkConfig.Keys.DEDUPLICATOR, String.valueOf( this.deduplicator ) ); // NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP);
+        if ( this.markAndSweepInterval != null ) config.setLong( NetworkConfig.Keys.MARK_AND_SWEEP_INTERVAL, Long.valueOf( this.markAndSweepInterval ) ); // 10 * 1000);
+        if ( this.cropRotationPeriod != null ) config.setInt( NetworkConfig.Keys.CROP_ROTATION_PERIOD, Integer.valueOf( this.cropRotationPeriod ) ); // 2000);
 
         /*
         if ( this.httpPort != null ) config.setInt(NetworkConfig.Keys.HTTP_PORT, Integer.valueOf( this.httpPort )); // 8080);
@@ -1203,10 +1237,8 @@ public class EndpointConfig
         if ( this.httpCacheResponseMaxAge != null ) config.setInt(NetworkConfig.Keys.HTTP_CACHE_RESPONSE_MAX_AGE, Integer.valueOf( this.httpCacheResponseMaxAge )); // 86400);
         if ( this.httpCacheSize != null ) config.setInt(NetworkConfig.Keys.HTTP_CACHE_SIZE, Integer.valueOf( this.httpCacheSize )); // 32);
         */
-        if ( this.healthStatusInterval != null ) config.setInt(NetworkConfig.Keys.HEALTH_STATUS_INTERVAL, Integer.valueOf( this.healthStatusInterval )); // 0); // s
+        if ( this.healthStatusInterval != null ) config.setInt( NetworkConfig.Keys.HEALTH_STATUS_INTERVAL, Integer.valueOf( this.healthStatusInterval ) ); // 0); // s
         return config;
     }
-
-  
 
 }

@@ -14,6 +14,7 @@
 
 package nl.teslanet.mule.transport.coap.server.config;
 
+
 import java.net.InetSocketAddress;
 
 import org.eclipse.californium.core.coap.CoAP;
@@ -21,6 +22,7 @@ import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.components.Configuration;
 import org.mule.api.annotations.display.Placement;
 import org.mule.api.annotations.param.Default;
+
 
 /**
  * The CoAP server configuration contains attributes defining the CoAP endpoint and child elements that define CoAP 
@@ -64,7 +66,7 @@ import org.mule.api.annotations.param.Default;
  * &lt;/coap-server:config&gt;<br/>
  * </code><br/>
  */
-@Configuration(friendlyName = "Server Configuration")
+@Configuration(friendlyName= "Server Configuration")
 public class ServerConfig extends EndpointConfig
 {
     /**
@@ -72,7 +74,7 @@ public class ServerConfig extends EndpointConfig
      * Key and certificate must then be configured.
      */
     @Configurable
-    @Default( value= "false")
+    @Default(value= "false")
     @Placement(tab= "General", group= "Server")
     //@FriendlyName(value = false)
     private boolean secure= false;
@@ -81,34 +83,34 @@ public class ServerConfig extends EndpointConfig
      * When true each CoAP message will be logged.
      */
     @Configurable
-    @Default( value= "false")
+    @Default(value= "false")
     @Placement(tab= "Logging", group= "CoAP")
     //@FriendlyName(value = false)
     private boolean logCoapMessages= false;
-    
+
     /**
      * Gets the Socket address the server listens on
      */
     public InetSocketAddress getInetSocketAddress()
     {
         int port;
-       
+
         if ( secure )
         {
-            port = ( getBindToSecurePort() != null ? Integer.parseInt( getBindToSecurePort()) : CoAP.DEFAULT_COAP_SECURE_PORT );
+            port= ( getBindToSecurePort() != null ? Integer.parseInt( getBindToSecurePort() ) : CoAP.DEFAULT_COAP_SECURE_PORT );
         }
         else
         {
-            port = ( getBindToPort() != null ? Integer.parseInt( getBindToPort()) : CoAP.DEFAULT_COAP_PORT );
+            port= ( getBindToPort() != null ? Integer.parseInt( getBindToPort() ) : CoAP.DEFAULT_COAP_PORT );
         }
         if ( getBindToHost() != null )
         {
-            
-            return new InetSocketAddress( getBindToHost(), port );            
+
+            return new InetSocketAddress( getBindToHost(), port );
         }
         else
         {
-            return new InetSocketAddress( port );            
+            return new InetSocketAddress( port );
         }
     }
 
@@ -145,6 +147,5 @@ public class ServerConfig extends EndpointConfig
     {
         this.logCoapMessages= logMessages;
     }
-
 
 }
