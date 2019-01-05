@@ -14,14 +14,16 @@
 
 package nl.teslanet.mule.transport.coap.server.config;
 
-
 import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.display.Placement;
 import org.mule.api.annotations.param.Default;
 import org.mule.api.annotations.param.Optional;
 
-
+/**
+ * Contains servers endpoint configuration.
+ *
+ */
 public class EndpointConfig
 {
     /**
@@ -49,9 +51,26 @@ public class EndpointConfig
     @Placement(tab= "Endpoint", group= "Endpoint")
     private String bindToSecurePort= null;
 
+    /**
+     * The maximum number of active peers supported.
+     */
+    @Configurable
+    @Default(value= "150000")
+    @Placement(tab= "Endpoint", group= "Endpoint")
+    private String maxActivePeers= null;
+
+    /**
+     * The maximum number of seconds [s] a peer may be inactive for before it is
+     * considered stale and all state associated with it can be discarded.
+     */
+    @Configurable
+    @Default(value= "600")
+    @Placement(tab= "Endpoint", group= "Endpoint")
+    private String maxPeerInactivityPeriod= null;
+
     //TODO: rename acknowledgment group name to transmission
     /**
-     * The minimum (in milliseconds [ms]) spacing before retransmission is tried.
+     * The minimum spacing (in milliseconds [ms]) before retransmission is tried.
      */
     @Configurable
     @Default(value= "2000")
@@ -126,7 +145,7 @@ public class EndpointConfig
     //TODO: used by Cf?
     /**
      * Period of time (in milliseconds [ms]) of the spreading of responses to a multicast request,
-     * for netork congestion prevention.
+     * for network congestion prevention.
      */
     @Configurable
     @Default(value= "5000")
@@ -191,6 +210,34 @@ public class EndpointConfig
     @Placement(tab= "Security", group= "Security", order= 6)
     private String trustedRootCertificateAlias= null;
 
+    /**
+     * (D)TLS session timeout in seconds [s].
+     * Default value is 24 hours.
+     */
+    @Configurable
+    @Default(value="86400")
+    @Placement(tab= "Security", group= "Security", order= 7)
+    private String secureSessionTimeout= null;
+
+    /**
+     * DTLS auto resumption timeout in milliseconds [ms]. After that period
+     * without exchanged messages, the session is forced to resume.
+     */
+    @Configurable
+    @Default(value="30000")
+    @Placement(tab= "Security", group= "Security", order= 8)
+    private String dtlsAutoResumeTimeout= null;
+
+    //TODO: enum
+    /**
+     * The default DTLS response matcher.
+     * Supported values are {@code STRICT}, {@code RELAXED}, or {@code PRINCIPAL}.
+     */
+    @Configurable
+    @Default(value="STRICT")
+    @Placement(tab= "Security", group= "Security", order= 8)
+    private String responseMatching= null;
+
     //-----------------
     /**
      * When {@code true} the message IDs will start at a random index. 
@@ -200,6 +247,25 @@ public class EndpointConfig
     @Default(value= "true")
     @Placement(tab= "Token", group= "Token")
     private String useRandomMidStart= null;
+
+    //TODO: enum
+    /**
+     * The default MID tracker.
+     * Supported values are {@code NULL}, {@code GROUPED}, or {@code MAPBASED}.
+     */
+    @Configurable
+    @Default(value= "GROUPED")
+    @Placement(tab= "Token", group= "Token")
+    private String midTracker= null;
+
+    /**
+     * The default number of MID groups.
+     * Used for {@code GROUPED} message Id tracker.
+     */
+    @Configurable
+    @Default(value= "16")
+    @Placement(tab= "Token", group= "Token")
+    private String midTrackerGroups= null;
 
     /**
      * The maximum token length (bytes).
@@ -487,6 +553,22 @@ public class EndpointConfig
     public void setBindToSecurePort( String coapSecurePort )
     {
         this.bindToSecurePort= coapSecurePort;
+    }
+
+    /**
+     * @return the maxActivePeers
+     */
+    public String getMaxActivePeers()
+    {
+        return maxActivePeers;
+    }
+
+    /**
+     * @param maxActivePeers the maxActivePeers to set
+     */
+    public void setMaxActivePeers( String maxActivePeers )
+    {
+        this.maxActivePeers= maxActivePeers;
     }
 
     /**
@@ -1183,9 +1265,10 @@ public class EndpointConfig
     {
         NetworkConfig config= NetworkConfig.createStandardWithoutFile();
 
-        if ( this.bindToPort != null ) config.setInt( NetworkConfig.Keys.COAP_PORT, Integer.valueOf( this.bindToPort ) ); // CoAP.DEFAULT_COAP_PORT);
-        if ( this.bindToSecurePort != null ) config.setInt( NetworkConfig.Keys.COAP_SECURE_PORT, Integer.valueOf( this.bindToSecurePort ) ); // CoAP.DEFAULT_COAP_SECURE_PORT);
-
+        if ( this.bindToPort != null ) config.setInt( NetworkConfig.Keys.COAP_PORT, Integer.valueOf( this.bindToPort ) );
+        if ( this.bindToSecurePort != null ) config.setInt( NetworkConfig.Keys.COAP_SECURE_PORT, Integer.valueOf( this.bindToSecurePort ) ); 
+        if ( this.maxActivePeers != null ) config.setInt( NetworkConfig.Keys.MAX_ACTIVE_PEERS, Integer.valueOf( this.maxActivePeers ) ); 
+        if ( this.maxPeerInactivityPeriod != null ) config.setInt( NetworkConfig.Keys.MAX_PEER_INACTIVITY_PERIOD, Integer.valueOf( this.maxPeerInactivityPeriod ) ); 
         if ( this.ackTimeout != null ) config.setInt( NetworkConfig.Keys.ACK_TIMEOUT, Integer.valueOf( this.ackTimeout ) ); // 2000);
         if ( this.ackRandomFactor != null ) config.setFloat( NetworkConfig.Keys.ACK_RANDOM_FACTOR, Float.valueOf( this.ackRandomFactor ) ); // 1.5f); Float.va
         if ( this.ackTimeoutScale != null ) config.setFloat( NetworkConfig.Keys.ACK_TIMEOUT_SCALE, Float.valueOf( this.ackTimeoutScale ) ); // 2f);
@@ -1198,6 +1281,8 @@ public class EndpointConfig
         if ( this.probingRate != null ) config.setFloat( NetworkConfig.Keys.PROBING_RATE, Float.valueOf( this.probingRate ) ); // 1f);
 
         if ( this.useRandomMidStart != null ) config.setBoolean( NetworkConfig.Keys.USE_RANDOM_MID_START, Boolean.valueOf( this.useRandomMidStart ) ); // true);
+        if ( this.midTracker != null ) config.setBoolean( NetworkConfig.Keys.MID_TRACKER, Boolean.valueOf( this.midTracker ) ); 
+        if ( this.midTrackerGroups != null ) config.setBoolean( NetworkConfig.Keys.MID_TRACKER_GROUPS, Boolean.valueOf( this.midTrackerGroups ) ); 
         if ( this.tokenSizeLimit != null ) config.setInt( NetworkConfig.Keys.TOKEN_SIZE_LIMIT, Integer.valueOf( this.tokenSizeLimit ) ); // 8);
 
         if ( this.preferredBlockSize != null ) config.setInt( NetworkConfig.Keys.PREFERRED_BLOCK_SIZE, Integer.valueOf( this.preferredBlockSize ) ); // 512);
@@ -1229,6 +1314,7 @@ public class EndpointConfig
         if ( this.deduplicator != null ) config.setString( NetworkConfig.Keys.DEDUPLICATOR, String.valueOf( this.deduplicator ) ); // NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP);
         if ( this.markAndSweepInterval != null ) config.setLong( NetworkConfig.Keys.MARK_AND_SWEEP_INTERVAL, Long.valueOf( this.markAndSweepInterval ) ); // 10 * 1000);
         if ( this.cropRotationPeriod != null ) config.setInt( NetworkConfig.Keys.CROP_ROTATION_PERIOD, Integer.valueOf( this.cropRotationPeriod ) ); // 2000);
+        if ( this.responseMatching != null ) config.setInt( NetworkConfig.Keys.RESPONSE_MATCHING, Integer.valueOf( this.responseMatching ) ); 
 
         /*
         if ( this.httpPort != null ) config.setInt(NetworkConfig.Keys.HTTP_PORT, Integer.valueOf( this.httpPort )); // 8080);
@@ -1236,8 +1322,15 @@ public class EndpointConfig
         if ( this.httpServerSocketBufferSize != null ) config.setInt(NetworkConfig.Keys.HTTP_SERVER_SOCKET_BUFFER_SIZE, Integer.valueOf( this.httpServerSocketBufferSize )); // 8192);
         if ( this.httpCacheResponseMaxAge != null ) config.setInt(NetworkConfig.Keys.HTTP_CACHE_RESPONSE_MAX_AGE, Integer.valueOf( this.httpCacheResponseMaxAge )); // 86400);
         if ( this.httpCacheSize != null ) config.setInt(NetworkConfig.Keys.HTTP_CACHE_SIZE, Integer.valueOf( this.httpCacheSize )); // 32);
+        / ** Properties for TCP connector. * /
+        public static final String TCP_CONNECTION_IDLE_TIMEOUT = "TCP_CONNECTION_IDLE_TIMEOUT";
+        public static final String TCP_CONNECT_TIMEOUT = "TCP_CONNECT_TIMEOUT";
+        public static final String TCP_WORKER_THREADS = "TCP_WORKER_THREADS";
         */
         if ( this.healthStatusInterval != null ) config.setInt( NetworkConfig.Keys.HEALTH_STATUS_INTERVAL, Integer.valueOf( this.healthStatusInterval ) ); // 0); // s
+
+        if ( this.secureSessionTimeout != null ) config.setInt( NetworkConfig.Keys.SECURE_SESSION_TIMEOUT, Integer.valueOf( this.secureSessionTimeout ) ); 
+        if ( this.dtlsAutoResumeTimeout != null ) config.setInt( NetworkConfig.Keys.DTLS_AUTO_RESUME_TIMEOUT, Integer.valueOf( this.dtlsAutoResumeTimeout ) ); 
         return config;
     }
 
