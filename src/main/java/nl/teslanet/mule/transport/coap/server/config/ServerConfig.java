@@ -84,7 +84,7 @@ public class ServerConfig extends EndpointConfig
      */
     @Configurable
     @Default(value= "false")
-    @Placement(tab= "Logging", group= "CoAP")
+    @Placement(tab= "Logging", group= "Logging")
     //@FriendlyName(value = false)
     private boolean logCoapMessages= false;
 

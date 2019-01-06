@@ -14,11 +14,13 @@
 
 package nl.teslanet.mule.transport.coap.server.config;
 
+
 import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.display.Placement;
 import org.mule.api.annotations.param.Default;
 import org.mule.api.annotations.param.Optional;
+
 
 /**
  * Contains servers endpoint configuration.
@@ -215,7 +217,7 @@ public class EndpointConfig
      * Default value is 24 hours.
      */
     @Configurable
-    @Default(value="86400")
+    @Default(value= "86400")
     @Placement(tab= "Security", group= "Security", order= 7)
     private String secureSessionTimeout= null;
 
@@ -224,19 +226,18 @@ public class EndpointConfig
      * without exchanged messages, the session is forced to resume.
      */
     @Configurable
-    @Default(value="30000")
+    @Default(value= "30000")
     @Placement(tab= "Security", group= "Security", order= 8)
     private String dtlsAutoResumeTimeout= null;
 
-    //TODO: enum
     /**
      * The default DTLS response matcher.
      * Supported values are {@code STRICT}, {@code RELAXED}, or {@code PRINCIPAL}.
      */
     @Configurable
-    @Default(value="STRICT")
+    @Default(value= "STRICT")
     @Placement(tab= "Security", group= "Security", order= 8)
-    private String responseMatching= null;
+    private DtlsResponseMatchingName responseMatching= null;
 
     //-----------------
     /**
@@ -248,15 +249,16 @@ public class EndpointConfig
     @Placement(tab= "Token", group= "Token")
     private String useRandomMidStart= null;
 
-    //TODO: enum
     /**
-     * The default MID tracker.
+     * The message identity racker used. The tracker maintains the administration
+     * of message id's uses in the CoAP exchanges. These use different strategies like 
+     * maintaining a map of individual entries or use groups where id's get cleaned by group.  
      * Supported values are {@code NULL}, {@code GROUPED}, or {@code MAPBASED}.
      */
     @Configurable
     @Default(value= "GROUPED")
     @Placement(tab= "Token", group= "Token")
-    private String midTracker= null;
+    private MidTrackerName midTracker= null;
 
     /**
      * The default number of MID groups.
@@ -449,9 +451,9 @@ public class EndpointConfig
      * Available deduplicators are MARK_AND_SWEEP and CROP_ROTATION.
      */
     @Configurable
-    @Default(value= "DEDUPLICATOR_MARK_AND_SWEEP")
+    @Default(value= "MARK_AND_SWEEP")
     @Placement(tab= "Deduplicator", group= "Deduplicator")
-    private DeduplicatorType deduplicator= null;
+    private DeduplicatorName deduplicator= null;
 
     /**
      * The period of MARK_AND_SWEEP deduplicators cleanup cycle (milliseconds [ms]).
@@ -499,12 +501,20 @@ public class EndpointConfig
     //---------------
 
     /**
-     * When healthStatusInterval > 0 additional status information 
-     * is logged with this interval (seconds [s])
+     * When logHealthStatus is {@code true}, periodically additional
+     * status information is logged.
      */
     @Configurable
-    @Default(value= "0")
-    @Placement(tab= "Status", group= "Status")
+    @Default(value= "false")
+    @Placement(tab= "Logging", group= "Logging")
+    private boolean logHealthStatus= false;
+
+    /**
+     * The interval of healthStatus logging (seconds [s]).
+     */
+    @Configurable
+    @Default(value= "600")
+    @Placement(tab= "Logging", group= "Logging")
     private String healthStatusInterval= null;
 
     /**
@@ -569,6 +579,22 @@ public class EndpointConfig
     public void setMaxActivePeers( String maxActivePeers )
     {
         this.maxActivePeers= maxActivePeers;
+    }
+
+    /**
+     * @return the maxPeerInactivityPeriod
+     */
+    public String getMaxPeerInactivityPeriod()
+    {
+        return maxPeerInactivityPeriod;
+    }
+
+    /**
+     * @param maxPeerInactivityPeriod the maxPeerInactivityPeriod to set
+     */
+    public void setMaxPeerInactivityPeriod( String maxPeerInactivityPeriod )
+    {
+        this.maxPeerInactivityPeriod= maxPeerInactivityPeriod;
     }
 
     /**
@@ -665,6 +691,54 @@ public class EndpointConfig
     public void setTrustedRootCertificateAlias( String trustedRootCertificateAlias )
     {
         this.trustedRootCertificateAlias= trustedRootCertificateAlias;
+    }
+
+    /**
+     * @return the secureSessionTimeout
+     */
+    public String getSecureSessionTimeout()
+    {
+        return secureSessionTimeout;
+    }
+
+    /**
+     * @param secureSessionTimeout the secureSessionTimeout to set
+     */
+    public void setSecureSessionTimeout( String secureSessionTimeout )
+    {
+        this.secureSessionTimeout= secureSessionTimeout;
+    }
+
+    /**
+     * @return the dtlsAutoResumeTimeout
+     */
+    public String getDtlsAutoResumeTimeout()
+    {
+        return dtlsAutoResumeTimeout;
+    }
+
+    /**
+     * @param dtlsAutoResumeTimeout the dtlsAutoResumeTimeout to set
+     */
+    public void setDtlsAutoResumeTimeout( String dtlsAutoResumeTimeout )
+    {
+        this.dtlsAutoResumeTimeout= dtlsAutoResumeTimeout;
+    }
+
+    /**
+     * @return the responseMatching
+     */
+    public DtlsResponseMatchingName getResponseMatching()
+    {
+        return responseMatching;
+    }
+
+    /**
+     * @param responseMatching the responseMatching to set
+     */
+    public void setResponseMatching( DtlsResponseMatchingName responseMatching )
+    {
+        this.responseMatching= responseMatching;
     }
 
     /**
@@ -841,6 +915,38 @@ public class EndpointConfig
     public void setUseRandomMidStart( String useRandomMidStart )
     {
         this.useRandomMidStart= useRandomMidStart;
+    }
+
+    /**
+     * @return the midTracker
+     */
+    public MidTrackerName getMidTracker()
+    {
+        return midTracker;
+    }
+
+    /**
+     * @param midTracker the midTracker to set
+     */
+    public void setMidTracker( MidTrackerName midTracker )
+    {
+        this.midTracker= midTracker;
+    }
+
+    /**
+     * @return the midTrackerGroups
+     */
+    public String getMidTrackerGroups()
+    {
+        return midTrackerGroups;
+    }
+
+    /**
+     * @param midTrackerGroups the midTrackerGroups to set
+     */
+    public void setMidTrackerGroups( String midTrackerGroups )
+    {
+        this.midTrackerGroups= midTrackerGroups;
     }
 
     /**
@@ -1118,7 +1224,7 @@ public class EndpointConfig
     /**
      * @return the deduplicator
      */
-    public DeduplicatorType getDeduplicator()
+    public DeduplicatorName getDeduplicator()
     {
         return deduplicator;
     }
@@ -1126,7 +1232,7 @@ public class EndpointConfig
     /**
      * @param deduplicator the deduplicator to set
      */
-    public void setDeduplicator( DeduplicatorType deduplicator )
+    public void setDeduplicator( DeduplicatorName deduplicator )
     {
         this.deduplicator= deduplicator;
     }
@@ -1266,9 +1372,9 @@ public class EndpointConfig
         NetworkConfig config= NetworkConfig.createStandardWithoutFile();
 
         if ( this.bindToPort != null ) config.setInt( NetworkConfig.Keys.COAP_PORT, Integer.valueOf( this.bindToPort ) );
-        if ( this.bindToSecurePort != null ) config.setInt( NetworkConfig.Keys.COAP_SECURE_PORT, Integer.valueOf( this.bindToSecurePort ) ); 
-        if ( this.maxActivePeers != null ) config.setInt( NetworkConfig.Keys.MAX_ACTIVE_PEERS, Integer.valueOf( this.maxActivePeers ) ); 
-        if ( this.maxPeerInactivityPeriod != null ) config.setInt( NetworkConfig.Keys.MAX_PEER_INACTIVITY_PERIOD, Integer.valueOf( this.maxPeerInactivityPeriod ) ); 
+        if ( this.bindToSecurePort != null ) config.setInt( NetworkConfig.Keys.COAP_SECURE_PORT, Integer.valueOf( this.bindToSecurePort ) );
+        if ( this.maxActivePeers != null ) config.setInt( NetworkConfig.Keys.MAX_ACTIVE_PEERS, Integer.valueOf( this.maxActivePeers ) );
+        if ( this.maxPeerInactivityPeriod != null ) config.setInt( NetworkConfig.Keys.MAX_PEER_INACTIVITY_PERIOD, Integer.valueOf( this.maxPeerInactivityPeriod ) );
         if ( this.ackTimeout != null ) config.setInt( NetworkConfig.Keys.ACK_TIMEOUT, Integer.valueOf( this.ackTimeout ) ); // 2000);
         if ( this.ackRandomFactor != null ) config.setFloat( NetworkConfig.Keys.ACK_RANDOM_FACTOR, Float.valueOf( this.ackRandomFactor ) ); // 1.5f); Float.va
         if ( this.ackTimeoutScale != null ) config.setFloat( NetworkConfig.Keys.ACK_TIMEOUT_SCALE, Float.valueOf( this.ackTimeoutScale ) ); // 2f);
@@ -1281,14 +1387,31 @@ public class EndpointConfig
         if ( this.probingRate != null ) config.setFloat( NetworkConfig.Keys.PROBING_RATE, Float.valueOf( this.probingRate ) ); // 1f);
 
         if ( this.useRandomMidStart != null ) config.setBoolean( NetworkConfig.Keys.USE_RANDOM_MID_START, Boolean.valueOf( this.useRandomMidStart ) ); // true);
-        if ( this.midTracker != null ) config.setBoolean( NetworkConfig.Keys.MID_TRACKER, Boolean.valueOf( this.midTracker ) ); 
-        if ( this.midTrackerGroups != null ) config.setBoolean( NetworkConfig.Keys.MID_TRACKER_GROUPS, Boolean.valueOf( this.midTrackerGroups ) ); 
+        if ( this.midTracker != null )
+        {
+            switch (this.midTracker )
+            {
+                case GROUPED:
+                    config.setString( NetworkConfig.Keys.MID_TRACKER, "GROUPED" );
+                    break;
+                case MAPBASED:
+                    config.setString( NetworkConfig.Keys.MID_TRACKER, "MAPBASED" );
+                    break;
+                case NULL:
+                    config.setString( NetworkConfig.Keys.MID_TRACKER, "NULL" );
+                    break;
+                default:
+                    break;
+            }
+        }
+        if ( this.midTrackerGroups != null ) config.setBoolean( NetworkConfig.Keys.MID_TRACKER_GROUPS, Boolean.valueOf( this.midTrackerGroups ) );
         if ( this.tokenSizeLimit != null ) config.setInt( NetworkConfig.Keys.TOKEN_SIZE_LIMIT, Integer.valueOf( this.tokenSizeLimit ) ); // 8);
 
         if ( this.preferredBlockSize != null ) config.setInt( NetworkConfig.Keys.PREFERRED_BLOCK_SIZE, Integer.valueOf( this.preferredBlockSize ) ); // 512);
         if ( this.maxMessageSize != null ) config.setInt( NetworkConfig.Keys.MAX_MESSAGE_SIZE, Integer.valueOf( this.maxMessageSize ) ); // 1024);
         //TODO: only transparent blockwise is supported: value > 0
-        if ( this.maxResourceBodySize != null && Integer.valueOf( this.maxResourceBodySize ) > 0 ) config.setInt( NetworkConfig.Keys.MAX_RESOURCE_BODY_SIZE, Integer.valueOf( this.maxResourceBodySize ) ); // 8192 bytes);
+        if ( this.maxResourceBodySize != null && Integer.valueOf( this.maxResourceBodySize ) > 0 )
+            config.setInt( NetworkConfig.Keys.MAX_RESOURCE_BODY_SIZE, Integer.valueOf( this.maxResourceBodySize ) ); // 8192 bytes);
         if ( this.blockwiseStatusLifetime != null ) config.setInt( NetworkConfig.Keys.BLOCKWISE_STATUS_LIFETIME, Integer.valueOf( this.blockwiseStatusLifetime ) ); // 5 * 60 * 1000); // ms (5min)
 
         if ( this.notificationCheckIntervalTime != null ) config.setLong( NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_TIME, Long.valueOf( this.notificationCheckIntervalTime ) ); // 24 * 60 * 60 * 1000); // ms
@@ -1311,10 +1434,42 @@ public class EndpointConfig
         if ( this.udpConnectorSendBuffer != null ) config.setInt( NetworkConfig.Keys.UDP_CONNECTOR_SEND_BUFFER, Integer.valueOf( this.udpConnectorSendBuffer ) ); // UDPConnector.UNDEFINED);
         if ( this.udpConnectorOutCapacity != null ) config.setInt( NetworkConfig.Keys.UDP_CONNECTOR_OUT_CAPACITY, Integer.valueOf( this.udpConnectorOutCapacity ) ); // Integer.MAX_VALUE); // unbounded
 
-        if ( this.deduplicator != null ) config.setString( NetworkConfig.Keys.DEDUPLICATOR, String.valueOf( this.deduplicator ) ); // NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP);
+        if ( this.deduplicator != null )
+        {
+            switch ( this.deduplicator )
+            {
+                case NONE:
+                    config.setString( NetworkConfig.Keys.DEDUPLICATOR, NetworkConfig.Keys.NO_DEDUPLICATOR );
+                    break;
+                case CROP_ROTATION:
+                    config.setString( NetworkConfig.Keys.DEDUPLICATOR, NetworkConfig.Keys.DEDUPLICATOR_CROP_ROTATION );
+                    break;
+                case MARK_AND_SWEEP:
+                    config.setString( NetworkConfig.Keys.DEDUPLICATOR, NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP );
+                    break;
+                default:
+                    break;
+            }
+        }
         if ( this.markAndSweepInterval != null ) config.setLong( NetworkConfig.Keys.MARK_AND_SWEEP_INTERVAL, Long.valueOf( this.markAndSweepInterval ) ); // 10 * 1000);
         if ( this.cropRotationPeriod != null ) config.setInt( NetworkConfig.Keys.CROP_ROTATION_PERIOD, Integer.valueOf( this.cropRotationPeriod ) ); // 2000);
-        if ( this.responseMatching != null ) config.setInt( NetworkConfig.Keys.RESPONSE_MATCHING, Integer.valueOf( this.responseMatching ) ); 
+        if ( this.responseMatching != null )
+        {
+            switch ( this.responseMatching )
+            {
+                case STRICT:
+                    config.setString( NetworkConfig.Keys.RESPONSE_MATCHING, "STRICT" );
+                    break;
+                case PRINCIPAL:
+                    config.setString( NetworkConfig.Keys.RESPONSE_MATCHING, "PRINCIPAL" );
+                    break;
+                case RELAXED:
+                    config.setString( NetworkConfig.Keys.RESPONSE_MATCHING, "RELAXED" );
+                    break;
+                default:
+                    break;
+            }
+        }
 
         /*
         if ( this.httpPort != null ) config.setInt(NetworkConfig.Keys.HTTP_PORT, Integer.valueOf( this.httpPort )); // 8080);
@@ -1327,11 +1482,19 @@ public class EndpointConfig
         public static final String TCP_CONNECT_TIMEOUT = "TCP_CONNECT_TIMEOUT";
         public static final String TCP_WORKER_THREADS = "TCP_WORKER_THREADS";
         */
-        if ( this.healthStatusInterval != null ) config.setInt( NetworkConfig.Keys.HEALTH_STATUS_INTERVAL, Integer.valueOf( this.healthStatusInterval ) ); // 0); // s
-
-        if ( this.secureSessionTimeout != null ) config.setInt( NetworkConfig.Keys.SECURE_SESSION_TIMEOUT, Integer.valueOf( this.secureSessionTimeout ) ); 
-        if ( this.dtlsAutoResumeTimeout != null ) config.setInt( NetworkConfig.Keys.DTLS_AUTO_RESUME_TIMEOUT, Integer.valueOf( this.dtlsAutoResumeTimeout ) ); 
+        if ( this.logHealthStatus )
+        {
+            if ( this.healthStatusInterval != null )
+            {
+                config.setInt( NetworkConfig.Keys.HEALTH_STATUS_INTERVAL, Integer.valueOf( this.healthStatusInterval ) );
+            }
+            else
+            {
+                config.setInt( NetworkConfig.Keys.HEALTH_STATUS_INTERVAL, 600 );
+            }
+        }
+        if ( this.secureSessionTimeout != null ) config.setInt( NetworkConfig.Keys.SECURE_SESSION_TIMEOUT, Integer.valueOf( this.secureSessionTimeout ) );
+        if ( this.dtlsAutoResumeTimeout != null ) config.setInt( NetworkConfig.Keys.DTLS_AUTO_RESUME_TIMEOUT, Integer.valueOf( this.dtlsAutoResumeTimeout ) );
         return config;
     }
-
 }

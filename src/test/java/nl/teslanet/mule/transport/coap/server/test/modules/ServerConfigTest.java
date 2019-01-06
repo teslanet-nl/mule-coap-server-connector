@@ -13,7 +13,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import nl.teslanet.mule.transport.coap.server.config.DeduplicatorType;
+import nl.teslanet.mule.transport.coap.server.config.DeduplicatorName;
 import nl.teslanet.mule.transport.coap.server.config.ServerConfig;
 import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
 
@@ -478,7 +478,7 @@ public class ServerConfigTest
                     config.setUdpConnectorOutCapacity( value );
                     break;
                 case deduplicator:
-                    config.setDeduplicator( DeduplicatorType.valueOf( value ) );
+                    config.setDeduplicator( DeduplicatorName.valueOf( value ) );
                     break;
                 // used by californium as property value
                 //                case deduplicatorMarkAndSweep:
@@ -863,8 +863,8 @@ public class ServerConfigTest
         list.add(
             new ConfigPropertyDesc(
                 ConfigPropertyDesc.PropertyName.deduplicator, null, 
-                DeduplicatorType.DEDUPLICATOR_MARK_AND_SWEEP.name(),
-                DeduplicatorType.DEDUPLICATOR_CROP_ROTATION.name() ) );
+                DeduplicatorName.MARK_AND_SWEEP.name(),
+                DeduplicatorName.CROP_ROTATION.name() ) );
         //        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.deduplicatorMarkAndSweep, null,  null, "deduplicatorMarkAndSweep2" ) );
         list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.markAndSweepInterval, null,  "10000", "22000" ) );
         //        list.add( new ConfigPropertyDesc( ConfigPropertyDesc.PropertyName.deduplicatorCropRotation, null,  null, "deduplicatorCropRotation2" ) );
