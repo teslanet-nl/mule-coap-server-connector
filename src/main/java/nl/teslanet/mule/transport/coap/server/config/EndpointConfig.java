@@ -1352,6 +1352,22 @@ public class EndpointConfig
     */
 
     /**
+     * @return the logHealthStatus
+     */
+    public boolean isLogHealthStatus()
+    {
+        return logHealthStatus;
+    }
+
+    /**
+     * @param logHealthStatus the logHealthStatus to set
+     */
+    public void setLogHealthStatus( boolean logHealthStatus )
+    {
+        this.logHealthStatus= logHealthStatus;
+    }
+
+    /**
      * @return the healthStatusInterval
      */
     public String getHealthStatusInterval()
@@ -1404,12 +1420,12 @@ public class EndpointConfig
                     break;
             }
         }
-        if ( this.midTrackerGroups != null ) config.setBoolean( NetworkConfig.Keys.MID_TRACKER_GROUPS, Boolean.valueOf( this.midTrackerGroups ) );
+        if ( this.midTrackerGroups != null ) config.setInt( NetworkConfig.Keys.MID_TRACKER_GROUPS, Integer.valueOf( this.midTrackerGroups ) );
         if ( this.tokenSizeLimit != null ) config.setInt( NetworkConfig.Keys.TOKEN_SIZE_LIMIT, Integer.valueOf( this.tokenSizeLimit ) ); // 8);
 
         if ( this.preferredBlockSize != null ) config.setInt( NetworkConfig.Keys.PREFERRED_BLOCK_SIZE, Integer.valueOf( this.preferredBlockSize ) ); // 512);
         if ( this.maxMessageSize != null ) config.setInt( NetworkConfig.Keys.MAX_MESSAGE_SIZE, Integer.valueOf( this.maxMessageSize ) ); // 1024);
-        //TODO: only transparent blockwise is supported: value > 0
+        //TODO: only transparent blockwise is supported: maxResourceBodySize > 0
         if ( this.maxResourceBodySize != null && Integer.valueOf( this.maxResourceBodySize ) > 0 )
             config.setInt( NetworkConfig.Keys.MAX_RESOURCE_BODY_SIZE, Integer.valueOf( this.maxResourceBodySize ) ); // 8192 bytes);
         if ( this.blockwiseStatusLifetime != null ) config.setInt( NetworkConfig.Keys.BLOCKWISE_STATUS_LIFETIME, Integer.valueOf( this.blockwiseStatusLifetime ) ); // 5 * 60 * 1000); // ms (5min)

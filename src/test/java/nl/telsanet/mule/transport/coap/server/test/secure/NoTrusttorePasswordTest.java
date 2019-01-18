@@ -1,10 +1,13 @@
-package nl.telanet.mule.transport.coap.server.test.secure;
+package nl.telsanet.mule.transport.coap.server.test.secure;
 
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.isA;
 import static org.junit.internal.matchers.ThrowableCauseMatcher.hasCause;
 import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
+
+import java.io.IOException;
+import java.security.UnrecoverableKeyException;
 
 import org.mule.api.ConnectionException;
 import org.mule.api.lifecycle.LifecycleException;
@@ -13,7 +16,7 @@ import nl.teslanet.mule.transport.coap.server.error.EndpointConstructionExceptio
 import nl.teslanet.mule.transport.coap.server.test.utils.AbstractMuleStartTestCase;
 
 
-public class NoPrivateKeyAliasTest extends AbstractMuleStartTestCase
+public class NoTrusttorePasswordTest extends AbstractMuleStartTestCase
 {
     @Override
     protected void expectException()
@@ -25,15 +28,15 @@ public class NoPrivateKeyAliasTest extends AbstractMuleStartTestCase
         exception.expect( hasCause( hasCause( isA( EndpointConstructionException.class ) ) ) );
         exception.expect( hasCause( hasCause( hasMessage( containsString( "cannot load truststore" ) ) ) ) );
         exception.expect( hasCause( hasCause( hasMessage( containsString( "certs/trustStore.jks" ) ) ) ) );
-        exception.expect( hasCause( hasCause( hasCause( isA( EndpointConstructionException.class ) ) ) ) );
-        exception.expect( hasCause( hasCause( hasCause( hasMessage( containsString( "identity with private key" ) ) ) ) ) );
-        exception.expect( hasCause( hasCause( hasCause( hasMessage( containsString( "serverNONEXISTENT" ) ) ) ) ) );
-        exception.expect( hasCause( hasCause( hasCause( hasMessage( containsString( "could not be set" ) ) ) ) ) );
+        exception.expect( hasCause( hasCause( hasCause( isA( IOException.class ) ) ) ) );
+        exception.expect( hasCause( hasCause( hasCause( hasMessage( containsString( "password was incorrect" ) ) ) ) ) );
+        exception.expect( hasCause( hasCause( hasCause( hasCause( isA( UnrecoverableKeyException.class ) ) ) ) ) );
+        exception.expect( hasCause( hasCause( hasCause( hasCause( hasMessage( containsString( "Password verification failed" ) ) ) ) ) ) );
     }
 
     @Override
     protected String getConfigResources()
     {
-        return "mule-config/secure/testserver4.xml";
+        return "mule-config/secure/testserver6.xml";
     };
 }

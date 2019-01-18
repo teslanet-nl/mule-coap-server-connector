@@ -1,4 +1,4 @@
-package nl.telanet.mule.transport.coap.server.test.secure;
+package nl.telsanet.mule.transport.coap.server.test.secure;
 
 
 import static org.junit.Assert.assertArrayEquals;
