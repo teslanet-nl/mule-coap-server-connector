@@ -250,7 +250,7 @@ public class EndpointConfig
     private String useRandomMidStart= null;
 
     /**
-     * The message identity racker used. The tracker maintains the administration
+     * The message identity tracker used. The tracker maintains the administration
      * of message id's uses in the CoAP exchanges. These use different strategies like 
      * maintaining a map of individual entries or use groups where id's get cleaned by group.  
      * Supported values are {@code NULL}, {@code GROUPED}, or {@code MAPBASED}.

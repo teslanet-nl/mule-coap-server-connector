@@ -4,26 +4,72 @@ package nl.teslanet.mule.transport.coap.server.test.config;
 import org.eclipse.californium.core.network.config.NetworkConfig;
 
 import nl.teslanet.mule.transport.coap.server.config.DeduplicatorName;
+import nl.teslanet.mule.transport.coap.server.config.DtlsResponseMatchingName;
+import nl.teslanet.mule.transport.coap.server.config.MidTrackerName;
 import nl.teslanet.mule.transport.coap.server.config.ServerConfig;
 
 
 /**
- * The properties to test
+ * The Configuration attributes to test
  *
  */
-public class Properties
+public class ConfigAttributes
 {
     /**
-     * Names of the properties 
+     * Names of the configuration attributes 
      *
      */
-    public enum PropertyName
+    public enum AttributeName
     {
         //from ServerConfig
-        secure, logCoapMessages,
-
+        secure,
+        //
+        logCoapMessages,
         //from EndpointConfig
-        bindToHost, bindToPort, bindToSecurePort, ackTimeout, ackRandomFactor, ackTimeoutScale, maxRetransmit, exchangeLifetime, nonLifetime, maxTransmitWait, nstart, leisure, probingRate, keyStoreLocation, keyStorePassword, privateKeyAlias, trustStoreLocation, trustStorePassword, trustedRootCertificateAlias, useRandomMidStart, tokenSizeLimit, preferredBlockSize, maxMessageSize, blockwiseStatusLifetime, notificationCheckIntervalTime, notificationCheckIntervalCount, notificationReregistrationBackoff, useCongestionControl, congestionControlAlgorithm, protocolStageThreadCount, networkStageReceiverThreadCount, networkStageSenderThreadCount, udpConnectorDatagramSize, udpConnectorReceiveBuffer, udpConnectorSendBuffer, udpConnectorOutCapacity,
+        bindToHost,
+        bindToPort,
+        bindToSecurePort,
+        maxActivePeers,
+        maxPeerInactivityPeriod,
+        ackTimeout,
+        ackRandomFactor,
+        ackTimeoutScale,
+        maxRetransmit,
+        exchangeLifetime,
+        nonLifetime,
+        maxTransmitWait,
+        nstart,
+        leisure,
+        probingRate,
+        keyStoreLocation,
+        keyStorePassword,
+        privateKeyAlias,
+        trustStoreLocation,
+        trustStorePassword,
+        trustedRootCertificateAlias,
+        secureSessionTimeout,
+        dtlsAutoResumeTimeout,
+        responseMatching,
+        useRandomMidStart,
+        midTracker,
+        midTrackerGroups,
+        tokenSizeLimit,
+        preferredBlockSize,
+        maxMessageSize,
+        maxResourceBodySize,
+        blockwiseStatusLifetime,
+        notificationCheckIntervalTime,
+        notificationCheckIntervalCount,
+        notificationReregistrationBackoff,
+        useCongestionControl,
+        congestionControlAlgorithm,
+        protocolStageThreadCount,
+        networkStageReceiverThreadCount,
+        networkStageSenderThreadCount,
+        udpConnectorDatagramSize,
+        udpConnectorReceiveBuffer,
+        udpConnectorSendBuffer,
+        udpConnectorOutCapacity,
         //
         deduplicator,
         //deduplicatorMarkAndSweep, 
@@ -36,20 +82,21 @@ public class Properties
         // httpServerSocketBufferSize,
         // httpCacheResponseMaxAge,
         // httpCacheSize,
+        logHealthStatus,
         healthStatusInterval
     }
 
     /**
-     * Get configured value for the property
+     * Get actual value of the attribute
      * @param config
      * @return
      * @throws Exception
      */
-    static public String getValue( PropertyName propertyName, ServerConfig config ) throws Exception
+    static public String getValue( AttributeName attributeName, ServerConfig config ) throws Exception
     {
         String result= null;
 
-        switch ( propertyName )
+        switch ( attributeName )
         {
             case secure:
                 result= Boolean.toString( config.isSecure() );
@@ -65,6 +112,12 @@ public class Properties
                 break;
             case bindToSecurePort:
                 result= config.getBindToSecurePort();
+                break;
+            case maxActivePeers:
+                result= config.getMaxActivePeers();
+                break;
+            case maxPeerInactivityPeriod:
+                result= config.getMaxPeerInactivityPeriod();
                 break;
             case keyStoreLocation:
                 result= config.getKeyStoreLocation();
@@ -83,6 +136,15 @@ public class Properties
                 break;
             case trustedRootCertificateAlias:
                 result= config.getTrustedRootCertificateAlias();
+                break;
+            case secureSessionTimeout:
+                result= config.getSecureSessionTimeout();
+                break;
+            case dtlsAutoResumeTimeout:
+                result= config.getDtlsAutoResumeTimeout();
+                break;
+            case responseMatching:
+                result= ( config.getResponseMatching() != null ? config.getResponseMatching().name() : null );
                 break;
             case ackTimeout:
                 result= config.getAckTimeout();
@@ -117,6 +179,12 @@ public class Properties
             case useRandomMidStart:
                 result= config.getUseRandomMidStart();
                 break;
+            case midTracker:
+                result= ( config.getMidTracker() != null ? config.getMidTracker().name() : null );
+                break;
+            case midTrackerGroups:
+                result= config.getMidTrackerGroups();
+                break;
             case tokenSizeLimit:
                 result= config.getTokenSizeLimit();
                 break;
@@ -125,6 +193,9 @@ public class Properties
                 break;
             case maxMessageSize:
                 result= config.getMaxMessageSize();
+                break;
+            case maxResourceBodySize:
+                result= config.getMaxResourceBodySize();
                 break;
             case blockwiseStatusLifetime:
                 result= config.getBlockwiseStatusLifetime();
@@ -174,24 +245,27 @@ public class Properties
             case cropRotationPeriod:
                 result= config.getCropRotationPeriod();
                 break;
+            case logHealthStatus:
+                result= Boolean.toString( config.isLogHealthStatus() );
+                break;
             case healthStatusInterval:
                 result= config.getHealthStatusInterval();
                 break;
             default:
-                throw new Exception( "propertyname unknown" );
+                throw new Exception( "attributename unknown" );
         }
         return result;
     }
 
     /**
-     * @return the NetworkConfig key when property is a networkproperty, otherwise null is returned
-     * @throws Exception when property is invalid
+     * @return the NetworkConfig key when attribute is a NetworkConfig attribute, otherwise null is returned
+     * @throws Exception when attribute is invalid
      */
-    static public String getKey( PropertyName propertyName ) throws Exception
+    static public String getKey( AttributeName attributeName ) throws Exception
     {
         String result= null;
 
-        switch ( propertyName )
+        switch ( attributeName )
         {
             case secure:
                 break;
@@ -204,6 +278,12 @@ public class Properties
                 break;
             case bindToSecurePort:
                 result= NetworkConfig.Keys.COAP_SECURE_PORT;
+                break;
+            case maxActivePeers:
+                result= NetworkConfig.Keys.MAX_ACTIVE_PEERS;
+                break;
+            case maxPeerInactivityPeriod:
+                result= NetworkConfig.Keys.MAX_PEER_INACTIVITY_PERIOD;
                 break;
             case ackTimeout:
                 result= NetworkConfig.Keys.ACK_TIMEOUT;
@@ -247,8 +327,23 @@ public class Properties
                 break;
             case trustedRootCertificateAlias:
                 break;
+            case secureSessionTimeout:
+                result= NetworkConfig.Keys.SECURE_SESSION_TIMEOUT;
+                break;
+            case dtlsAutoResumeTimeout:
+                result= NetworkConfig.Keys.DTLS_AUTO_RESUME_TIMEOUT;
+                break;
+            case responseMatching:
+                result= NetworkConfig.Keys.RESPONSE_MATCHING;
+                break;
             case useRandomMidStart:
                 result= NetworkConfig.Keys.USE_RANDOM_MID_START;
+                break;
+            case midTracker:
+                result= NetworkConfig.Keys.MID_TRACKER;
+                break;
+            case midTrackerGroups:
+                result= NetworkConfig.Keys.MID_TRACKER_GROUPS;
                 break;
             case tokenSizeLimit:
                 result= NetworkConfig.Keys.TOKEN_SIZE_LIMIT;
@@ -258,6 +353,9 @@ public class Properties
                 break;
             case maxMessageSize:
                 result= NetworkConfig.Keys.MAX_MESSAGE_SIZE;
+                break;
+            case maxResourceBodySize:
+                result= NetworkConfig.Keys.MAX_RESOURCE_BODY_SIZE;
                 break;
             case blockwiseStatusLifetime:
                 result= NetworkConfig.Keys.BLOCKWISE_STATUS_LIFETIME;
@@ -301,21 +399,21 @@ public class Properties
             case deduplicator:
                 result= NetworkConfig.Keys.DEDUPLICATOR;
                 break;
-            // used by californium as property value
+            // used by californium as attribute value
             //                case deduplicatorMarkAndSweep:
             //                    result= NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP;
             //                    break;
             case markAndSweepInterval:
                 result= NetworkConfig.Keys.MARK_AND_SWEEP_INTERVAL;
                 break;
-            // used by californium as property value
+            // used by californium as attribute value
             //                case deduplicatorCropRotation:
             //                    result= NetworkConfig.Keys.DEDUPLICATOR_CROP_ROTATION;
             //                    break;
             case cropRotationPeriod:
                 result= NetworkConfig.Keys.CROP_ROTATION_PERIOD;
                 break;
-            // used by californium as property value
+            // used by californium as attribute value
             //                case noDeduplicator:
             //                    result= NetworkConfig.Keys.NO_DEDUPLICATOR;
             //                    break;
@@ -324,131 +422,148 @@ public class Properties
             // case httpServerSocketBufferSize: result= NetworkConfig.Keys.httpServerSocketBufferSize ; break;
             // case httpCacheResponseMaxAge: result= NetworkConfig.Keys.httpCacheResponseMaxAge ; break;
             // case httpCacheSize: result= NetworkConfig.Keys.httpCacheSize ; break;
+            case logHealthStatus:
+                break;
             case healthStatusInterval:
                 result= NetworkConfig.Keys.HEALTH_STATUS_INTERVAL;
                 break;
 
             default:
-                throw new Exception( "propertyname unknown" );
+                throw new Exception( "attribute name unknown" );
         }
         return result;
     }
 
     /**
-     * @return the property name corresponding to NetworkConfig key
+     * @return the attribute name corresponding to NetworkConfig key
      * @throws Exception when key is not known
      */
-    static public PropertyName getName( String key ) throws Exception
+    static public AttributeName getName( String key ) throws Exception
     {
-        PropertyName result= null;
+        AttributeName result= null;
 
         switch ( key )
         {
             case NetworkConfig.Keys.COAP_PORT:
-                result= PropertyName.bindToPort;
+                result= AttributeName.bindToPort;
                 break;
             case NetworkConfig.Keys.COAP_SECURE_PORT:
-                result= PropertyName.bindToSecurePort;
+                result= AttributeName.bindToSecurePort;
+                break;
+            case NetworkConfig.Keys.MAX_ACTIVE_PEERS:
+                result= AttributeName.maxActivePeers;
+                break;
+            case NetworkConfig.Keys.MAX_PEER_INACTIVITY_PERIOD:
+                result= AttributeName.maxPeerInactivityPeriod;
                 break;
             case NetworkConfig.Keys.ACK_TIMEOUT:
-                result= PropertyName.ackTimeout;
+                result= AttributeName.ackTimeout;
                 break;
             case NetworkConfig.Keys.ACK_RANDOM_FACTOR:
-                result= PropertyName.ackRandomFactor;
+                result= AttributeName.ackRandomFactor;
                 break;
             case NetworkConfig.Keys.ACK_TIMEOUT_SCALE:
-                result= PropertyName.ackTimeoutScale;
+                result= AttributeName.ackTimeoutScale;
                 break;
             case NetworkConfig.Keys.MAX_RETRANSMIT:
-                result= PropertyName.maxRetransmit;
+                result= AttributeName.maxRetransmit;
                 break;
             case NetworkConfig.Keys.EXCHANGE_LIFETIME:
-                result= PropertyName.exchangeLifetime;
+                result= AttributeName.exchangeLifetime;
                 break;
             case NetworkConfig.Keys.NON_LIFETIME:
-                result= PropertyName.nonLifetime;
+                result= AttributeName.nonLifetime;
                 break;
             case NetworkConfig.Keys.MAX_TRANSMIT_WAIT:
-                result= PropertyName.maxTransmitWait;
+                result= AttributeName.maxTransmitWait;
                 break;
             case NetworkConfig.Keys.NSTART:
-                result= PropertyName.nstart;
+                result= AttributeName.nstart;
                 break;
             case NetworkConfig.Keys.LEISURE:
-                result= PropertyName.leisure;
+                result= AttributeName.leisure;
                 break;
             case NetworkConfig.Keys.PROBING_RATE:
-                result= PropertyName.probingRate;
+                result= AttributeName.probingRate;
                 break;
             case NetworkConfig.Keys.USE_RANDOM_MID_START:
-                result= PropertyName.useRandomMidStart;
+                result= AttributeName.useRandomMidStart;
+                break;
+            case NetworkConfig.Keys.MID_TRACKER:
+                result= AttributeName.midTracker;
+                break;
+            case NetworkConfig.Keys.MID_TRACKER_GROUPS:
+                result= AttributeName.midTrackerGroups;
                 break;
             case NetworkConfig.Keys.TOKEN_SIZE_LIMIT:
-                result= PropertyName.tokenSizeLimit;
+                result= AttributeName.tokenSizeLimit;
                 break;
             case NetworkConfig.Keys.PREFERRED_BLOCK_SIZE:
-                result= PropertyName.preferredBlockSize;
+                result= AttributeName.preferredBlockSize;
                 break;
             case NetworkConfig.Keys.MAX_MESSAGE_SIZE:
-                result= PropertyName.maxMessageSize;
+                result= AttributeName.maxMessageSize;
+                break;
+            case NetworkConfig.Keys.MAX_RESOURCE_BODY_SIZE:
+                result= AttributeName.maxResourceBodySize;
                 break;
             case NetworkConfig.Keys.BLOCKWISE_STATUS_LIFETIME:
-                result= PropertyName.blockwiseStatusLifetime;
+                result= AttributeName.blockwiseStatusLifetime;
                 break;
             case NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_TIME:
-                result= PropertyName.notificationCheckIntervalTime;
+                result= AttributeName.notificationCheckIntervalTime;
                 break;
             case NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_COUNT:
-                result= PropertyName.notificationCheckIntervalCount;
+                result= AttributeName.notificationCheckIntervalCount;
                 break;
             case NetworkConfig.Keys.NOTIFICATION_REREGISTRATION_BACKOFF:
-                result= PropertyName.notificationReregistrationBackoff;
+                result= AttributeName.notificationReregistrationBackoff;
                 break;
             case NetworkConfig.Keys.USE_CONGESTION_CONTROL:
-                result= PropertyName.useCongestionControl;
+                result= AttributeName.useCongestionControl;
                 break;
             case NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM:
-                result= PropertyName.congestionControlAlgorithm;
+                result= AttributeName.congestionControlAlgorithm;
                 break;
             case NetworkConfig.Keys.PROTOCOL_STAGE_THREAD_COUNT:
-                result= PropertyName.protocolStageThreadCount;
+                result= AttributeName.protocolStageThreadCount;
                 break;
             case NetworkConfig.Keys.NETWORK_STAGE_RECEIVER_THREAD_COUNT:
-                result= PropertyName.networkStageReceiverThreadCount;
+                result= AttributeName.networkStageReceiverThreadCount;
                 break;
             case NetworkConfig.Keys.NETWORK_STAGE_SENDER_THREAD_COUNT:
-                result= PropertyName.networkStageSenderThreadCount;
+                result= AttributeName.networkStageSenderThreadCount;
                 break;
             case NetworkConfig.Keys.UDP_CONNECTOR_DATAGRAM_SIZE:
-                result= PropertyName.udpConnectorDatagramSize;
+                result= AttributeName.udpConnectorDatagramSize;
                 break;
             case NetworkConfig.Keys.UDP_CONNECTOR_RECEIVE_BUFFER:
-                result= PropertyName.udpConnectorReceiveBuffer;
+                result= AttributeName.udpConnectorReceiveBuffer;
                 break;
             case NetworkConfig.Keys.UDP_CONNECTOR_SEND_BUFFER:
-                result= PropertyName.udpConnectorSendBuffer;
+                result= AttributeName.udpConnectorSendBuffer;
                 break;
             case NetworkConfig.Keys.UDP_CONNECTOR_OUT_CAPACITY:
-                result= PropertyName.udpConnectorOutCapacity;
+                result= AttributeName.udpConnectorOutCapacity;
                 break;
             case NetworkConfig.Keys.DEDUPLICATOR:
-                result= PropertyName.deduplicator;
+                result= AttributeName.deduplicator;
                 break;
-            // used by californium as property value
+            // used by californium as attribute value
             //                case : result= deduplicatorMarkAndSweep:
             //                     NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP;
             //                    break;
             case NetworkConfig.Keys.MARK_AND_SWEEP_INTERVAL:
-                result= PropertyName.markAndSweepInterval;
+                result= AttributeName.markAndSweepInterval;
                 break;
-            // used by californium as property value
+            // used by californium as attribute value
             //                case : result= deduplicatorCropRotation:
             //                     NetworkConfig.Keys.DEDUPLICATOR_CROP_ROTATION;
             //                    break;
             case NetworkConfig.Keys.CROP_ROTATION_PERIOD:
-                result= PropertyName.cropRotationPeriod;
+                result= AttributeName.cropRotationPeriod;
                 break;
-            // used by californium as property value
+            // used by californium as attribute value
             //                case : result= noDeduplicator:
             //                     NetworkConfig.Keys.NO_DEDUPLICATOR;
             //                    break;
@@ -458,9 +573,17 @@ public class Properties
             // case : result= httpCacheResponseMaxAge:  NetworkConfig.Keys.httpCacheResponseMaxAge ; break;
             // case : result= httpCacheSize:  NetworkConfig.Keys.httpCacheSize ; break;
             case NetworkConfig.Keys.HEALTH_STATUS_INTERVAL:
-                result= PropertyName.healthStatusInterval;
+                result= AttributeName.healthStatusInterval;
                 break;
-
+            case NetworkConfig.Keys.SECURE_SESSION_TIMEOUT:
+                result= AttributeName.secureSessionTimeout;
+                break;
+            case NetworkConfig.Keys.DTLS_AUTO_RESUME_TIMEOUT:
+                result= AttributeName.dtlsAutoResumeTimeout;
+                break;
+            case NetworkConfig.Keys.RESPONSE_MATCHING:
+                result= AttributeName.responseMatching;
+                break;
             default:
                 throw new Exception( "key unknown" );
         }
@@ -468,157 +591,25 @@ public class Properties
     }
 
     /**
-     * @param networkPropertyKey the networkPropertyKey to set
-     * @throws Exception when invalid property
+     * Establish whether the attribute is a NetworkConfig attribute 
+     * @param AttributeName the attribute name
+     * @throws Exception when invalid name
      */
-    static public boolean isNetworkProperty( PropertyName propertyName ) throws Exception
+    static public boolean isNetworkConfig( AttributeName attributeName ) throws Exception
     {
-        return( getKey( propertyName ) != null );
+        return( getKey( attributeName ) != null );
     }
 
     /**
-     * @return the value
-     * @throws Exception 
+     * Get the value of a NetworkConfig attribute
+     * @return the actual value when it is a NetworkConfig attribute, otherwise null
+     * @throws Exception when name is unknown
      */
-    static public String getNetworkValue( PropertyName propertyName, ServerConfig config ) throws Exception
+    static public String getNetworkConfigValue( AttributeName attributeName, ServerConfig config ) throws Exception
     {
-        String key= null;
+        String key= getKey( attributeName );
         String result= null;
 
-        switch ( propertyName )
-        {
-            case secure:
-                break;
-            case logCoapMessages:
-                break;
-            case bindToHost:
-                break;
-            case bindToPort:
-                key= NetworkConfig.Keys.COAP_PORT;
-                break;
-            case bindToSecurePort:
-                key= NetworkConfig.Keys.COAP_SECURE_PORT;
-                break;
-            case keyStoreLocation:
-                break;
-            case keyStorePassword:
-                break;
-            case trustStoreLocation:
-                break;
-            case trustStorePassword:
-                break;
-            case privateKeyAlias:
-                break;
-            case trustedRootCertificateAlias:
-                break;
-            case ackTimeout:
-                key= NetworkConfig.Keys.ACK_TIMEOUT;
-                break;
-            case ackRandomFactor:
-                key= NetworkConfig.Keys.ACK_RANDOM_FACTOR;
-                break;
-            case ackTimeoutScale:
-                key= NetworkConfig.Keys.ACK_TIMEOUT_SCALE;
-                break;
-            case maxRetransmit:
-                key= NetworkConfig.Keys.MAX_RETRANSMIT;
-                break;
-            case exchangeLifetime:
-                key= NetworkConfig.Keys.EXCHANGE_LIFETIME;
-                break;
-            case nonLifetime:
-                key= NetworkConfig.Keys.NON_LIFETIME;
-                break;
-            case maxTransmitWait:
-                key= NetworkConfig.Keys.MAX_TRANSMIT_WAIT;
-                break;
-            case nstart:
-                key= NetworkConfig.Keys.NSTART;
-                break;
-            case leisure:
-                key= NetworkConfig.Keys.LEISURE;
-                break;
-            case probingRate:
-                key= NetworkConfig.Keys.PROBING_RATE;
-                break;
-            case useRandomMidStart:
-                key= NetworkConfig.Keys.USE_RANDOM_MID_START;
-                break;
-            case tokenSizeLimit:
-                key= NetworkConfig.Keys.TOKEN_SIZE_LIMIT;
-                break;
-            case preferredBlockSize:
-                key= NetworkConfig.Keys.PREFERRED_BLOCK_SIZE;
-                break;
-            case maxMessageSize:
-                key= NetworkConfig.Keys.MAX_MESSAGE_SIZE;
-                break;
-            case blockwiseStatusLifetime:
-                key= NetworkConfig.Keys.BLOCKWISE_STATUS_LIFETIME;
-                break;
-            case notificationCheckIntervalTime:
-                key= NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_TIME;
-                break;
-            case notificationCheckIntervalCount:
-                key= NetworkConfig.Keys.NOTIFICATION_CHECK_INTERVAL_COUNT;
-                break;
-            case notificationReregistrationBackoff:
-                key= NetworkConfig.Keys.NOTIFICATION_REREGISTRATION_BACKOFF;
-                break;
-            case useCongestionControl:
-                key= NetworkConfig.Keys.USE_CONGESTION_CONTROL;
-                break;
-            case congestionControlAlgorithm:
-                key= NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM;
-                break;
-            case protocolStageThreadCount:
-                key= NetworkConfig.Keys.PROTOCOL_STAGE_THREAD_COUNT;
-                break;
-            case networkStageReceiverThreadCount:
-                key= NetworkConfig.Keys.NETWORK_STAGE_RECEIVER_THREAD_COUNT;
-                break;
-            case networkStageSenderThreadCount:
-                key= NetworkConfig.Keys.NETWORK_STAGE_SENDER_THREAD_COUNT;
-                break;
-            case udpConnectorDatagramSize:
-                key= NetworkConfig.Keys.UDP_CONNECTOR_DATAGRAM_SIZE;
-                break;
-            case udpConnectorReceiveBuffer:
-                key= NetworkConfig.Keys.UDP_CONNECTOR_RECEIVE_BUFFER;
-                break;
-            case udpConnectorSendBuffer:
-                key= NetworkConfig.Keys.UDP_CONNECTOR_SEND_BUFFER;
-                break;
-            case udpConnectorOutCapacity:
-                key= NetworkConfig.Keys.UDP_CONNECTOR_OUT_CAPACITY;
-                break;
-            case deduplicator:
-                key= NetworkConfig.Keys.DEDUPLICATOR;
-                break;
-            // used by californium as property value
-            //                case deduplicatorMarkAndSweep:
-            //                    key= NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP;
-            //                    break;
-            case markAndSweepInterval:
-                key= NetworkConfig.Keys.MARK_AND_SWEEP_INTERVAL;
-                break;
-            // used by californium as property value
-            //                case deduplicatorCropRotation:
-            //                    key= NetworkConfig.Keys.DEDUPLICATOR_CROP_ROTATION;
-            //                    break;
-            case cropRotationPeriod:
-                key= NetworkConfig.Keys.CROP_ROTATION_PERIOD;
-                break;
-            // used by californium as property value
-            //                case noDeduplicator:
-            //                    key= NetworkConfig.Keys.NO_DEDUPLICATOR;
-            //                    break;
-            case healthStatusInterval:
-                key= NetworkConfig.Keys.HEALTH_STATUS_INTERVAL;
-                break;
-            default:
-                throw new Exception( "propertyname unknown" );
-        }
         if ( key != null )
         {
             result= config.getNetworkConfig().getString( key );
@@ -627,14 +618,14 @@ public class Properties
     }
 
     /**
-     * Set configured value for the property
-     * @param config configuration to set the property on
+     * Set value for the attribute
+     * @param config configuration to set the attribute on
      * @param value to set
-     * @throws Exception when property is invalid
+     * @throws Exception when attribute is invalid
      */
-    static public void setValue( PropertyName propertyName, ServerConfig config, String value ) throws Exception
+    static public void setValue( AttributeName attributeName, ServerConfig config, String value ) throws Exception
     {
-        switch ( propertyName )
+        switch ( attributeName )
         {
             case secure:
                 config.setSecure( Boolean.parseBoolean( value ) );
@@ -650,6 +641,12 @@ public class Properties
                 break;
             case bindToSecurePort:
                 config.setBindToSecurePort( value );
+                break;
+            case maxActivePeers:
+                config.setMaxActivePeers( value );
+                break;
+            case maxPeerInactivityPeriod:
+                config.setMaxPeerInactivityPeriod( value );
                 break;
             case keyStoreLocation:
                 config.setKeyStoreLocation( value );
@@ -668,6 +665,15 @@ public class Properties
                 break;
             case trustedRootCertificateAlias:
                 config.setTrustedRootCertificateAlias( value );
+                break;
+            case secureSessionTimeout:
+                config.setSecureSessionTimeout( value );
+                break;
+            case dtlsAutoResumeTimeout:
+                config.setDtlsAutoResumeTimeout( value );
+                break;
+            case responseMatching:
+                config.setResponseMatching( DtlsResponseMatchingName.valueOf( value ) );
                 break;
             case ackTimeout:
                 config.setAckTimeout( value );
@@ -702,6 +708,12 @@ public class Properties
             case useRandomMidStart:
                 config.setUseRandomMidStart( value );
                 break;
+            case midTracker:
+                config.setMidTracker( MidTrackerName.valueOf( value ) );
+                break;
+            case midTrackerGroups:
+                config.setMidTrackerGroups( value );
+                break;
             case tokenSizeLimit:
                 config.setTokenSizeLimit( value );
                 break;
@@ -710,6 +722,9 @@ public class Properties
                 break;
             case maxMessageSize:
                 config.setMaxMessageSize( value );
+                break;
+            case maxResourceBodySize:
+                config.setMaxResourceBodySize( value );
                 break;
             case blockwiseStatusLifetime:
                 config.setBlockwiseStatusLifetime( value );
@@ -771,11 +786,15 @@ public class Properties
             //                case noDeduplicator:
             //                    config.setNoDeduplicator( value );
             //                    break;
+            case logHealthStatus:
+                config.setLogHealthStatus( Boolean.parseBoolean( value ) );
+                break;
             case healthStatusInterval:
+                config.setLogHealthStatus( true );
                 config.setHealthStatusInterval( value );
                 break;
             default:
-                throw new Exception( "propertyname unknown" );
+                throw new Exception( "attribute name unknown" );
         }
     }
 }

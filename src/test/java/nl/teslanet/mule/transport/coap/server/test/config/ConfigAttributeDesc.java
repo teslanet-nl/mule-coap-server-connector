@@ -1,24 +1,24 @@
 package nl.teslanet.mule.transport.coap.server.test.config;
 
 
-import nl.teslanet.mule.transport.coap.server.test.config.Properties.PropertyName;
+import nl.teslanet.mule.transport.coap.server.test.config.ConfigAttributes.AttributeName;
 
 
-public class ConfigPropertyDesc
+public class ConfigAttributeDesc
 {
 
     /**
-     * Name of the property
+     * Name of the attribute
      */
-    private PropertyName propertyName;
+    private AttributeName attributeName;
 
     /**
-     * Californium NetworkConfig name of the property
+     * Californium NetworkConfig name of the attribute
      */
-    private String propertyNetworkName;
+    private String networkConfigName;
 
     /**
-     * Expected default value of the property 
+     * Expected default value of the attribute 
      */
     private String expectedDefaultValue;
 
@@ -39,20 +39,20 @@ public class ConfigPropertyDesc
 
     /**
      * Constructor
-     * @param propertyName
+     * @param attributeName
      * @param defaultValue
      * @param customValue
      */
-    public ConfigPropertyDesc(
-        Properties.PropertyName propertyName,
-        String propertyNetworkName,
+    public ConfigAttributeDesc(
+        ConfigAttributes.AttributeName attributeName,
+        String networkConfigName,
         String expectedDefaultValue,
         String expectedDefaultNetworkValue,
         String customValue,
         String expectedCustomNetworkValue )
     {
-        this.propertyName= propertyName;
-        this.propertyNetworkName= propertyNetworkName;
+        this.attributeName= attributeName;
+        this.networkConfigName= networkConfigName;
         this.expectedDefaultValue= expectedDefaultValue;
         this.expectedDefaultNetworkValue= expectedDefaultNetworkValue;
         this.customValue= customValue;
@@ -60,35 +60,35 @@ public class ConfigPropertyDesc
     }
 
     /**
-     * @return the propertyName
+     * @return the attributeName
      */
-    public PropertyName getPropertyName()
+    public AttributeName getAttributeName()
     {
-        return propertyName;
+        return attributeName;
     }
 
     /**
-     * @param propertyName the propertyName to set
+     * @param attributeName the attributeName to set
      */
-    public void setPropertyName( PropertyName propertyName )
+    public void setAttributeName( AttributeName attributeName )
     {
-        this.propertyName= propertyName;
+        this.attributeName= attributeName;
     }
 
     /**
-     * @return the propertyNetworkName
+     * @return the networkConfigName
      */
-    public String getPropertyNetworkName()
+    public String getNetworkConfigName()
     {
-        return propertyNetworkName;
+        return networkConfigName;
     }
 
     /**
-     * @param propertyNetworkName the propertyNetworkName to set
+     * @param networkConfigName the networkConfigName to set
      */
-    public void setPropertyNetworkName( String propertyNetworkName )
+    public void setNetworkConfigName( String propertyNetworkName )
     {
-        this.propertyNetworkName= propertyNetworkName;
+        this.networkConfigName= propertyNetworkName;
     }
 
     /**
