@@ -366,7 +366,6 @@ public class EndpointConfig
     @Placement(tab= "Congestion", group= "Congestion")
     private String useCongestionControl= null;
 
-    //TODO enum
     /**
      * The congestion control algorithm to use. Valid values are
      * {@code Cocoa}, 
@@ -378,7 +377,7 @@ public class EndpointConfig
     @Configurable
     @Default(value= "Cocoa")
     @Placement(tab= "Congestion", group= "Congestion")
-    private String congestionControlAlgorithm= null;
+    private CongestionControlAlgorithmName congestionControlAlgorithm= null;
 
     //-----------------
     //TODO: UDP group?
@@ -1096,7 +1095,7 @@ public class EndpointConfig
     /**
      * @return the congestionControlAlgorithm
      */
-    public String getCongestionControlAlgorithm()
+    public CongestionControlAlgorithmName getCongestionControlAlgorithm()
     {
         return congestionControlAlgorithm;
     }
@@ -1104,7 +1103,7 @@ public class EndpointConfig
     /**
      * @param congestionControlAlgorithm the congestionControlAlgorithm to set
      */
-    public void setCongestionControlAlgorithm( String congestionControlAlgorithm )
+    public void setCongestionControlAlgorithm( CongestionControlAlgorithmName congestionControlAlgorithm )
     {
         this.congestionControlAlgorithm= congestionControlAlgorithm;
     }
@@ -1405,7 +1404,7 @@ public class EndpointConfig
         if ( this.useRandomMidStart != null ) config.setBoolean( NetworkConfig.Keys.USE_RANDOM_MID_START, Boolean.valueOf( this.useRandomMidStart ) ); // true);
         if ( this.midTracker != null )
         {
-            switch (this.midTracker )
+            switch ( this.midTracker )
             {
                 case GROUPED:
                     config.setString( NetworkConfig.Keys.MID_TRACKER, "GROUPED" );
@@ -1437,8 +1436,27 @@ public class EndpointConfig
             config.setLong( NetworkConfig.Keys.NOTIFICATION_REREGISTRATION_BACKOFF, Long.valueOf( this.notificationReregistrationBackoff ) ); // 2000); // ms
 
         if ( this.useCongestionControl != null ) config.setBoolean( NetworkConfig.Keys.USE_CONGESTION_CONTROL, Boolean.valueOf( this.useCongestionControl ) ); // false);
-        if ( this.congestionControlAlgorithm != null ) config.setString( NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, String.valueOf( this.congestionControlAlgorithm ) ); // "Cocoa"); // see org.eclipse.californium.core.network.stack.congestioncontrol
-
+        if ( this.congestionControlAlgorithm != null )
+        {
+            switch ( this.congestionControlAlgorithm )
+            {
+                case Cocoa:
+                    config.setString( NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, "Cocoa" );
+                    break;
+                case CocoaStrong:
+                    config.setString( NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, "CocoaStrong" );
+                    break;
+                case BasicRto:
+                    config.setString( NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, "BasicRto" );
+                    break;
+                case LinuxRto:
+                    config.setString( NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, "LinuxRto" );
+                    break;
+                case PeakhopperRto:
+                    config.setString( NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, "PeakhopperRto" );
+                    break;
+            }
+        }
         if ( this.protocolStageThreadCount != null ) config.setInt( NetworkConfig.Keys.PROTOCOL_STAGE_THREAD_COUNT, Integer.valueOf( this.protocolStageThreadCount ) ); // CORES);
         if ( this.networkStageReceiverThreadCount != null )
             config.setInt( NetworkConfig.Keys.NETWORK_STAGE_RECEIVER_THREAD_COUNT, Integer.valueOf( this.networkStageReceiverThreadCount ) ); // WINDOWS ? CORES : 1);
@@ -1486,7 +1504,6 @@ public class EndpointConfig
                     break;
             }
         }
-
         /*
         if ( this.httpPort != null ) config.setInt(NetworkConfig.Keys.HTTP_PORT, Integer.valueOf( this.httpPort )); // 8080);
         if ( this.httpServerSocketTimeout != null ) config.setInt(NetworkConfig.Keys.HTTP_SERVER_SOCKET_TIMEOUT, Integer.valueOf( this.httpServerSocketTimeout )); // 100000);

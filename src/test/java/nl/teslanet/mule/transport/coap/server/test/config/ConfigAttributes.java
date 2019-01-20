@@ -3,6 +3,7 @@ package nl.teslanet.mule.transport.coap.server.test.config;
 
 import org.eclipse.californium.core.network.config.NetworkConfig;
 
+import nl.teslanet.mule.transport.coap.server.config.CongestionControlAlgorithmName;
 import nl.teslanet.mule.transport.coap.server.config.DeduplicatorName;
 import nl.teslanet.mule.transport.coap.server.config.DtlsResponseMatchingName;
 import nl.teslanet.mule.transport.coap.server.config.MidTrackerName;
@@ -213,7 +214,7 @@ public class ConfigAttributes
                 result= config.getUseCongestionControl();
                 break;
             case congestionControlAlgorithm:
-                result= config.getCongestionControlAlgorithm();
+                result= config.getCongestionControlAlgorithm().name();
                 break;
             case protocolStageThreadCount:
                 result= config.getProtocolStageThreadCount();
@@ -742,7 +743,7 @@ public class ConfigAttributes
                 config.setUseCongestionControl( value );
                 break;
             case congestionControlAlgorithm:
-                config.setCongestionControlAlgorithm( value );
+                config.setCongestionControlAlgorithm( CongestionControlAlgorithmName.valueOf( value ) );
                 break;
             case protocolStageThreadCount:
                 config.setProtocolStageThreadCount( value );
