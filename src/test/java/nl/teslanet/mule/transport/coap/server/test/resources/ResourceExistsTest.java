@@ -1,10 +1,11 @@
 package nl.teslanet.mule.transport.coap.server.test.resources;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;

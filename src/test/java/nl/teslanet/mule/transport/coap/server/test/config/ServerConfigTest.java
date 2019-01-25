@@ -4,12 +4,7 @@ package nl.teslanet.mule.transport.coap.server.test.config;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import org.eclipse.californium.core.network.config.NetworkConfig;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -227,7 +222,7 @@ public class ServerConfigTest
             case useCongestionControl:
                 return new ConfigAttributeDesc( AttributeName.useCongestionControl, NetworkConfig.Keys.USE_CONGESTION_CONTROL, null, "false", "true", "true" );
             case congestionControlAlgorithm:
-                return new ConfigAttributeDesc( AttributeName.congestionControlAlgorithm, NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, null, "Cocoa", "Cocoala2", "Cocoala2" );
+                return new ConfigAttributeDesc( AttributeName.congestionControlAlgorithm, NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, null, "Cocoa", "PeakhopperRto", "PeakhopperRto" );
             case protocolStageThreadCount:
                 return new ConfigAttributeDesc( AttributeName.protocolStageThreadCount, NetworkConfig.Keys.PROTOCOL_STAGE_THREAD_COUNT, null, "4", "12", "12" );
             case networkStageReceiverThreadCount:

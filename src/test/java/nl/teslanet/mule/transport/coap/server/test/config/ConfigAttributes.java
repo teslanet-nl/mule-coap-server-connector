@@ -17,16 +17,16 @@ import nl.teslanet.mule.transport.coap.server.config.ServerConfig;
 public class ConfigAttributes
 {
     /**
-     * Names of the configuration attributes 
+     * Names of the configuration attributes
      *
      */
     public enum AttributeName
     {
-        //from ServerConfig
+        // from ServerConfig
         secure,
         //
         logCoapMessages,
-        //from EndpointConfig
+        // from EndpointConfig
         bindToHost,
         bindToPort,
         bindToSecurePort,
@@ -73,12 +73,12 @@ public class ConfigAttributes
         udpConnectorOutCapacity,
         //
         deduplicator,
-        //deduplicatorMarkAndSweep, 
+        // deduplicatorMarkAndSweep,
         markAndSweepInterval,
-        //deduplicatorCropRotation, 
+        // deduplicatorCropRotation,
         cropRotationPeriod,
-        //noDeduplicator,
-        //httpPort,
+        // noDeduplicator,
+        // httpPort,
         // httpServerSocketTimeout,
         // httpServerSocketBufferSize,
         // httpCacheResponseMaxAge,
@@ -89,6 +89,7 @@ public class ConfigAttributes
 
     /**
      * Get actual value of the attribute
+     * 
      * @param config
      * @return
      * @throws Exception
@@ -106,19 +107,19 @@ public class ConfigAttributes
                 result= Boolean.toString( config.isLogCoapMessages() );
                 break;
             case bindToHost:
-                result= config.getBindToHost();
+                result= ( config.getBindToHost() != null ? config.getBindToHost().toString() : null );
                 break;
             case bindToPort:
-                result= config.getBindToPort();
+                result= ( config.getBindToPort() != null ? config.getBindToPort().toString() : null );
                 break;
             case bindToSecurePort:
-                result= config.getBindToSecurePort();
+                result= ( config.getBindToSecurePort() != null ? config.getBindToSecurePort().toString() : null );
                 break;
             case maxActivePeers:
-                result= config.getMaxActivePeers();
+                result= ( config.getMaxActivePeers() != null ? config.getMaxActivePeers().toString() : null );
                 break;
             case maxPeerInactivityPeriod:
-                result= config.getMaxPeerInactivityPeriod();
+                result= ( config.getMaxPeerInactivityPeriod() != null ? config.getMaxPeerInactivityPeriod().toString() : null );
                 break;
             case keyStoreLocation:
                 result= config.getKeyStoreLocation();
@@ -139,118 +140,118 @@ public class ConfigAttributes
                 result= config.getTrustedRootCertificateAlias();
                 break;
             case secureSessionTimeout:
-                result= config.getSecureSessionTimeout();
+                result= ( config.getSecureSessionTimeout() != null ? config.getSecureSessionTimeout().toString() : null );
                 break;
             case dtlsAutoResumeTimeout:
-                result= config.getDtlsAutoResumeTimeout();
+                result= ( config.getDtlsAutoResumeTimeout() != null ? config.getDtlsAutoResumeTimeout().toString() : null );
                 break;
             case responseMatching:
                 result= ( config.getResponseMatching() != null ? config.getResponseMatching().name() : null );
                 break;
             case ackTimeout:
-                result= config.getAckTimeout();
+                result= ( config.getAckTimeout() != null ? config.getAckTimeout().toString() : null );
                 break;
             case ackRandomFactor:
-                result= config.getAckRandomFactor();
+                result= ( config.getAckRandomFactor() != null ? config.getAckRandomFactor().toString() : null );
                 break;
             case ackTimeoutScale:
-                result= config.getAckTimeoutScale();
+                result= ( config.getAckTimeoutScale() != null ? config.getAckTimeoutScale().toString() : null );
                 break;
             case maxRetransmit:
-                result= config.getMaxRetransmit();
+                result= ( config.getMaxRetransmit() != null ? config.getMaxRetransmit().toString() : null );
                 break;
             case exchangeLifetime:
-                result= config.getExchangeLifetime();
+                result= ( config.getExchangeLifetime() != null ? config.getExchangeLifetime().toString() : null );
                 break;
             case nonLifetime:
-                result= config.getNonLifetime();
+                result= ( config.getNonLifetime() != null ? config.getNonLifetime().toString() : null );
                 break;
             case maxTransmitWait:
-                result= config.getMaxTransmitWait();
+                result= ( config.getMaxTransmitWait() != null ? config.getMaxTransmitWait().toString() : null );
                 break;
             case nstart:
-                result= config.getNstart();
+                result= ( config.getNstart() != null ? config.getNstart().toString() : null );
                 break;
             case leisure:
-                result= config.getLeisure();
+                result= ( config.getLeisure() != null ? config.getLeisure().toString() : null );
                 break;
             case probingRate:
-                result= config.getProbingRate();
+                result= ( config.getProbingRate() != null ? config.getProbingRate().toString() : null );
                 break;
             case useRandomMidStart:
-                result= config.getUseRandomMidStart();
+                result= ( config.getUseRandomMidStart() != null ? config.getUseRandomMidStart().toString() : null );
                 break;
             case midTracker:
                 result= ( config.getMidTracker() != null ? config.getMidTracker().name() : null );
                 break;
             case midTrackerGroups:
-                result= config.getMidTrackerGroups();
+                result= ( config.getMidTrackerGroups() != null ? config.getMidTrackerGroups().toString() : null );
                 break;
             case tokenSizeLimit:
-                result= config.getTokenSizeLimit();
+                result= ( config.getTokenSizeLimit() != null ? config.getTokenSizeLimit().toString() : null );
                 break;
             case preferredBlockSize:
-                result= config.getPreferredBlockSize();
+                result= ( config.getPreferredBlockSize() != null ? config.getPreferredBlockSize().toString() : null );
                 break;
             case maxMessageSize:
-                result= config.getMaxMessageSize();
+                result= ( config.getMaxMessageSize() != null ? config.getMaxMessageSize().toString() : null );
                 break;
             case maxResourceBodySize:
-                result= config.getMaxResourceBodySize();
+                result= ( config.getMaxResourceBodySize() != null ? config.getMaxResourceBodySize().toString() : null );
                 break;
             case blockwiseStatusLifetime:
-                result= config.getBlockwiseStatusLifetime();
+                result= ( config.getBlockwiseStatusLifetime() != null ? config.getBlockwiseStatusLifetime().toString() : null );
                 break;
             case notificationCheckIntervalTime:
-                result= config.getNotificationCheckIntervalTime();
+                result= ( config.getNotificationCheckIntervalTime() != null ? config.getNotificationCheckIntervalTime().toString() : null );
                 break;
             case notificationCheckIntervalCount:
-                result= config.getNotificationCheckIntervalCount();
+                result= ( config.getNotificationCheckIntervalCount() != null ? config.getNotificationCheckIntervalCount().toString() : null );
                 break;
             case notificationReregistrationBackoff:
-                result= config.getNotificationReregistrationBackoff();
+                result= ( config.getNotificationReregistrationBackoff() != null ? config.getNotificationReregistrationBackoff().toString() : null );
                 break;
             case useCongestionControl:
-                result= config.getUseCongestionControl();
+                result= ( config.getUseCongestionControl() != null ? config.getUseCongestionControl().toString() : null );
                 break;
             case congestionControlAlgorithm:
-                result= config.getCongestionControlAlgorithm().name();
+                result= ( config.getCongestionControlAlgorithm() != null ? config.getCongestionControlAlgorithm().name() : null );
                 break;
             case protocolStageThreadCount:
-                result= config.getProtocolStageThreadCount();
+                result= ( config.getProtocolStageThreadCount() != null ? config.getProtocolStageThreadCount().toString() : null );
                 break;
             case networkStageReceiverThreadCount:
-                result= config.getNetworkStageReceiverThreadCount();
+                result= ( config.getNetworkStageReceiverThreadCount() != null ? config.getNetworkStageReceiverThreadCount().toString() : null );
                 break;
             case networkStageSenderThreadCount:
-                result= config.getNetworkStageSenderThreadCount();
+                result= ( config.getNetworkStageSenderThreadCount() != null ? config.getNetworkStageSenderThreadCount().toString() : null );
                 break;
             case udpConnectorDatagramSize:
-                result= config.getUdpConnectorDatagramSize();
+                result= ( config.getUdpConnectorDatagramSize() != null ? config.getUdpConnectorDatagramSize().toString() : null );
                 break;
             case udpConnectorReceiveBuffer:
-                result= config.getUdpConnectorReceiveBuffer();
+                result= ( config.getUdpConnectorReceiveBuffer() != null ? config.getUdpConnectorReceiveBuffer().toString() : null );
                 break;
             case udpConnectorSendBuffer:
-                result= config.getUdpConnectorSendBuffer();
+                result= ( config.getUdpConnectorSendBuffer() != null ? config.getUdpConnectorSendBuffer().toString() : null );
                 break;
             case udpConnectorOutCapacity:
-                result= config.getUdpConnectorOutCapacity();
+                result= ( config.getUdpConnectorOutCapacity() != null ? config.getUdpConnectorOutCapacity().toString() : null );
                 break;
             case deduplicator:
                 result= ( config.getDeduplicator() != null ? config.getDeduplicator().name() : null );
                 break;
             case markAndSweepInterval:
-                result= config.getMarkAndSweepInterval();
+                result= ( config.getMarkAndSweepInterval() != null ? config.getMarkAndSweepInterval().toString() : null );
                 break;
             case cropRotationPeriod:
-                result= config.getCropRotationPeriod();
+                result= ( config.getCropRotationPeriod() != null ? config.getCropRotationPeriod().toString() : null );
                 break;
             case logHealthStatus:
                 result= Boolean.toString( config.isLogHealthStatus() );
                 break;
             case healthStatusInterval:
-                result= config.getHealthStatusInterval();
+                result= ( config.getHealthStatusInterval() != null ? config.getHealthStatusInterval().toString() : null );
                 break;
             default:
                 throw new Exception( "attributename unknown" );
@@ -259,8 +260,10 @@ public class ConfigAttributes
     }
 
     /**
-     * @return the NetworkConfig key when attribute is a NetworkConfig attribute, otherwise null is returned
-     * @throws Exception when attribute is invalid
+     * @return the NetworkConfig key when attribute is a NetworkConfig attribute,
+     *         otherwise null is returned
+     * @throws Exception
+     *             when attribute is invalid
      */
     static public String getKey( AttributeName attributeName ) throws Exception
     {
@@ -401,27 +404,30 @@ public class ConfigAttributes
                 result= NetworkConfig.Keys.DEDUPLICATOR;
                 break;
             // used by californium as attribute value
-            //                case deduplicatorMarkAndSweep:
-            //                    result= NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP;
-            //                    break;
+            // case deduplicatorMarkAndSweep:
+            // result= NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP;
+            // break;
             case markAndSweepInterval:
                 result= NetworkConfig.Keys.MARK_AND_SWEEP_INTERVAL;
                 break;
             // used by californium as attribute value
-            //                case deduplicatorCropRotation:
-            //                    result= NetworkConfig.Keys.DEDUPLICATOR_CROP_ROTATION;
-            //                    break;
+            // case deduplicatorCropRotation:
+            // result= NetworkConfig.Keys.DEDUPLICATOR_CROP_ROTATION;
+            // break;
             case cropRotationPeriod:
                 result= NetworkConfig.Keys.CROP_ROTATION_PERIOD;
                 break;
             // used by californium as attribute value
-            //                case noDeduplicator:
-            //                    result= NetworkConfig.Keys.NO_DEDUPLICATOR;
-            //                    break;
-            //case httpPort: result= NetworkConfig.Keys.httpPort ; break;
-            // case httpServerSocketTimeout: result= NetworkConfig.Keys.httpServerSocketTimeout ; break;
-            // case httpServerSocketBufferSize: result= NetworkConfig.Keys.httpServerSocketBufferSize ; break;
-            // case httpCacheResponseMaxAge: result= NetworkConfig.Keys.httpCacheResponseMaxAge ; break;
+            // case noDeduplicator:
+            // result= NetworkConfig.Keys.NO_DEDUPLICATOR;
+            // break;
+            // case httpPort: result= NetworkConfig.Keys.httpPort ; break;
+            // case httpServerSocketTimeout: result=
+            // NetworkConfig.Keys.httpServerSocketTimeout ; break;
+            // case httpServerSocketBufferSize: result=
+            // NetworkConfig.Keys.httpServerSocketBufferSize ; break;
+            // case httpCacheResponseMaxAge: result=
+            // NetworkConfig.Keys.httpCacheResponseMaxAge ; break;
             // case httpCacheSize: result= NetworkConfig.Keys.httpCacheSize ; break;
             case logHealthStatus:
                 break;
@@ -437,7 +443,8 @@ public class ConfigAttributes
 
     /**
      * @return the attribute name corresponding to NetworkConfig key
-     * @throws Exception when key is not known
+     * @throws Exception
+     *             when key is not known
      */
     static public AttributeName getName( String key ) throws Exception
     {
@@ -551,28 +558,31 @@ public class ConfigAttributes
                 result= AttributeName.deduplicator;
                 break;
             // used by californium as attribute value
-            //                case : result= deduplicatorMarkAndSweep:
-            //                     NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP;
-            //                    break;
+            // case : result= deduplicatorMarkAndSweep:
+            // NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP;
+            // break;
             case NetworkConfig.Keys.MARK_AND_SWEEP_INTERVAL:
                 result= AttributeName.markAndSweepInterval;
                 break;
             // used by californium as attribute value
-            //                case : result= deduplicatorCropRotation:
-            //                     NetworkConfig.Keys.DEDUPLICATOR_CROP_ROTATION;
-            //                    break;
+            // case : result= deduplicatorCropRotation:
+            // NetworkConfig.Keys.DEDUPLICATOR_CROP_ROTATION;
+            // break;
             case NetworkConfig.Keys.CROP_ROTATION_PERIOD:
                 result= AttributeName.cropRotationPeriod;
                 break;
             // used by californium as attribute value
-            //                case : result= noDeduplicator:
-            //                     NetworkConfig.Keys.NO_DEDUPLICATOR;
-            //                    break;
-            //case : result= httpPort:  NetworkConfig.Keys.httpPort ; break;
-            // case : result= httpServerSocketTimeout:  NetworkConfig.Keys.httpServerSocketTimeout ; break;
-            // case : result= httpServerSocketBufferSize:  NetworkConfig.Keys.httpServerSocketBufferSize ; break;
-            // case : result= httpCacheResponseMaxAge:  NetworkConfig.Keys.httpCacheResponseMaxAge ; break;
-            // case : result= httpCacheSize:  NetworkConfig.Keys.httpCacheSize ; break;
+            // case : result= noDeduplicator:
+            // NetworkConfig.Keys.NO_DEDUPLICATOR;
+            // break;
+            // case : result= httpPort: NetworkConfig.Keys.httpPort ; break;
+            // case : result= httpServerSocketTimeout:
+            // NetworkConfig.Keys.httpServerSocketTimeout ; break;
+            // case : result= httpServerSocketBufferSize:
+            // NetworkConfig.Keys.httpServerSocketBufferSize ; break;
+            // case : result= httpCacheResponseMaxAge:
+            // NetworkConfig.Keys.httpCacheResponseMaxAge ; break;
+            // case : result= httpCacheSize: NetworkConfig.Keys.httpCacheSize ; break;
             case NetworkConfig.Keys.HEALTH_STATUS_INTERVAL:
                 result= AttributeName.healthStatusInterval;
                 break;
@@ -592,9 +602,12 @@ public class ConfigAttributes
     }
 
     /**
-     * Establish whether the attribute is a NetworkConfig attribute 
-     * @param AttributeName the attribute name
-     * @throws Exception when invalid name
+     * Establish whether the attribute is a NetworkConfig attribute
+     * 
+     * @param AttributeName
+     *            the attribute name
+     * @throws Exception
+     *             when invalid name
      */
     static public boolean isNetworkConfig( AttributeName attributeName ) throws Exception
     {
@@ -603,8 +616,10 @@ public class ConfigAttributes
 
     /**
      * Get the value of a NetworkConfig attribute
+     * 
      * @return the actual value when it is a NetworkConfig attribute, otherwise null
-     * @throws Exception when name is unknown
+     * @throws Exception
+     *             when name is unknown
      */
     static public String getNetworkConfigValue( AttributeName attributeName, ServerConfig config ) throws Exception
     {
@@ -620,34 +635,38 @@ public class ConfigAttributes
 
     /**
      * Set value for the attribute
-     * @param config configuration to set the attribute on
-     * @param value to set
-     * @throws Exception when attribute is invalid
+     * 
+     * @param config
+     *            configuration to set the attribute on
+     * @param value
+     *            to set
+     * @throws Exception
+     *             when attribute is invalid
      */
     static public void setValue( AttributeName attributeName, ServerConfig config, String value ) throws Exception
     {
         switch ( attributeName )
         {
             case secure:
-                config.setSecure( Boolean.parseBoolean( value ) );
+                config.setSecure( new Boolean( value ) );
                 break;
             case logCoapMessages:
-                config.setLogCoapMessages( Boolean.parseBoolean( value ) );
+                config.setLogCoapMessages( new Boolean( value ) );
                 break;
             case bindToHost:
                 config.setBindToHost( value );
                 break;
             case bindToPort:
-                config.setBindToPort( value );
+                config.setBindToPort( new Integer( value ) );
                 break;
             case bindToSecurePort:
-                config.setBindToSecurePort( value );
+                config.setBindToSecurePort( new Integer( value ) );
                 break;
             case maxActivePeers:
-                config.setMaxActivePeers( value );
+                config.setMaxActivePeers( new Integer( value ) );
                 break;
             case maxPeerInactivityPeriod:
-                config.setMaxPeerInactivityPeriod( value );
+                config.setMaxPeerInactivityPeriod( new Integer( value ) );
                 break;
             case keyStoreLocation:
                 config.setKeyStoreLocation( value );
@@ -668,131 +687,131 @@ public class ConfigAttributes
                 config.setTrustedRootCertificateAlias( value );
                 break;
             case secureSessionTimeout:
-                config.setSecureSessionTimeout( value );
+                config.setSecureSessionTimeout( new Integer( value ) );
                 break;
             case dtlsAutoResumeTimeout:
-                config.setDtlsAutoResumeTimeout( value );
+                config.setDtlsAutoResumeTimeout( new Integer( value ) );
                 break;
             case responseMatching:
                 config.setResponseMatching( DtlsResponseMatchingName.valueOf( value ) );
                 break;
             case ackTimeout:
-                config.setAckTimeout( value );
+                config.setAckTimeout( new Integer( value ) );
                 break;
             case ackRandomFactor:
-                config.setAckRandomFactor( value );
+                config.setAckRandomFactor( new Float( value ) );
                 break;
             case ackTimeoutScale:
-                config.setAckTimeoutScale( value );
+                config.setAckTimeoutScale( new Float( value ) );
                 break;
             case maxRetransmit:
-                config.setMaxRetransmit( value );
+                config.setMaxRetransmit( new Integer( value ) );
                 break;
             case exchangeLifetime:
-                config.setExchangeLifetime( value );
+                config.setExchangeLifetime( new Long( value ) );
                 break;
             case nonLifetime:
-                config.setNonLifetime( value );
+                config.setNonLifetime( new Long( value ) );
                 break;
             case maxTransmitWait:
-                config.setMaxTransmitWait( value );
+                config.setMaxTransmitWait( new Long( value ) );
                 break;
             case nstart:
-                config.setNstart( value );
+                config.setNstart( new Integer( value ) );
                 break;
             case leisure:
-                config.setLeisure( value );
+                config.setLeisure( new Integer( value ) );
                 break;
             case probingRate:
-                config.setProbingRate( value );
+                config.setProbingRate( new Float( value ) );
                 break;
             case useRandomMidStart:
-                config.setUseRandomMidStart( value );
+                config.setUseRandomMidStart( new Boolean( value ) );
                 break;
             case midTracker:
                 config.setMidTracker( MidTrackerName.valueOf( value ) );
                 break;
             case midTrackerGroups:
-                config.setMidTrackerGroups( value );
+                config.setMidTrackerGroups( new Integer( value ) );
                 break;
             case tokenSizeLimit:
-                config.setTokenSizeLimit( value );
+                config.setTokenSizeLimit( new Integer( value ) );
                 break;
             case preferredBlockSize:
-                config.setPreferredBlockSize( value );
+                config.setPreferredBlockSize( new Integer( value ) );
                 break;
             case maxMessageSize:
-                config.setMaxMessageSize( value );
+                config.setMaxMessageSize( new Integer( value ) );
                 break;
             case maxResourceBodySize:
-                config.setMaxResourceBodySize( value );
+                config.setMaxResourceBodySize( new Integer( value ) );
                 break;
             case blockwiseStatusLifetime:
-                config.setBlockwiseStatusLifetime( value );
+                config.setBlockwiseStatusLifetime( new Integer( value ) );
                 break;
             case notificationCheckIntervalTime:
-                config.setNotificationCheckIntervalTime( value );
+                config.setNotificationCheckIntervalTime( new Long( value ) );
                 break;
             case notificationCheckIntervalCount:
-                config.setNotificationCheckIntervalCount( value );
+                config.setNotificationCheckIntervalCount( new Integer( value ) );
                 break;
             case notificationReregistrationBackoff:
-                config.setNotificationReregistrationBackoff( value );
+                config.setNotificationReregistrationBackoff( new Long( value ) );
                 break;
             case useCongestionControl:
-                config.setUseCongestionControl( value );
+                config.setUseCongestionControl( new Boolean( value ) );
                 break;
             case congestionControlAlgorithm:
                 config.setCongestionControlAlgorithm( CongestionControlAlgorithmName.valueOf( value ) );
                 break;
             case protocolStageThreadCount:
-                config.setProtocolStageThreadCount( value );
+                config.setProtocolStageThreadCount( new Integer( value ) );
                 break;
             case networkStageReceiverThreadCount:
-                config.setNetworkStageReceiverThreadCount( value );
+                config.setNetworkStageReceiverThreadCount( new Integer( value ) );
                 break;
             case networkStageSenderThreadCount:
-                config.setNetworkStageSenderThreadCount( value );
+                config.setNetworkStageSenderThreadCount( new Integer( value ) );
                 break;
             case udpConnectorDatagramSize:
-                config.setUdpConnectorDatagramSize( value );
+                config.setUdpConnectorDatagramSize( new Integer( value ) );
                 break;
             case udpConnectorReceiveBuffer:
-                config.setUdpConnectorReceiveBuffer( value );
+                config.setUdpConnectorReceiveBuffer( new Integer( value ) );
                 break;
             case udpConnectorSendBuffer:
-                config.setUdpConnectorSendBuffer( value );
+                config.setUdpConnectorSendBuffer( new Integer( value ) );
                 break;
             case udpConnectorOutCapacity:
-                config.setUdpConnectorOutCapacity( value );
+                config.setUdpConnectorOutCapacity( new Integer( value ) );
                 break;
             case deduplicator:
                 config.setDeduplicator( DeduplicatorName.valueOf( value ) );
                 break;
             // used by californium as property value
-            //                case deduplicatorMarkAndSweep:
-            //                    config.setDeduplicatorMarkAndSweep( value );
-            //                    break;
+            // case deduplicatorMarkAndSweep:
+            // config.setDeduplicatorMarkAndSweep( value );
+            // break;
             case markAndSweepInterval:
-                config.setMarkAndSweepInterval( value );
+                config.setMarkAndSweepInterval( new Long( value ) );
                 break;
             // used by californium as property value
-            //                case deduplicatorCropRotation:
-            //                    config.setDeduplicatorCropRotation( value );
-            //                    break;
+            // case deduplicatorCropRotation:
+            // config.setDeduplicatorCropRotation( value );
+            // break;
             case cropRotationPeriod:
-                config.setCropRotationPeriod( value );
+                config.setCropRotationPeriod( new Integer( value ) );
                 break;
             // used by californium as property value
-            //                case noDeduplicator:
-            //                    config.setNoDeduplicator( value );
-            //                    break;
+            // case noDeduplicator:
+            // config.setNoDeduplicator( value );
+            // break;
             case logHealthStatus:
-                config.setLogHealthStatus( Boolean.parseBoolean( value ) );
+                config.setLogHealthStatus( new Boolean( value ) );
                 break;
             case healthStatusInterval:
                 config.setLogHealthStatus( true );
-                config.setHealthStatusInterval( value );
+                config.setHealthStatusInterval( new Integer( value ) );
                 break;
             default:
                 throw new Exception( "attribute name unknown" );
