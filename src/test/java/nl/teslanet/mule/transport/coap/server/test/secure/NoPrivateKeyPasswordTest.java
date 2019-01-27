@@ -1,10 +1,12 @@
-package nl.telsanet.mule.transport.coap.server.test.secure;
+package nl.teslanet.mule.transport.coap.server.test.secure;
 
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.isA;
 import static org.junit.internal.matchers.ThrowableCauseMatcher.hasCause;
 import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
+
+import java.io.IOException;
 
 import org.mule.api.ConnectionException;
 import org.mule.api.lifecycle.LifecycleException;
@@ -13,7 +15,7 @@ import nl.teslanet.mule.transport.coap.server.error.EndpointConstructionExceptio
 import nl.teslanet.mule.transport.coap.server.test.utils.AbstractMuleStartTestCase;
 
 
-public class NoKeystoreTest extends AbstractMuleStartTestCase
+public class NoPrivateKeyPasswordTest extends AbstractMuleStartTestCase
 {
     @Override
     protected void expectException()
@@ -23,15 +25,14 @@ public class NoKeystoreTest extends AbstractMuleStartTestCase
         exception.expect( hasCause( isA( ConnectionException.class ) ) );
         exception.expect( hasCause( hasMessage( containsString( "CoAP configuration error" ) ) ) );
         exception.expect( hasCause( hasCause( isA( EndpointConstructionException.class ) ) ) );
-        exception.expect( hasCause( hasCause( hasMessage( containsString( "cannot load keystore" ) ) ) ) );
-        exception.expect( hasCause( hasCause( hasMessage( containsString( "certs/keyStoreNONEXISTENT.jks" ) ) ) ) );
-        exception.expect( hasCause( hasCause( hasCause( isA( EndpointConstructionException.class ) ) ) ) );
-        exception.expect( hasCause( hasCause( hasCause( hasMessage( containsString( "resource not found" ) ) ) ) ) );
+        exception.expect( hasCause( hasCause( hasMessage( containsString( "cannot construct secure endpoint" ) ) ) ) );
+        exception.expect( hasCause( hasCause( hasCause( isA(NullPointerException.class ) ) ) ) );
+        exception.expect( hasCause( hasCause( hasCause( hasMessage( containsString( "keyPassword must be provided" ) ) ) ) ) );
     }
 
     @Override
     protected String getConfigResources()
     {
-        return "mule-config/secure/testserver2.xml";
+        return "mule-config/secure/testserver8.xml";
     };
 }

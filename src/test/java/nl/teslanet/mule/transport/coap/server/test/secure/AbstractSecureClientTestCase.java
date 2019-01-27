@@ -1,4 +1,4 @@
-package nl.telsanet.mule.transport.coap.server.test.secure;
+package nl.teslanet.mule.transport.coap.server.test.secure;
 
 
 import static org.junit.Assert.assertArrayEquals;
@@ -19,11 +19,11 @@ import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.network.CoapEndpoint;
-import org.eclipse.californium.core.network.CoapEndpoint.CoapEndpointBuilder;
 import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig.Builder;
+import org.eclipse.californium.scandium.dtls.CertificateType;
 import org.eclipse.californium.scandium.dtls.pskstore.InMemoryPskStore;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -41,7 +41,7 @@ import org.mule.munit.runner.functional.FunctionalMunitSuite;
 
 import nl.teslanet.mule.transport.coap.server.test.utils.Data;
 
-
+//TODO review
 public abstract class AbstractSecureClientTestCase extends FunctionalMunitSuite
 {
     private static URI uri= null;
@@ -124,7 +124,7 @@ public abstract class AbstractSecureClientTestCase extends FunctionalMunitSuite
         Builder dtlsBuilder= new DtlsConnectorConfig.Builder();
 
         dtlsBuilder.setPskStore( pskStore );
-        dtlsBuilder.setIdentity( (PrivateKey) keyStore.getKey( "client", "endPass".toCharArray() ), keyStore.getCertificateChain( "client" ), true );
+        dtlsBuilder.setIdentity( (PrivateKey) keyStore.getKey( "client", "endPass".toCharArray() ), keyStore.getCertificateChain( "client" ), CertificateType.X_509 );
         dtlsBuilder.setTrustStore( trustedCertificates );
         dtlsBuilder.setEnableAddressReuse( false );
         dtlsBuilder.setConnectionThreadCount( 1 );
@@ -135,7 +135,7 @@ public abstract class AbstractSecureClientTestCase extends FunctionalMunitSuite
 
         //endpoint
 
-        CoapEndpointBuilder endpointBuilder= new CoapEndpoint.CoapEndpointBuilder();
+        CoapEndpoint.Builder endpointBuilder= new CoapEndpoint.Builder();
         endpointBuilder.setConnector( dtlsConnector );
         NetworkConfig config= NetworkConfig.createStandardWithoutFile();
         config.setInt( NetworkConfig.Keys.ACK_TIMEOUT, 20000 );
@@ -214,6 +214,15 @@ public abstract class AbstractSecureClientTestCase extends FunctionalMunitSuite
             client.useLateNegotiation();
             Request request= new Request( call );
             request.setURI( uri.resolve( getPath( call ) ) );
+            switch ( call )
+            {
+                case DELETE:
+                case GET:
+                    request.setUnintendedPayload();
+                    break;
+                default:
+                    break;
+            }
             request.setPayload( "test-payload" );
 
             CoapResponse response= client.advanced( request );
@@ -236,6 +245,15 @@ public abstract class AbstractSecureClientTestCase extends FunctionalMunitSuite
         {
             Request request= new Request( call );
             request.setURI( uri.resolve( getPath( call ) ) );
+            switch ( call )
+            {
+                case DELETE:
+                case GET:
+                    request.setUnintendedPayload();
+                    break;
+                default:
+                    break;
+            }
             request.setPayload( "nothing important" );
 
             CoapResponse response= client.advanced( request );

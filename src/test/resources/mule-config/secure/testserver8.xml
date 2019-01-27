@@ -23,10 +23,9 @@
    	secure="true"
 	keyStoreLocation="certs/keyStore.jks" 
 	keyStorePassword="endPass" 
-	privateKeyAlias="server"
-	privateKeyPassword="endpass"
+	privateKeyAlias="server" 
 	trustStoreLocation="certs/trustStore.jks" 
-	trustStorePassword="rootPassNONEXISTENT"
+	trustStorePassword="rootPass"
 	trustedRootCertificateAlias="root"
 	>
 		<coap-server:resources>

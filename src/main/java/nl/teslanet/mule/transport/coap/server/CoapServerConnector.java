@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 (teslanet.nl) Rogier Cobben.
+ * Copyright (c) 2017, 2018, 2019 (teslanet.nl) Rogier Cobben.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -13,6 +13,7 @@
  ******************************************************************************/
 
 package nl.teslanet.mule.transport.coap.server;
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,8 +34,10 @@ import org.eclipse.californium.core.network.Endpoint;
 import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.californium.core.network.interceptors.MessageTracer;
 import org.eclipse.californium.core.server.resources.Resource;
+import org.eclipse.californium.elements.util.SslContextUtil;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
+import org.eclipse.californium.scandium.dtls.CertificateType;
 import org.eclipse.californium.scandium.dtls.pskstore.InMemoryPskStore;
 import org.mule.api.ConnectionException;
 import org.mule.api.ConnectionExceptionCode;
@@ -61,6 +64,8 @@ import nl.teslanet.mule.transport.coap.server.error.ErrorHandler;
 import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
 
 
+//TODO: check file headers
+
 /**
  * Mule CoAP connector - CoapServer. 
  * The CoapServer Connector can be used in Mule applications to implement CoAP servers.
@@ -70,18 +75,15 @@ import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
  * @Author Rogier Cobben     
  */
 
-@Connector(
-    name= "coap-server", 
-    friendlyName= "CoAP Server", 
-    schemaVersion= "2.0",
-    minMuleVersion="3.8.0",
-    //namespace= "http://www.mulesoft.org/schema/mule/coap-server",
-    schemaLocation= "http://www.teslanet.nl/schema/mule/coap-server/2.0/mule-coap-server.xsd"
-)
+@Connector(name= "coap-server", friendlyName= "CoAP Server", schemaVersion= "2.0", minMuleVersion= "3.8.0",
+        //namespace= "http://www.mulesoft.org/schema/mule/coap-server",
+        schemaLocation= "http://www.teslanet.nl/schema/mule/coap-server/2.0/mule-coap-server.xsd")
 @OnException(handler= ErrorHandler.class)
 public class CoapServerConnector
 {
-
+    /**
+     * The configuration that is used to construct the CoAP Server instance.
+     */
     @Config
     @Placement(tab= "General", group= "Server", order= 1)
     private ServerConfig config;
@@ -151,104 +153,49 @@ public class CoapServerConnector
     {
         if ( !config.isSecure() )
         {
-            CoapEndpoint.CoapEndpointBuilder builder= new CoapEndpoint.CoapEndpointBuilder();
+            CoapEndpoint.Builder builder= new CoapEndpoint.Builder();
             builder.setInetSocketAddress( config.getInetSocketAddress() );
             builder.setNetworkConfig( config.getNetworkConfig() );
             server.addEndpoint( builder.build() );
         }
         else
         {
+            //TODO: add allowing all clients to connect
+            MuleInputStreamFactory streamFactory= new MuleInputStreamFactory();
+            SslContextUtil.configure( streamFactory.getScheme(), streamFactory );
             // Pre-shared secrets
             //TODO improve security (-> not in memory ) 
             InMemoryPskStore pskStore= new InMemoryPskStore();
-            //pskStore.setKey("password", "sesame".getBytes()); // from ETSI Plugtest test spec
-
-            // load the key store
-            KeyStore keyStore;
+            // put in the PSK store the default identity/psk for tinydtls tests
+            //pskStore.setKey( "Client_identity", "secretPSK".getBytes() );
             try
             {
-                keyStore= KeyStore.getInstance( "JKS" );
-            }
-            catch ( KeyStoreException e1 )
-            {
-                throw new EndpointConstructionException( "cannot create JKS keystore instance", e1 );
-            }
-            InputStream in;
-            try
-            {
-                in= IOUtils.getResourceAsStream( config.getKeyStoreLocation(), server.getClass(), true, true );
-                if ( in == null ) throw new EndpointConstructionException( "resource not found");
-            }
-            catch ( Exception e1 )
-            {
-                throw new EndpointConstructionException( "cannot load keystore from { " + config.getKeyStoreLocation() + " }", e1 );
-            }
-            try
-            {
-                keyStore.load( in, config.getKeyStorePassword().toCharArray() );
-            }
-            catch ( NoSuchAlgorithmException | CertificateException | IOException e1 )
-            {
-                throw new EndpointConstructionException( "cannot load keystore from { " + config.getKeyStoreLocation() + " } using passwd ***", e1 );
-            }
+                // load the key store
+                SslContextUtil.Credentials serverCredentials= SslContextUtil.loadCredentials(
+                    streamFactory.getScheme() + config.getKeyStoreLocation(),
+                    config.getPrivateKeyAlias(),
+                    ( config.getKeyStorePassword() != null ? config.getKeyStorePassword().toCharArray() : null ),
+                    ( config.getPrivateKeyPassword() != null ? config.getPrivateKeyPassword().toCharArray() : null ) );
+                Certificate[] trustedCertificates= SslContextUtil.loadTrustedCertificates(
+                    streamFactory.getScheme() + config.getTrustStoreLocation(),
+                    config.getTrustedRootCertificateAlias(),
+                    ( config.getTrustStorePassword() != null ? config.getTrustStorePassword().toCharArray() : null ) );
 
-            // load the trust store
-            KeyStore trustStore;
-            try
-            {
-                trustStore= KeyStore.getInstance( "JKS" );
+                DtlsConnectorConfig.Builder builder= new DtlsConnectorConfig.Builder();
+                builder.setAddress( config.getInetSocketAddress() );
+                builder.setPskStore( pskStore );
+                builder.setIdentity( serverCredentials.getPrivateKey(), serverCredentials.getCertificateChain(), CertificateType.RAW_PUBLIC_KEY, CertificateType.X_509 );
+                builder.setTrustStore( trustedCertificates );
+                builder.setRpkTrustAll();
+                DTLSConnector dtlsConnector= new DTLSConnector( builder.build() );
+                CoapEndpoint.Builder endpointBuilder= new CoapEndpoint.Builder();
+                endpointBuilder.setNetworkConfig( config.getNetworkConfig() );
+                endpointBuilder.setConnector( dtlsConnector );
+                server.addEndpoint( endpointBuilder.build() );
             }
-            catch ( KeyStoreException e1 )
+            catch ( Exception e )
             {
-                throw new EndpointConstructionException( "cannot create JKS truststore instance", e1 );
-            }
-            try ( InputStream inTrust= IOUtils.getResourceAsStream( config.getTrustStoreLocation(), server.getClass(), true, true ); )
-
-            {
-                if ( inTrust == null ) throw new EndpointConstructionException( "resource not found");
-                trustStore.load( inTrust, config.getTrustStorePassword().toCharArray() );
-
-                // You can load multiple certificates if needed
-                Certificate[] trustedCertificates = new Certificate[1];
-                trustedCertificates[0] = trustStore.getCertificate( config.getTrustedRootCertificateAlias());
-                
-                DtlsConnectorConfig.Builder dtlsBuilder= new DtlsConnectorConfig.Builder();
-                dtlsBuilder.setAddress( config.getInetSocketAddress() );
-                dtlsBuilder.setPskStore( pskStore );
-                try
-                {
-                    dtlsBuilder.setIdentity(
-                        (PrivateKey) keyStore.getKey( config.getPrivateKeyAlias(), config.getKeyStorePassword().toCharArray() ),
-                        keyStore.getCertificateChain( config.getPrivateKeyAlias() ),
-                        true );
-                }
-                catch ( Exception e )
-                {
-                    throw new EndpointConstructionException( "identity with private key alias { " + config.getPrivateKeyAlias() + " } could not be set" );
-                }
-                try
-                {
-                    dtlsBuilder.setTrustStore( trustedCertificates );
-                }
-                catch ( Exception e )
-                {
-                    throw new EndpointConstructionException( "certificate chain with alias { " + config.getTrustedRootCertificateAlias() + " } not found in truststore", e );
-                }
-
-                DTLSConnector dtlsConnector= new DTLSConnector( dtlsBuilder.build() );
-
-                CoapEndpoint.CoapEndpointBuilder builder= new CoapEndpoint.CoapEndpointBuilder();
-                builder.setNetworkConfig( config.getNetworkConfig() );
-                builder.setConnector( dtlsConnector );
-                server.addEndpoint( builder.build() );
-            }
-            catch ( IOException e1 )
-            {
-                throw new EndpointConstructionException( "cannot load truststore from { " + config.getTrustStoreLocation() + " }", e1 );
-            }
-            catch ( Exception e1 )
-            {
-                throw new EndpointConstructionException( "cannot load truststore from { " + config.getTrustStoreLocation() + " }", e1 );
+                throw new EndpointConstructionException( "cannot construct secure endpoint", e );
             }
         }
     }
@@ -271,8 +218,6 @@ public class CoapServerConnector
             registry.add( null, resourceConfig );
         }
     }
-
-
 
     // A class with @Connector must contain exactly one method annotated with
     @Stop
@@ -425,7 +370,7 @@ public class CoapServerConnector
         {
             throw new ResourceUriException( "null" );
         }
-            registry.remove( uriPattern );
+        registry.remove( uriPattern );
     }
 
     /**

@@ -102,7 +102,7 @@
       <coap-server:add-resource config-ref="config" uri="#[flowVars.resource_path]"
          get="#[flowVars.get]" put="#[flowVars.put]" post="#[flowVars.post]"
          delete="#[flowVars.delete]" doc:name="add resource"/>
-      <set-property propertyName="coap.opt.location_path" value="#[ '/' + flowVars.resource_path ]"/>
+      <set-property propertyName="coap.opt.location_path" value="#[ flowVars.resource_path ]"/>
       <set-property propertyName="coap.response.code" value="CREATED"/>
    </sub-flow>
 

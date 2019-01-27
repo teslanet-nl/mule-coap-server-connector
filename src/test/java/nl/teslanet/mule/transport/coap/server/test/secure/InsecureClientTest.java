@@ -1,4 +1,4 @@
-package nl.telsanet.mule.transport.coap.server.test.secure;
+package nl.teslanet.mule.transport.coap.server.test.secure;
 
 
 import static org.junit.Assert.assertEquals;
@@ -125,7 +125,6 @@ public class InsecureClientTest extends FunctionalMunitSuite
         spyActivated= false;
         CoapClient client= getClient( getPath( call ) );
         Request request= new Request( call );
-        request.setPayload( "nothing important" );
 
         CoapResponse response= client.advanced( request );
 
@@ -185,7 +184,6 @@ public class InsecureClientTest extends FunctionalMunitSuite
         spyActivated= false;
         CoapClient client= getClient( getPath( call ) );
         Request request= new Request( call );
-        request.setPayload( "nothing important" );
 
         CoapResponse response= client.advanced( request );
 

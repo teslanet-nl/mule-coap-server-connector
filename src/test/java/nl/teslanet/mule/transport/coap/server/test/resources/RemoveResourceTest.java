@@ -84,7 +84,6 @@ public class RemoveResourceTest extends FunctionalMunitSuite
         for ( Code call : calls )
         {
             Request request= new Request( call );
-            request.setPayload( "some other content" );
             response= client.advanced( request );
             assertNotNull( "got no response on: " + call, response );
             assertEquals( "wrong response on: " + call, responses.get( call ), response.getCode() );
@@ -109,12 +108,10 @@ public class RemoveResourceTest extends FunctionalMunitSuite
         client= getClient( "/service/resource-to-remove2" );
         response= client.get();
         assertNotNull( "get resoure2 gave no response", response );
-        //assertFalse( "response first get resoure2 should not indicate succes", response.isSuccess() );
         assertEquals( "get gave wrong response", ResponseCode.NOT_FOUND, response.getCode() );
 
         client= getClient( "/service/add_resource/all_methods" );
         Request request= new Request( Code.POST );
-        request.setPayload( "some content" );
         request.getOptions().addLocationPath( "service" ).addLocationPath( "resource-to-remove2" );
         response= client.advanced( request );
         assertNotNull( "post gave no response", response );
@@ -130,7 +127,6 @@ public class RemoveResourceTest extends FunctionalMunitSuite
         {
             client= getClient( "/service/resource-to-remove2" );
             request= new Request( call );
-            request.setPayload( "some other content" );
             response= client.advanced( request );
             assertNotNull( "got no response on: " + call, response );
             assertEquals( "wrong response on: " + call, responses.get( call ), response.getCode() );

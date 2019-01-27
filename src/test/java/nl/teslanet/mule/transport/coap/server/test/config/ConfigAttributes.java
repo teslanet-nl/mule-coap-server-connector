@@ -45,6 +45,7 @@ public class ConfigAttributes
         keyStoreLocation,
         keyStorePassword,
         privateKeyAlias,
+        privateKeyPassword,
         trustStoreLocation,
         trustStorePassword,
         trustedRootCertificateAlias,
@@ -135,6 +136,9 @@ public class ConfigAttributes
                 break;
             case privateKeyAlias:
                 result= config.getPrivateKeyAlias();
+                break;
+            case privateKeyPassword:
+                result= config.getPrivateKeyPassword();
                 break;
             case trustedRootCertificateAlias:
                 result= config.getTrustedRootCertificateAlias();
@@ -324,6 +328,8 @@ public class ConfigAttributes
             case keyStorePassword:
                 break;
             case privateKeyAlias:
+                break;
+            case privateKeyPassword:
                 break;
             case trustStoreLocation:
                 break;
@@ -682,6 +688,9 @@ public class ConfigAttributes
                 break;
             case privateKeyAlias:
                 config.setPrivateKeyAlias( value );
+                break;
+            case privateKeyPassword:
+                config.setPrivateKeyPassword( value );
                 break;
             case trustedRootCertificateAlias:
                 config.setTrustedRootCertificateAlias( value );

@@ -1,4 +1,4 @@
-package nl.telsanet.mule.transport.coap.server.test.secure;
+package nl.teslanet.mule.transport.coap.server.test.secure;
 
 public class SecureClientTest extends AbstractSecureClientTestCase
 {

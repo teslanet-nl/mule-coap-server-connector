@@ -1,4 +1,4 @@
-package nl.telsanet.mule.transport.coap.server.test.secure;
+package nl.teslanet.mule.transport.coap.server.test.secure;
 
 
 import static org.hamcrest.Matchers.containsString;
@@ -13,7 +13,7 @@ import nl.teslanet.mule.transport.coap.server.error.EndpointConstructionExceptio
 import nl.teslanet.mule.transport.coap.server.test.utils.AbstractMuleStartTestCase;
 
 
-public class NoTrustedRootCertificateAliasTest extends AbstractMuleStartTestCase
+public class NoKeystoreTest extends AbstractMuleStartTestCase
 {
     @Override
     protected void expectException()
@@ -23,17 +23,12 @@ public class NoTrustedRootCertificateAliasTest extends AbstractMuleStartTestCase
         exception.expect( hasCause( isA( ConnectionException.class ) ) );
         exception.expect( hasCause( hasMessage( containsString( "CoAP configuration error" ) ) ) );
         exception.expect( hasCause( hasCause( isA( EndpointConstructionException.class ) ) ) );
-        exception.expect( hasCause( hasCause( hasMessage( containsString( "cannot load truststore" ) ) ) ) );
-        exception.expect( hasCause( hasCause( hasMessage( containsString( "certs/trustStore.jks" ) ) ) ) );
-        exception.expect( hasCause( hasCause( hasCause( isA( EndpointConstructionException.class ) ) ) ) );
-        exception.expect( hasCause( hasCause( hasCause( hasMessage( containsString( "certificate chain with alias" ) ) ) ) ) );
-        exception.expect( hasCause( hasCause( hasCause( hasMessage( containsString( "rootNONEXISTENT" ) ) ) ) ) );
-        exception.expect( hasCause( hasCause( hasCause( hasMessage( containsString( "not found in truststore" ) ) ) ) ) );
+        exception.expect( hasCause( hasCause( hasMessage( containsString( "cannot construct secure endpoint" ) ) ) ) );
     }
 
     @Override
     protected String getConfigResources()
     {
-        return "mule-config/secure/testserver7.xml";
+        return "mule-config/secure/testserver2.xml";
     };
 }

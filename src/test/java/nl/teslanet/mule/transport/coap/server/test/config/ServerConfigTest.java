@@ -163,6 +163,8 @@ public class ServerConfigTest
                 return new ConfigAttributeDesc( AttributeName.trustStorePassword, null, null, null, "secret1", null );
             case privateKeyAlias:
                 return new ConfigAttributeDesc( AttributeName.privateKeyAlias, null, null, null, "secretKey", null );
+            case privateKeyPassword:
+                return new ConfigAttributeDesc( AttributeName.privateKeyPassword, null, null, null, "secret_keypassword", null );
             case trustedRootCertificateAlias:
                 return new ConfigAttributeDesc( AttributeName.trustedRootCertificateAlias, null, null, null, "certificate2", null );
             case ackTimeout:

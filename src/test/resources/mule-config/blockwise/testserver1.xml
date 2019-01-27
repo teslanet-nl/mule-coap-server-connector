@@ -15,7 +15,7 @@
    http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/3.9/mule-validation.xsd
    ">
    
-   <coap-server:config name="config" exchangeLifetime="20" logCoapMessages="true">
+   <coap-server:config name="config1" bindToPort="5683" exchangeLifetime="20" logCoapMessages="true" maxResourceBodySize="8192">
       <coap-server:resources>
          <coap-server:resource name="service">
             <coap-server:resources>
@@ -26,11 +26,28 @@
             </coap-server:resources>
          </coap-server:resource>
       </coap-server:resources>
-      
    </coap-server:config>
    
-   <flow name="listen">
-      <coap-server:listen uri="/service/*" config-ref="config"/>
+   <coap-server:config name="config2" bindToPort="5685" logCoapMessages="true" maxResourceBodySize="16000">
+      <coap-server:resources>
+         <coap-server:resource name="service">
+            <coap-server:resources>
+               <coap-server:resource name="get_me" get="true"/>
+               <coap-server:resource name="put_me" put="true"/>
+               <coap-server:resource name="post_me" post="true"/>
+               <coap-server:resource name="delete_me" delete="true"/>
+            </coap-server:resources>
+         </coap-server:resource>
+      </coap-server:resources>
+   </coap-server:config>
+   
+   <flow name="listen1">
+      <coap-server:listen uri="/service/*" config-ref="config1"/>
+      <set-payload value="mock_or_spy"/>
+   </flow>
+   
+   <flow name="listen2">
+      <coap-server:listen uri="/service/*" config-ref="config2"/>
       <set-payload value="mock_or_spy"/>
    </flow>
    
