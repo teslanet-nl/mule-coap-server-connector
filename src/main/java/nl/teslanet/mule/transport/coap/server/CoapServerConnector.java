@@ -2,8 +2,8 @@
  * Copyright (c) 2017, 2018, 2019 (teslanet.nl) Rogier Cobben.
  * 
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * and Eclipse Public License - v 2.0 which accompany this distribution.
+ * are made available under the terms of the Eclipse Public License v2.0
+ * which accompanies this distribution.
  * 
  * The Eclipse Public License is available at
  *    http://www.eclipse.org/legal/epl-v20.html
@@ -15,14 +15,7 @@
 package nl.teslanet.mule.transport.coap.server;
 
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -55,7 +48,6 @@ import org.mule.api.annotations.lifecycle.Stop;
 import org.mule.api.annotations.param.Default;
 import org.mule.api.annotations.param.Optional;
 import org.mule.api.callback.SourceCallback;
-import org.mule.util.IOUtils;
 
 import nl.teslanet.mule.transport.coap.server.config.ResourceConfig;
 import nl.teslanet.mule.transport.coap.server.config.ServerConfig;
@@ -72,7 +64,6 @@ import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
  * A CoAP server is defined by means of a set resources on which requests can be done like GET, POST, PUT etc. .
  * The server CoAP endpoint has a number of configuration parameters that can be used to tune behavior of the server. 
  * These parameters have sensible defaults and need only to be set for specific needs.
- * @Author Rogier Cobben     
  */
 
 @Connector(name= "coap-server", friendlyName= "CoAP Server", schemaVersion= "2.0", minMuleVersion= "3.8.0",
