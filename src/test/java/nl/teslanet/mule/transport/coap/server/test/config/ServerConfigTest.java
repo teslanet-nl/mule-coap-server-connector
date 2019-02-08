@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2017, 2018, 2019 (teslanet.nl) Rogier Cobben.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License - v 2.0 
+ * which accompanies this distribution.
+ * 
+ * The Eclipse Public License is available at
+ *    http://www.eclipse.org/legal/epl-v20.html
+ * 
+ * Contributors:
+ *    (teslanet.nl) Rogier Cobben - initial creation
+ ******************************************************************************/
 package nl.teslanet.mule.transport.coap.server.test.config;
 
 
@@ -28,7 +41,7 @@ public class ServerConfigTest
     public static AttributeName[] propertiesToTest()
     {
         return AttributeName.values();
-     }
+    }
 
     /**
      * The attribute to test.
@@ -224,7 +237,13 @@ public class ServerConfigTest
             case useCongestionControl:
                 return new ConfigAttributeDesc( AttributeName.useCongestionControl, NetworkConfig.Keys.USE_CONGESTION_CONTROL, null, "false", "true", "true" );
             case congestionControlAlgorithm:
-                return new ConfigAttributeDesc( AttributeName.congestionControlAlgorithm, NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM, null, "Cocoa", "PeakhopperRto", "PeakhopperRto" );
+                return new ConfigAttributeDesc(
+                    AttributeName.congestionControlAlgorithm,
+                    NetworkConfig.Keys.CONGESTION_CONTROL_ALGORITHM,
+                    null,
+                    "Cocoa",
+                    "PeakhopperRto",
+                    "PeakhopperRto" );
             case protocolStageThreadCount:
                 return new ConfigAttributeDesc( AttributeName.protocolStageThreadCount, NetworkConfig.Keys.PROTOCOL_STAGE_THREAD_COUNT, null, "4", "12", "12" );
             case networkStageReceiverThreadCount:
@@ -254,7 +273,7 @@ public class ServerConfigTest
                     DeduplicatorName.CROP_ROTATION.name(),
                     NetworkConfig.Keys.DEDUPLICATOR_CROP_ROTATION );
             case responseMatching:
-                return new ConfigAttributeDesc( AttributeName.responseMatching, NetworkConfig.Keys.RESPONSE_MATCHING, null, "STRICT", "RELAXED", "RELAXED" );               
+                return new ConfigAttributeDesc( AttributeName.responseMatching, NetworkConfig.Keys.RESPONSE_MATCHING, null, "STRICT", "RELAXED", "RELAXED" );
             case markAndSweepInterval:
                 return new ConfigAttributeDesc( AttributeName.markAndSweepInterval, NetworkConfig.Keys.MARK_AND_SWEEP_INTERVAL, null, "10000", "22000", "22000" );
             case cropRotationPeriod:

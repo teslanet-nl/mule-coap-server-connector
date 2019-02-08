@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2017, 2018, 2019 (teslanet.nl) Rogier Cobben.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License - v 2.0 
+ * which accompanies this distribution.
+ * 
+ * The Eclipse Public License is available at
+ *    http://www.eclipse.org/legal/epl-v20.html
+ * 
+ * Contributors:
+ *    (teslanet.nl) Rogier Cobben - initial creation
+ ******************************************************************************/
 package nl.teslanet.mule.transport.coap.server.test.basic;
 
 
@@ -39,7 +52,6 @@ public class PutMethodTest extends FunctionalMunitSuite
         return false;
     }
 
-
     @Before
     public void setUp() throws Exception
     {
@@ -61,7 +73,7 @@ public class PutMethodTest extends FunctionalMunitSuite
         CoapClient client= new CoapClient( uri.resolve( path ) );
         client.setTimeout( 1000L );
 
-        CoapResponse response= client.put(payload, 0);
+        CoapResponse response= client.put( payload, 0 );
 
         assertNotNull( "put gave no response", response );
         assertEquals( "response code should be CREATED", ResponseCode.CREATED, response.getCode() );
@@ -73,11 +85,11 @@ public class PutMethodTest extends FunctionalMunitSuite
     {
         String path= "/basic/do_not_put_me";
         String payload= ":payload_do_not_put_me";
-        
+
         client= new CoapClient( uri.resolve( path ) );
         client.setTimeout( 1000L );
 
-        CoapResponse response= client.put(payload, 0);
+        CoapResponse response= client.put( payload, 0 );
 
         assertNotNull( "put gave no response", response );
         assertEquals( "response code should be METHOD_NOT_ALLOWED", ResponseCode.METHOD_NOT_ALLOWED, response.getCode() );
@@ -93,7 +105,7 @@ public class PutMethodTest extends FunctionalMunitSuite
         client= new CoapClient( uri.resolve( path ) );
         client.setTimeout( 1000L );
 
-        CoapResponse response= client.put(payload, 0);
+        CoapResponse response= client.put( payload, 0 );
 
         assertNotNull( "put gave no response", response );
         assertEquals( "response code should be METHOD_NOT_ALLOWED", ResponseCode.METHOD_NOT_ALLOWED, response.getCode() );
@@ -109,7 +121,7 @@ public class PutMethodTest extends FunctionalMunitSuite
         client= new CoapClient( uri.resolve( path ) );
         client.setTimeout( 1000L );
 
-        CoapResponse response= client.put(payload, 0);
+        CoapResponse response= client.put( payload, 0 );
 
         assertNotNull( "put gave no response", response );
         assertEquals( "response code should be NOT_FOUND", ResponseCode.NOT_FOUND, response.getCode() );

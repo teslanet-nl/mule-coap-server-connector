@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2017, 2018, 2019 (teslanet.nl) Rogier Cobben.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License - v 2.0 
+ * which accompanies this distribution.
+ * 
+ * The Eclipse Public License is available at
+ *    http://www.eclipse.org/legal/epl-v20.html
+ * 
+ * Contributors:
+ *    (teslanet.nl) Rogier Cobben - initial creation
+ ******************************************************************************/
 package nl.teslanet.mule.transport.coap.server.test.discovery;
 
 
@@ -109,7 +122,7 @@ public class DynamicResourcesTest extends FunctionalMunitSuite
         boolean obs= link.getAttributes().hasObservable();
         assertTrue( "obs not true", obs );
     }
-    
+
     @Test
     public void testRt()
     {
@@ -120,7 +133,7 @@ public class DynamicResourcesTest extends FunctionalMunitSuite
         assertTrue( "rt does not contain rt1", rt.contains( "rt1" ) );
         assertTrue( "rt does not contain rt1", rt.contains( "rt2" ) );
     }
-    
+
     @Test
     public void testSz()
     {
@@ -129,7 +142,7 @@ public class DynamicResourcesTest extends FunctionalMunitSuite
         String sz= link.getAttributes().getMaximumSizeEstimate();
         assertEquals( "sz has wrong value", "123456", sz );
     }
-    
+
     @Test
     public void testTitle()
     {

@@ -14,6 +14,22 @@
    http://www.mulesoft.org/schema/mule/coap-server http://www.teslanet.nl/schema/mule/coap-server/2.0/mule-coap-server.xsd 
    http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/3.9/mule-validation.xsd
    ">
+   <description>
+      /*******************************************************************************
+      * Copyright (c) 2017, 2018, 2019 (teslanet.nl) Rogier Cobben.
+      * 
+      * All rights reserved. This program and the accompanying materials
+      * are made available under the terms of the Eclipse Public License - v 2.0 
+      * which accompanies this distribution.
+      * 
+      * The Eclipse Public License is available at
+      *    http://www.eclipse.org/legal/epl-v20.html
+      * 
+      * Contributors:
+      *    (teslanet.nl) Rogier Cobben - initial creation
+      ******************************************************************************/
+      Mule CoAP connector test application
+   </description>
    
    <coap-server:config name="config1" bindToPort="5683" exchangeLifetime="20" logCoapMessages="true" maxResourceBodySize="8192">
       <coap-server:resources>

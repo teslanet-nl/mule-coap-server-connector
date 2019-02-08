@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2017, 2018, 2019 (teslanet.nl) Rogier Cobben.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License - v 2.0 
+ * which accompanies this distribution.
+ * 
+ * The Eclipse Public License is available at
+ *    http://www.eclipse.org/legal/epl-v20.html
+ * 
+ * Contributors:
+ *    (teslanet.nl) Rogier Cobben - initial creation
+ ******************************************************************************/
 package nl.teslanet.mule.transport.coap.server.test.modules;
 
 
@@ -458,7 +471,7 @@ public class ResourceRegistryTest
         exception.expectMessage( uri4 );
         exception.expectMessage( "resource does not exist" );
 
-        assertFalse( "registry must not contain resource4", uri4.equals( registry.getResource( uri4 ).getURI()) );
+        assertFalse( "registry must not contain resource4", uri4.equals( registry.getResource( uri4 ).getURI() ) );
 
     }
 
@@ -538,49 +551,49 @@ public class ResourceRegistryTest
         resources= registry.findResources( uri1 );
         assertNotNull( resources );
         assertEquals( "wrong resource count", 1, resources.size() );
-        assertEquals( "wrong resources found", 0x1 , resourcesPresent( resources) );
+        assertEquals( "wrong resources found", 0x1, resourcesPresent( resources ) );
 
         resources= registry.findResources( uri2 );
         assertNotNull( resources );
         assertEquals( "wrong resource count", 1, resources.size() );
-        assertEquals( "wrong resources found", 0x2 , resourcesPresent( resources) );
+        assertEquals( "wrong resources found", 0x2, resourcesPresent( resources ) );
 
         resources= registry.findResources( uri3 );
         assertNotNull( resources );
         assertEquals( "wrong resource count", 1, resources.size() );
-        assertEquals( "wrong resources found", 0x4 , resourcesPresent( resources) );
+        assertEquals( "wrong resources found", 0x4, resourcesPresent( resources ) );
 
         resources= registry.findResources( uri4 );
         assertNotNull( resources );
         assertEquals( "wrong resource count", 1, resources.size() );
-        assertEquals( "wrong resources found", 0x8 , resourcesPresent( resources) );
+        assertEquals( "wrong resources found", 0x8, resourcesPresent( resources ) );
 
         resources= registry.findResources( "/*" );
         assertNotNull( resources );
         assertEquals( "wrong resource count", 4, resources.size() );
-        assertEquals( "wrong resources found", 0x1 | 0x2 | 0x4 | 0x8 , resourcesPresent( resources) );
+        assertEquals( "wrong resources found", 0x1 | 0x2 | 0x4 | 0x8, resourcesPresent( resources ) );
 
         resources= registry.findResources( "/resource1/*" );
         assertNotNull( resources );
         assertEquals( "wrong resource count", 3, resources.size() );
-        assertEquals( "wrong resources found", 0x2 | 0x4 | 0x8 , resourcesPresent( resources) );
+        assertEquals( "wrong resources found", 0x2 | 0x4 | 0x8, resourcesPresent( resources ) );
 
         resources= registry.findResources( "/resource1/resource2/*" );
         assertNotNull( resources );
         assertEquals( "wrong resource count", 1, resources.size() );
-        assertEquals( "wrong resources found", 0x4 , resourcesPresent( resources) );
+        assertEquals( "wrong resources found", 0x4, resourcesPresent( resources ) );
 
         resources= registry.findResources( "/resource1/resource2/resource3/*" );
         assertNotNull( resources );
         assertEquals( "wrong resource count", 0, resources.size() );
-        assertEquals( "wrong resources found", 0x0 , resourcesPresent( resources) );
+        assertEquals( "wrong resources found", 0x0, resourcesPresent( resources ) );
 
         resources= registry.findResources( "/resource1/resource4/*" );
         assertNotNull( resources );
         assertEquals( "wrong resource count", 0, resources.size() );
-        assertEquals( "wrong resources found", 0x0 , resourcesPresent( resources) );
+        assertEquals( "wrong resources found", 0x0, resourcesPresent( resources ) );
 
-}
+    }
 
     int resourcesPresent( List< ServedResource > resources )
     {
@@ -589,15 +602,23 @@ public class ResourceRegistryTest
         final String name3= "resource3";
         final String name4= "resource4";
         int flags= 0;
-        
+
         for ( ServedResource resource : resources )
         {
             switch ( resource.getName() )
             {
-                case name1: flags|= 0x1; break;
-                case name2: flags|= 0x2; break;
-                case name3: flags|= 0x4; break;
-                case name4: flags|= 0x8; break;
+                case name1:
+                    flags|= 0x1;
+                    break;
+                case name2:
+                    flags|= 0x2;
+                    break;
+                case name3:
+                    flags|= 0x4;
+                    break;
+                case name4:
+                    flags|= 0x8;
+                    break;
             }
         }
         return flags;

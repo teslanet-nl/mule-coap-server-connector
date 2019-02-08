@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2017, 2018, 2019 (teslanet.nl) Rogier Cobben.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License - v 2.0 
+ * which accompanies this distribution.
+ * 
+ * The Eclipse Public License is available at
+ *    http://www.eclipse.org/legal/epl-v20.html
+ * 
+ * Contributors:
+ *    (teslanet.nl) Rogier Cobben - initial creation
+ ******************************************************************************/
 package nl.teslanet.mule.transport.coap.server.test.basic;
 
 
@@ -39,7 +52,6 @@ public class DeleteMethodTest extends FunctionalMunitSuite
         return false;
     }
 
-
     @Before
     public void setUp() throws Exception
     {
@@ -71,7 +83,7 @@ public class DeleteMethodTest extends FunctionalMunitSuite
     public void testNoDeleteAllowed()
     {
         String path= "/basic/do_not_delete_me";
-        
+
         client= new CoapClient( uri.resolve( path ) );
         client.setTimeout( 1000L );
 

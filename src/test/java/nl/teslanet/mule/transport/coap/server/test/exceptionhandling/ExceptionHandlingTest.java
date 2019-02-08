@@ -3,7 +3,7 @@
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License - v 2.0 
- * which accompany this distribution.
+ * which accompanies this distribution.
  * 
  * The Eclipse Public License is available at
  *    http://www.eclipse.org/legal/epl-v20.html
@@ -170,11 +170,11 @@ public class ExceptionHandlingTest extends FunctionalMunitSuite
     public void testException() throws Exception
     {
         Request request= new Request( requestCode );
-        if ( unintendedPayload) request.setUnintendedPayload();
+        if ( unintendedPayload ) request.setUnintendedPayload();
         request.setPayload( "nothing important" );
 
         CoapResponse response= client.advanced( request );
-        switch( exceptionHandling)
+        switch ( exceptionHandling )
         {
             case HANDLED:
                 assertNotNull( "request gave no response", response );
@@ -195,7 +195,7 @@ public class ExceptionHandlingTest extends FunctionalMunitSuite
                 assertEquals( "wrong response payload", "NO LISTENER", response.getResponseText() );
                 break;
             default:
-                break;  
+                break;
         }
     }
 }

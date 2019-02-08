@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2017, 2018, 2019 (teslanet.nl) Rogier Cobben.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License - v 2.0 
+ * which accompanies this distribution.
+ * 
+ * The Eclipse Public License is available at
+ *    http://www.eclipse.org/legal/epl-v20.html
+ * 
+ * Contributors:
+ *    (teslanet.nl) Rogier Cobben - initial creation
+ ******************************************************************************/
 package nl.teslanet.mule.transport.coap.server.test.properties;
 
 
@@ -14,7 +27,7 @@ public class OptEtagListInbound1Test extends AbstractInboundPropertyTestcase
     @Override
     protected void addOption( OptionSet options ) throws InvalidETagException
     {
-        options.addETag( new ETag( "0011FF").asBytes() );         
+        options.addETag( new ETag( "0011FF" ).asBytes() );
     }
 
     @Override
@@ -26,9 +39,9 @@ public class OptEtagListInbound1Test extends AbstractInboundPropertyTestcase
     @Override
     protected Object getExpectedPropertyValue() throws InvalidETagException
     {
-        LinkedList<ETag> list= new LinkedList<ETag>();
-        list.add( new ETag("0011FF") );
-        
+        LinkedList< ETag > list= new LinkedList< ETag >();
+        list.add( new ETag( "0011FF" ) );
+
         return list;
     }
 }

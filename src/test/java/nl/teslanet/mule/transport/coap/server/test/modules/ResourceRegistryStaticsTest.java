@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2017, 2018, 2019 (teslanet.nl) Rogier Cobben.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License - v 2.0 
+ * which accompanies this distribution.
+ * 
+ * The Eclipse Public License is available at
+ *    http://www.eclipse.org/legal/epl-v20.html
+ * 
+ * Contributors:
+ *    (teslanet.nl) Rogier Cobben - initial creation
+ ******************************************************************************/
 package nl.teslanet.mule.transport.coap.server.test.modules;
 
 
@@ -119,7 +132,7 @@ public class ResourceRegistryStaticsTest
         assertEquals( "got wrong resourcename from uri: " + uri3, name3, ResourceRegistry.getUriResourceName( uri3 ) );
         assertEquals( "got wrong resourcename from uri: " + uri4, name4, ResourceRegistry.getUriResourceName( uri4 ) );
     }
-    
+
     @Test
     public void testUriHasWildcard() throws ResourceUriException
     {
@@ -137,13 +150,13 @@ public class ResourceRegistryStaticsTest
         assertTrue( "got wrong wildcard flag from uri: " + uri2, ResourceRegistry.uriHasWildcard( uri2 ) );
         assertTrue( "got wrong wildcard flag from uri: " + uri3, ResourceRegistry.uriHasWildcard( uri3 ) );
         assertFalse( "got wrong wildcard flag from uri: " + uri4, ResourceRegistry.uriHasWildcard( uri4 ) );
-        
+
         assertFalse( "got wrong wildcard flag from uri: " + uri5, ResourceRegistry.uriHasWildcard( uri5 ) );
         assertFalse( "got wrong wildcard flag from uri: " + uri6, ResourceRegistry.uriHasWildcard( uri6 ) );
         assertFalse( "got wrong wildcard flag from uri: " + uri7, ResourceRegistry.uriHasWildcard( uri7 ) );
         assertFalse( "got wrong wildcard flag from uri: " + uri8, ResourceRegistry.uriHasWildcard( uri8 ) );
     }
-    
+
     @Test
     public void testGetParentUri() throws ResourceUriException
     {

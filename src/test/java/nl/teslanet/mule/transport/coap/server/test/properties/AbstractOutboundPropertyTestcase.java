@@ -3,7 +3,7 @@
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License - v 2.0 
- * which accompany this distribution.
+ * which accompanies this distribution.
  * 
  * The Eclipse Public License is available at
  *    http://www.eclipse.org/legal/epl-v20.html
@@ -41,6 +41,7 @@ import org.mule.api.MuleMessage;
 import org.mule.api.transport.PropertyScope;
 import org.mule.munit.common.mocking.MessageProcessorMocker;
 import org.mule.munit.runner.functional.FunctionalMunitSuite;
+
 
 /**
  * Test for outbound properties
@@ -164,7 +165,6 @@ public abstract class AbstractOutboundPropertyTestcase extends FunctionalMunitSu
      */
     abstract protected Object getExpectedOptionValue() throws Exception;
 
-
     /**
      * Override to specify whether the option is an ByteArray
      * @return {@code true} when option is a ByteArray
@@ -173,7 +173,7 @@ public abstract class AbstractOutboundPropertyTestcase extends FunctionalMunitSu
     {
         return false;
     }
-    
+
     /**
      * Mock that sets the outbound property in the Mule flow
      * @param propertyName name of the outbound property to set
@@ -212,10 +212,7 @@ public abstract class AbstractOutboundPropertyTestcase extends FunctionalMunitSu
         {
             @SuppressWarnings("unchecked")
             Collection< byte[] > option= (Collection< byte[] >) fetchOption( response.getOptions() );
-        
-            
-            
-            
+
             @SuppressWarnings("unchecked")
             Collection< byte[] > expected= (Collection< byte[] >) getExpectedOptionValue();
             assertEquals( "option value list length differ", expected.size(), option.size() );

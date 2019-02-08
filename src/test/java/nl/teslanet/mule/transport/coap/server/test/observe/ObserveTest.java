@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2017, 2018, 2019 (teslanet.nl) Rogier Cobben.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License - v 2.0 
+ * which accompanies this distribution.
+ * 
+ * The Eclipse Public License is available at
+ *    http://www.eclipse.org/legal/epl-v20.html
+ * 
+ * Contributors:
+ *    (teslanet.nl) Rogier Cobben - initial creation
+ ******************************************************************************/
 package nl.teslanet.mule.transport.coap.server.test.observe;
 
 
@@ -128,7 +141,7 @@ public class ObserveTest extends FunctionalMunitSuite
         relation.reactiveCancel();
         client.shutdown();
     }
-    
+
     @Test(timeout= 10000000L)
     public void testObserveOnAddedResource() throws Exception
     {
@@ -141,7 +154,7 @@ public class ObserveTest extends FunctionalMunitSuite
 
         CoapClient client2= getClient( "/service" );
         Request request= new Request( Code.POST );
-        request.setPayload( contents.get( 0 ));
+        request.setPayload( contents.get( 0 ) );
         request.getOptions().addLocationPath( "service" ).addLocationPath( "observe_me_too" );
         response= client2.advanced( request );
         assertNotNull( "post gave no response", response );

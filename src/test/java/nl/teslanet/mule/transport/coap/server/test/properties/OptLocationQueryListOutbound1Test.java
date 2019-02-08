@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2017, 2018, 2019 (teslanet.nl) Rogier Cobben.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License - v 2.0 
+ * which accompanies this distribution.
+ * 
+ * The Eclipse Public License is available at
+ *    http://www.eclipse.org/legal/epl-v20.html
+ * 
+ * Contributors:
+ *    (teslanet.nl) Rogier Cobben - initial creation
+ ******************************************************************************/
 package nl.teslanet.mule.transport.coap.server.test.properties;
 
 
@@ -25,20 +38,20 @@ public class OptLocationQueryListOutbound1Test extends AbstractOutboundPropertyT
     @Override
     protected Object getPropertyValue() throws InvalidETagException
     {
-        LinkedList<String> list= new LinkedList<String>();
-        list.add( "first=1");
-        list.add( "second=2");
-        
+        LinkedList< String > list= new LinkedList< String >();
+        list.add( "first=1" );
+        list.add( "second=2" );
+
         return list;
     }
 
     @Override
     protected Object getExpectedOptionValue() throws InvalidETagException
     {
-        LinkedList<String> list= new LinkedList<String>();
-        list.add( "first=1");
-        list.add( "second=2");
-        
+        LinkedList< String > list= new LinkedList< String >();
+        list.add( "first=1" );
+        list.add( "second=2" );
+
         return list;
     }
 
