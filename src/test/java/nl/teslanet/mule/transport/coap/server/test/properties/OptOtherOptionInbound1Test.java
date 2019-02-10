@@ -19,7 +19,10 @@ import org.eclipse.californium.core.coap.OptionSet;
 import org.junit.Before;
 
 
-//TODO add observe functionality test
+/**
+ * Test inbound other option
+ *
+ */
 public class OptOtherOptionInbound1Test extends AbstractInboundPropertyTestcase
 {
     private Option option;

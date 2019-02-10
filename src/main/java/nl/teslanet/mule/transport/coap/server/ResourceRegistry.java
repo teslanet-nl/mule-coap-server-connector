@@ -199,13 +199,14 @@ public class ResourceRegistry
     }
 
     /**
-     * Find all resources of that have matching uri's 
+     * Find all resources of that have matching uri's.
      * @param uriPattern the pattern to match to.
-     * @return A list containing all served resource that match.
+     * @return A list containing all served resource that match. The list is not thread safe.
      */
     public List< ServedResource > findResources( String uriPattern )
     {
         //TODO regex support
+        //TODO concurrent?
         ArrayList< ServedResource > found= new ArrayList< ServedResource >();
 
         for ( Entry< String, ServedResource > e : servedResources.entrySet() )

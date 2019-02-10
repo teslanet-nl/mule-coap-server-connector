@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 (teslanet.nl) Rogier Cobben.
+ * Copyright (c) 2017, 2018, 2019 (teslanet.nl) Rogier Cobben.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v2.0
@@ -41,24 +41,52 @@ import nl.teslanet.mule.transport.coap.commons.options.PropertyNames;
 import nl.teslanet.mule.transport.coap.server.config.ResourceConfig;
 
 
+/**
+ * The ServedResource class represents a CoAP resource that is active on the server.
+ * A ServedResource object handles all requests from clients on the CoAP resource.
+ */
 public class ServedResource extends CoapResource
 {
-
+    //TODO review logging
     /** The logger. */
     protected final Logger LOGGER= Logger.getLogger( ServedResource.class.getCanonicalName() );
 
+    /**
+     * The callback of the messagesource.
+     * It is used to handle messages over to the Mule flow that should process the request.
+     */
     private SourceCallback callback= null;
 
+    /**
+     * Flag that indicates whether the resource accepts Get requests.
+     */
     private Boolean get= false;
 
+    /**
+     * Flag that indicates whether the resource accepts Put requests.
+     */
     private Boolean put= false;
 
+    /**
+     * Flag that indicates whether the resource accepts Post requests.
+     */
     private Boolean post= false;
 
+    /**
+     * Flag that indicates whether the resource accepts Delete requests.
+     */
     private Boolean delete= false;
 
+    /**
+     * Flag that indicates whether the resource should acknowledge before processing the request.
+     */
     private Boolean earlyAck= false;
 
+    /**
+     * Constuctor that creates a ServedResource object according to given configuration.
+     * The ServedResource and its child resources will be constructed.
+     * @param resourceConfig the description of the resource to create. 
+     */
     public ServedResource( ResourceConfig resourceConfig )
     {
         super( resourceConfig.getName() );
@@ -119,6 +147,9 @@ public class ServedResource extends CoapResource
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.californium.core.CoapResource#handleGET(org.eclipse.californium.core.server.resources.CoapExchange)
+     */
     @Override
     public void handleGET( CoapExchange exchange )
     {
@@ -133,6 +164,9 @@ public class ServedResource extends CoapResource
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.californium.core.CoapResource#handlePUT(org.eclipse.californium.core.server.resources.CoapExchange)
+     */
     @Override
     public void handlePUT( CoapExchange exchange )
     {
@@ -147,6 +181,9 @@ public class ServedResource extends CoapResource
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.californium.core.CoapResource#handlePOST(org.eclipse.californium.core.server.resources.CoapExchange)
+     */
     @Override
     public void handlePOST( CoapExchange exchange )
     {
@@ -161,6 +198,9 @@ public class ServedResource extends CoapResource
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.californium.core.CoapResource#handleDELETE(org.eclipse.californium.core.server.resources.CoapExchange)
+     */
     @Override
     public void handleDELETE( CoapExchange exchange )
     {
@@ -175,6 +215,11 @@ public class ServedResource extends CoapResource
         }
     }
 
+    /**
+     * Generic handler for processing requests.
+     * @param exchange the CoAP exchange context of the request.
+     * @param defaultResponseCode the response code that will be used when the Mule flow hasn't set one.
+     */
     private void handleRequest( CoapExchange exchange, ResponseCode defaultResponseCode )
     {
         if ( !hasCallback() )
@@ -238,6 +283,12 @@ public class ServedResource extends CoapResource
 
     }
 
+    /**
+     * Create a map of properties that should be set on the inbound scope of the Mule Message
+     * @param exchange the context of the CoAP request
+     * @return map of properties
+     * @throws InvalidOptionValueException when an option has an invalid value
+     */
     private Map< String, Object > createInboundProperties( CoapExchange exchange ) throws InvalidOptionValueException
     {
 
@@ -257,6 +308,14 @@ public class ServedResource extends CoapResource
         return props;
     }
 
+    /**
+     * Hands the request over to the Mule flow to get processed.
+     * @param requestPayload the request payload that will be set as Mule message payload 
+     * @param requestContentFormat the content format of the request payload
+     * @param inboundProperties map of properties that will be set in the inbound scope of the Mule message handed to the flow
+     * @param outboundProperties map that gets filled with the outbound properties from the returned Mule message 
+     * @return the result message payload.
+     */
     private Object processMuleFlow( Object requestPayload, int requestContentFormat, Map< String, Object > inboundProperties, Map< String, Object > outboundProperties )
 
     {
@@ -318,7 +377,7 @@ public class ServedResource extends CoapResource
     };
 
     /**
-     * @return the get
+     * @return the get flag
      */
     public Boolean isGet()
     {
@@ -326,7 +385,7 @@ public class ServedResource extends CoapResource
     }
 
     /**
-     * @return the put
+     * @return the put flag
      */
     public Boolean isPut()
     {
@@ -334,7 +393,7 @@ public class ServedResource extends CoapResource
     }
 
     /**
-     * @return the post
+     * @return the post flag
      */
     public Boolean isPost()
     {
@@ -342,7 +401,7 @@ public class ServedResource extends CoapResource
     }
 
     /**
-     * @return the delete
+     * @return the delete flag
      */
     public Boolean isDelete()
     {
@@ -350,7 +409,7 @@ public class ServedResource extends CoapResource
     }
 
     /**
-     * @return the earlyAck
+     * @return the earlyAck flag
      */
     public Boolean isEarlyAck()
     {
@@ -358,7 +417,7 @@ public class ServedResource extends CoapResource
     }
 
     /**
-     * set the resource specific callback
+     * set the Mule callback for this resource.
      */
     public void setCallback( SourceCallback callback )
     {
@@ -374,6 +433,10 @@ public class ServedResource extends CoapResource
         return callback;
     }
 
+    /**
+     * Test whether the resource callback has been set.
+     * @return true when callback is set.
+     */
     public boolean hasCallback()
     {
         return( callback != null );

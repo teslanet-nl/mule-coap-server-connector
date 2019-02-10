@@ -142,7 +142,7 @@ public class ObserveTest extends FunctionalMunitSuite
         client.shutdown();
     }
 
-    @Test(timeout= 10000000L)
+    @Test(timeout= 10000L)
     public void testObserveOnAddedResource() throws Exception
     {
 

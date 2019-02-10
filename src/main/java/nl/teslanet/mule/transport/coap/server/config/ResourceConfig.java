@@ -62,7 +62,8 @@ public class ResourceConfig
     private boolean observable= false;
 
     /**
-     * When true an early acknowledgement is sent to client, before processing the request and returning the response.
+     * When true an acknowledgement is immediately sent to the client, before processing the request and returning the response.
+     * Use this when processing takes longer than the acknowledgment-timeout of the client.  
      */
     private boolean earlyAck= false;
 

@@ -19,7 +19,6 @@ import java.security.cert.Certificate;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.resource.spi.work.WorkException;
 
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.network.CoapEndpoint;
@@ -56,8 +55,6 @@ import nl.teslanet.mule.transport.coap.server.error.ErrorHandler;
 import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
 
 
-//TODO: check file headers
-
 /**
  * Mule CoAP connector - CoapServer. 
  * The CoapServer Connector can be used in Mule applications to implement CoAP servers.
@@ -81,9 +78,9 @@ public class CoapServerConnector
 
     /**
      * List of Resources that will be served. 
-     * The resources define their name and the operations that can be done on them by clients. These operations are Get, Post, Put, Delete and Observe. 
-     * When the EarlyAck flag is set an acknowledgement is immediately sent back to the client and before processing the request. Use this when processing takes longer than the acknowledgment-timeout of the client.  
-     */
+     * The resources define their name and the operations that are available to clients. 
+     * Resources can have child resources, forming a tree of resources.
+    */
     @Configurable
     @Optional
     @Placement(tab= "General", group= "Server", order= 2)
@@ -91,15 +88,28 @@ public class CoapServerConnector
     //mule devkit doesnt allow this to be configured in ServerConfig
     private List< ResourceConfig > resources= null;
 
+    /**
+     * The CoAP server instance
+     */
     private CoapServer server= null;
 
+    /**
+     * The registry of the resources served
+     */
     private ResourceRegistry registry= null;
 
+    /**
+     * The context that is injected by Mule.
+     */
     @Inject
     private MuleContext context;
 
+    /**
+     * Start the CoAP server. Called by Mule on application start.
+     * @throws ConnectionException thrown when the CoAP server could not start.
+     */
     @Start
-    public void startServer() throws ConnectionException, WorkException
+    public void startServer() throws ConnectionException
     {
         //TODO allow empty server
         if ( getResources() == null || getResources().isEmpty() )
@@ -140,6 +150,12 @@ public class CoapServerConnector
     //        }
     //    }
 
+    /**
+     * Add a new CoAP endpoint to the server.
+     * @param server that will use the endpoint.
+     * @param config the configuration containing the endpoint parameters.
+     * @throws EndpointConstructionException
+     */
     private void addEndPoint( CoapServer server, ServerConfig config ) throws EndpointConstructionException
     {
         if ( !config.isSecure() )
@@ -192,10 +208,10 @@ public class CoapServerConnector
     }
 
     /**
-     * Add all resources that are configured on the server 
-     * @param server
-     * @param resourceConfigs
-     * @throws ResourceUriException 
+     * Construct resources and add them to the server.
+     * @param server the server to add the resources to.
+     * @param resourceConfigs the configuration containing the resource parameters. 
+     * @throws ResourceUriException thrown when Resource construction failed.  
      */
     private void addResources( CoapServer server, List< ResourceConfig > resourceConfigs ) throws ResourceUriException
     {
@@ -210,7 +226,9 @@ public class CoapServerConnector
         }
     }
 
-    // A class with @Connector must contain exactly one method annotated with
+    /**
+     * Stop the CoAP server. Called by Mule when the application is stopped.
+     */
     @Stop
     public void stopServer()
     {
@@ -223,30 +241,20 @@ public class CoapServerConnector
         registry= null;
     }
 
+    //TODO select method to listen for
+    //TODO uriPattern
     /**
-     *  The Listen messageprocessor receives all incoming requests on the specified uri. 
-     *  The uri needs to be an existing resource defined in de coap-server configuration. 
-     *  Wildcards can also be used, like "/*" or "/some/deeper/resources/*". 
-     *  When multiple listeners apply for a resource, the listener with the most specific uri will get the requests on it.
-     *  CoAP options of the request are added to the inbound-scope of the MuleMessage. 
-     *  <br/>Example: <br/>
-     *  <code> 
-     *    &lt;flow name="coap-serverFlow1"&gt;<br/>
-     *    &emsp;&emsp;  &lt;coap-server:listen uri="/alphabet/*" config-ref="CoAP_Server_Configuration"/&gt;<br/>
-     *    &emsp;&emsp;  &lt;set-variable variableName="method" value="#[ message.inboundProperties['coap.request.code']]"/&gt;<br/>
-     *    &emsp;&emsp;  &lt;set-variable variableName="uri" value="#[message.inboundProperties['coap.request.uri'] ]"/&gt;<br/>
-     *    &emsp;&emsp;  &lt;byte-array-to-string-transformer/&gt;<br/>
-     *    &emsp;&emsp;  &lt;logger level="INFO" message="#[payload]"/&gt; <br/>
-     *    &emsp;&emsp;  &lt;set-payload value="&amp;lt;my_response&amp;gt;Hi!&amp;lt;/my_response&amp;gt;" encoding="UTF-8" mimeType="application/xml"/&gt;<br/>
-     *    &emsp;&emsp;  &lt;set-property propertyName="coap.response.code" value="CONTENT" /&gt;<br/>
-     *    &lt;/flow&gt;<br/>
-     *  </code>
-     *  @param callback Set by Mule, not visible in xml.
-     *  @param uri The uri (without scheme/host part) of the resource the listener get the requests to process. 
-     *  @return The payload of the CoAP request.
+     * The Listen messageprocessor receives all incoming requests on resources that comply to the specified uri. 
+     * Wildcards can also be used, like "/*" or "/some/deeper/resources/*". 
+     * When multiple listeners apply for a resource, the listener with the most specific uri will get the requests on it.
+     * CoAP options of the request are added to the inbound scope of the MuleMessage. 
+     * The result of the flow is returned as CoAP response. 
+     * CoAP options in the outbound property scope are put in the CoAP response.  
+     * @param uri The uri pattern of the resources for which the listener will receive requests to process. 
+     * @return The payload of the CoAP request.
      * @throws ResourceUriException thrown when uri is not valid
      */
-    @Source( /* threadingModel=SourceThreadingModel.NONE */)
+    @Source
     public byte[] listen( SourceCallback callback, String uri ) throws ResourceUriException
     {
         registry.add( new Listener( uri, callback ) );
@@ -254,16 +262,13 @@ public class CoapServerConnector
 
     }
 
+    //TODO uriPattern
     /**
-     *  The Resource Changed messageprocessor is used to trigger a notification to clients that observe the specified resource.  
-     *  The uri needs to be an existing resource defined in the coap-server configuration or a dynamically created resource. 
-     *  Wildcards can also be used, like "/*" or "/some/deeper/resources/*". 
-     *  The observing clients are notified by issuing an internal get-request for every client that gets processed by the listener on the resource concerned.
-     *  <br/>Example:<br/>
-     *  <code> 
-     *    &lt;coap-server:resource-changed config-ref="CoAP_Server_Configuration" uri="/hello/changeme"/&gt;<br/>
-     *  </code>
-     *  @param uri The uri (without scheme/host part) of the resource that has changed. 
+     * The Resource Changed messageprocessor indicates the state of resources has changed and 
+     * observing clients need to be notified. For every observing client and resource an internal get-request
+     * is issued on the listener for the resource concerned.
+     * The observing clients are notified by issuing an internal get-request for every client that gets processed by the listener on the resource concerned.
+     * @param uri The uri pattern that specify the resource(s) that have changed. Wildcards can be used, like "/*" or "/some/deeper/resources/*". 
      * @throws ResourceUriException thrown when resource uri is invalid.
      */
     @Processor
@@ -284,19 +289,15 @@ public class CoapServerConnector
      *  The Add Resource messageprocessor is used to dynamically add a resource to the CoAP server.
      *  The uri needs to be a complete resource-path, including all parent resource(s). 
      *  All parent resources in the path need to exist already.
-     *  Requests on the resource can be done immediately, provided there is a listener configured for it, 
-     *  e.g. by means of a listener that has a wildcard uri (for the example below a listener with uri="/alphabet/*" would do).
-     *  <br/>Example:<br/>
-     *  <code> 
-     *    &lt;coap-server:add-resource config-ref="CoAP_Server_Configuration"  uri="/alphabet/z" get="true" delete="true"/&gt;
-     *  </code>
-     *  @param uri The uri (without scheme/host part) of the resource to add. 
+     *  The resource is available to clients immediately, provided there is a listener configured that 
+     *  has an uri pattern that applies.
+     *  @param uri The uri of the resource to add. 
      *  @param get When true the resource accepts get-requests. 
      *  @param put When true the resource accepts put-requests. 
      *  @param post When true the resource accepts post-requests. 
      *  @param delete When true the resource accepts delete-requests. 
      *  @param observable When true the resource accepts observe-requests. 
-     *  @param earlyAck An immediate acknowledgement is sent tot the client before processing the request. 
+     *  @param earlyAck An immediate acknowledgement is sent to the client before processing the request and returning response. 
      *  @param title The readable title of the resource. 
      *  @param ifdesc The interface ( if ) indicates interfaces-name the resource implements. 
      *  @param rt The defines the resource type. 
@@ -343,15 +344,13 @@ public class CoapServerConnector
         registry.add( parentUri, resourceConfig );
     }
 
+    //TODO add notification parameter
+    //TODO uriPattern
     /**
-     *  The Remove Resource  messageprocessor removes one or more resources from the server.  
-     *  A wildcard can be used, e.g. "/tobefound/*". All resources that apply to the uri will be removed.
-     *  Clients that observe a resource that is removed will be notified.
-     *  <br/>Example:<br/>
-     *  <code>
-     *    &lt;coap-server:remove-resource config-ref="CoAP_Server_Configuration" uri="/alphabet/z" /&gt;
-     *  </code><br/>
-     *  @param uri The uri (without scheme/host part) of the resource(s) to be deleted. 
+     * The Remove Resource  messageprocessor removes one or more resources from the server.  
+     * All resources that apply to the uri will be removed.
+     * Clients that observe a resource that is removed will be notified.
+     * @param uri The uri of the resource(s) to be deleted. Wildcards can be used, like "/*" or "/some/deeper/resources/*". 
      * @throws ResourceUriException thrown when the uri is not valid.
      */
     @Processor
@@ -365,10 +364,10 @@ public class CoapServerConnector
     }
 
     /**
-     *  The <code>&lt;coap-server:resource-exists/&gt;</code> messageprocessor returns 'true' when a resource on 
-     *  the given uri is active, otherwise false. 
-     *  A wildcard can be used, e.g. "/tobefound/*". When at least one resource is found that applies to the uri, the Boolean 'true' is returned. 
-     *  @param uri The uri (without scheme/host part) of the resource(s) to be deleted. 
+     *  The Resource Exists messageprocessor returns 'true' when a resource on 
+     *  the given uri is active on the server, otherwise false. 
+     *  When at least one resource is found that applies to the uri, the Boolean 'true' is returned. 
+     *  @param uri The uri pattern of the resource(s) to be found. A wildcard can be used, e.g. "/tobefound/*". 
      *  @return true when at least one resource is found.
      * @throws ResourceUriException thrown when uri is not valid.
      */
@@ -383,24 +382,59 @@ public class CoapServerConnector
         return !found.isEmpty();
     }
 
-    //TODO add list-resources operation
+    //TODO add method, usermanual item, schema update, unit test
+    //TODO uriPattern
+    /**
+     *  The List Resources messageprocessor returns a list of uri's of 
+     *  the resources that match given uri pattern. 
+     *  @param uri The uri pattern of the resource(s) to be found. A wildcard can be used, e.g. "/tobefound/*". 
+     *  @return The list of resource uri's.
+     * @throws ResourceUriException thrown when uri is not valid.
+     */
+    //    @Processor
+    //    public List< String > ListResources( String uri ) throws ResourceUriException
+    //    {
+    //        if ( uri == null )
+    //        {
+    //            throw new ResourceUriException( "null" );
+    //        }
+    //        List< String > uriList= new ArrayList< String >();
+    //        for ( ServedResource found : registry.findResources( uri ) )
+    //        {
+    //            uriList.add( found.getURI() );
+    //        }
+    //        return new CopyOnWriteArrayList< String >( uriList );
+    //    }
 
+    /**
+     * Get the configuration
+     * @return the configuration object
+     */
     public ServerConfig getConfig()
     {
         return config;
     }
 
+    /**
+     * Set the configuration object
+     * @param config the configuration object
+     */
     public void setConfig( ServerConfig config )
     {
         this.config= config;
     }
 
+    /**
+     * Set the Mule context
+     * @param context the Mule context
+     */
     public void setContext( MuleContext context )
     {
         this.context= context;
     }
 
     /**
+     * Get the Mule context
      * @return the Mule context
      */
     public MuleContext getContext()
@@ -408,16 +442,29 @@ public class CoapServerConnector
         return context;
     }
 
+    /**
+     * Test whether a resource is the root resource.
+     * @param resource that is tested
+     * @return true when given resource is the root resource, otherwise false
+     */
     public boolean isRootResource( Resource resource )
     {
         return server.getRoot().equals( resource );
     }
 
+    /**
+     * Get configured resources  
+     * @return the list resource configurations
+     */
     public List< ResourceConfig > getResources()
     {
         return resources;
     }
 
+    /**
+     * Set configured resources 
+     * @param resources the resource configs to set.
+     */
     public void setResources( List< ResourceConfig > resources )
     {
         this.resources= resources;

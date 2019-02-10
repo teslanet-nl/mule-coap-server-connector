@@ -17,7 +17,10 @@ package nl.teslanet.mule.transport.coap.server.test.properties;
 import org.eclipse.californium.core.coap.OptionSet;
 
 
-//TODO add observe functionality test
+/**
+ * Test inbound size2 option
+ *
+ */
 public class OptSize2Inbound1Test extends AbstractInboundPropertyTestcase
 {
 

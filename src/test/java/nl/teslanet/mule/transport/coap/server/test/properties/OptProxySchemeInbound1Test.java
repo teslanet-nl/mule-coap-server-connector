@@ -17,7 +17,10 @@ package nl.teslanet.mule.transport.coap.server.test.properties;
 import org.eclipse.californium.core.coap.OptionSet;
 
 
-//TODO add observe functionality test
+/**
+ * Test inbound proxy scheme option
+ *
+ */
 public class OptProxySchemeInbound1Test extends AbstractInboundPropertyTestcase
 {
 
