@@ -168,7 +168,7 @@
          </when>
          <when expression="#[ flowVars.method == 'DELETE']">
             <invoke object-ref="storage" method="get" methodArguments="#[ flowVars.uri ]"/>
-            <coap-server:remove-resource config-ref="config" uriPattern="#[ flowVars.uri ]"/>
+            <coap-server:remove-resource config-ref="config" uri="#[ flowVars.uri ]"/>
             <message-properties-transformer overwrite="true" doc:name="responsecode = deleted">
                <add-message-property key="coap.response.code" value="DELETED"/>
             </message-properties-transformer>

@@ -39,8 +39,8 @@ public class ConfigAttributes
         bindToHost,
         bindToPort,
         bindToSecurePort,
-        maxActivePeers,
-        maxPeerInactivityPeriod,
+//        maxActivePeers,
+//        maxPeerInactivityPeriod,
         ackTimeout,
         ackRandomFactor,
         ackTimeoutScale,
@@ -54,20 +54,20 @@ public class ConfigAttributes
         keyStoreLocation,
         keyStorePassword,
         privateKeyAlias,
-        privateKeyPassword,
+//        privateKeyPassword,
         trustStoreLocation,
         trustStorePassword,
         trustedRootCertificateAlias,
-        secureSessionTimeout,
-        dtlsAutoResumeTimeout,
-        responseMatching,
+//        secureSessionTimeout,
+//        dtlsAutoResumeTimeout,
+//        responseMatching,
         useRandomMidStart,
-        midTracker,
-        midTrackerGroups,
+//        midTracker,
+//        midTrackerGroups,
         tokenSizeLimit,
         preferredBlockSize,
         maxMessageSize,
-        maxResourceBodySize,
+//        maxResourceBodySize,
         blockwiseStatusLifetime,
         notificationCheckIntervalTime,
         notificationCheckIntervalCount,
@@ -93,7 +93,8 @@ public class ConfigAttributes
         // httpServerSocketBufferSize,
         // httpCacheResponseMaxAge,
         // httpCacheSize,
-        logHealthStatus,
+//        logHealthStatus,
+        healthStatusPrintLevel,
         healthStatusInterval
     }
 
@@ -149,9 +150,9 @@ public class ConfigAttributes
 //            case privateKeyPassword:
 //                result= config.getPrivateKeyPassword();
 //                break;
-//            case trustedRootCertificateAlias:
-//                result= config.getTrustedRootCertificateAlias();
-//                break;
+            case trustedRootCertificateAlias:
+                result= config.getTrustedRootCertificateAlias();
+                break;
 //            case secureSessionTimeout:
 //                result= ( config.getSecureSessionTimeout() != null ? config.getSecureSessionTimeout().toString() : null );
 //                break;
@@ -227,9 +228,9 @@ public class ConfigAttributes
             case useCongestionControl:
                 result= ( config.getUseCongestionControl() != null ? config.getUseCongestionControl().toString() : null );
                 break;
-//            case congestionControlAlgorithm:
-//                result= ( config.getCongestionControlAlgorithm() != null ? config.getCongestionControlAlgorithm().name() : null );
-//                break;
+            case congestionControlAlgorithm:
+                result= ( config.getCongestionControlAlgorithm() != null ? config.getCongestionControlAlgorithm() : null );
+                break;
             case protocolStageThreadCount:
                 result= ( config.getProtocolStageThreadCount() != null ? config.getProtocolStageThreadCount().toString() : null );
                 break;
@@ -251,9 +252,9 @@ public class ConfigAttributes
             case udpConnectorOutCapacity:
                 result= ( config.getUdpConnectorOutCapacity() != null ? config.getUdpConnectorOutCapacity().toString() : null );
                 break;
-//            case deduplicator:
-//                result= ( config.getDeduplicator() != null ? config.getDeduplicator().name() : null );
-//                break;
+            case deduplicator:
+                result= ( config.getDeduplicator() != null ? config.getDeduplicator() : null );
+                break;
             case markAndSweepInterval:
                 result= ( config.getMarkAndSweepInterval() != null ? config.getMarkAndSweepInterval().toString() : null );
                 break;
@@ -263,6 +264,9 @@ public class ConfigAttributes
 //            case logHealthStatus:
 //                result= Boolean.toString( config.isLogHealthStatus() );
 //                break;
+            case healthStatusPrintLevel:
+                result= ( config.getHealthStatusPrintLevel() != null ? config.getHealthStatusPrintLevel() : null );
+                break;
             case healthStatusInterval:
                 result= ( config.getHealthStatusInterval() != null ? config.getHealthStatusInterval().toString() : null );
                 break;
@@ -338,8 +342,8 @@ public class ConfigAttributes
                 break;
             case privateKeyAlias:
                 break;
-            case privateKeyPassword:
-                break;
+//            case privateKeyPassword:
+//                break;
             case trustStoreLocation:
                 break;
             case trustStorePassword:
@@ -444,7 +448,10 @@ public class ConfigAttributes
             // case httpCacheResponseMaxAge: result=
             // NetworkConfig.Keys.httpCacheResponseMaxAge ; break;
             // case httpCacheSize: result= NetworkConfig.Keys.httpCacheSize ; break;
-            case logHealthStatus:
+//            case logHealthStatus:
+//                break;
+            case healthStatusPrintLevel:
+                result= NetworkConfig.Keys.HEALTH_STATUS_PRINT_LEVEL;
                 break;
             case healthStatusInterval:
                 result= NetworkConfig.Keys.HEALTH_STATUS_INTERVAL;
@@ -598,6 +605,9 @@ public class ConfigAttributes
             // case : result= httpCacheResponseMaxAge:
             // NetworkConfig.Keys.httpCacheResponseMaxAge ; break;
             // case : result= httpCacheSize: NetworkConfig.Keys.httpCacheSize ; break;
+            case NetworkConfig.Keys.HEALTH_STATUS_PRINT_LEVEL:
+                result= AttributeName.healthStatusPrintLevel;
+                break;
             case NetworkConfig.Keys.HEALTH_STATUS_INTERVAL:
                 result= AttributeName.healthStatusInterval;
                 break;
@@ -827,10 +837,12 @@ public class ConfigAttributes
 //            case logHealthStatus:
 //                config.setLogHealthStatus( value );
 //                break;
-//            case healthStatusInterval:
-//                config.setLogHealthStatus( true );
-//                config.setHealthStatusInterval( value );
-//                break;
+            case healthStatusPrintLevel:
+                config.setHealthStatusPrintLevel( value );
+                break;
+            case healthStatusInterval:
+                config.setHealthStatusInterval( value );
+                break;
             default:
                 throw new Exception( "attribute name unknown" );
         }

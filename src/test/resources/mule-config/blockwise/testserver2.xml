@@ -32,7 +32,7 @@
       Mule CoAP connector test application
    </description>
    
-   <coap-server:config name="config" exchangeLifetime="20" logMessages="true" maxResourceBodySize="16000" >
+   <coap-server:config name="config" exchangeLifetime="20" logMessages="true" >
       <coap-server:resources>
          <coap-server:resource name="service">
             <coap-server:resources>

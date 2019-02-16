@@ -50,14 +50,14 @@ public class Listener
     public void setUri( String uri ) throws ResourceUriException  
     {
         //TODO assure no bad chars
-        if ( uri == null ) throw new ResourceUriException( "null", " set on listener");
+        if ( uri == null ) throw new ResourceUriException( "null", ", null is not allowed");
         this.uri= uri.trim();
         if ( !this.uri.startsWith( Defs.COAP_URI_PATHSEP ))
         {
             this.uri= Defs.COAP_URI_PATHSEP + this.uri; 
         };
         int wildcardIndex= this.uri.indexOf( Defs.COAP_URI_WILDCARD );
-        if ( wildcardIndex >= 0 && wildcardIndex < this.uri.length()-1) throw new ResourceUriException( uri, ", wildcard in listener needs to be last char.");
+        if ( wildcardIndex >= 0 && wildcardIndex < this.uri.length()-1) throw new ResourceUriException( uri, ", wildcard needs to be last character.");
         if ( this.uri.length() < 2 ) throw new ResourceUriException( uri, ", listener uri cannot be empty."); 
 
     }

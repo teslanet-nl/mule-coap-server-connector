@@ -2,7 +2,9 @@
 <projectDescription>
   <name>mule-coap-server-connector</name>
   <comment>Mule CoAP Server Connector is an Anypoint Connector that adds CoAP server capability to Mule applications. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
-  <projects/>
+  <projects>
+    <project>mule-coap-commons</project>
+  </projects>
   <buildSpec>
     <buildCommand>
       <name>org.mule.tooling.devkit.devkitBuilder</name>

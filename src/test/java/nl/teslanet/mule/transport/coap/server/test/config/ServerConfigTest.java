@@ -175,8 +175,8 @@ public class ServerConfigTest
                 return new ConfigAttributeDesc( AttributeName.trustStorePassword, null, null, null, "secret1", null );
             case privateKeyAlias:
                 return new ConfigAttributeDesc( AttributeName.privateKeyAlias, null, null, null, "secretKey", null );
-            case privateKeyPassword:
-                return new ConfigAttributeDesc( AttributeName.privateKeyPassword, null, null, null, "secret_keypassword", null );
+//            case privateKeyPassword:
+//                return new ConfigAttributeDesc( AttributeName.privateKeyPassword, null, null, null, "secret_keypassword", null );
             case trustedRootCertificateAlias:
                 return new ConfigAttributeDesc( AttributeName.trustedRootCertificateAlias, null, null, null, "certificate2", null );
             case ackTimeout:
@@ -211,10 +211,10 @@ public class ServerConfigTest
                 return new ConfigAttributeDesc( AttributeName.preferredBlockSize, NetworkConfig.Keys.PREFERRED_BLOCK_SIZE, null, "512", "1024", "1024" );
             case maxMessageSize:
                 return new ConfigAttributeDesc( AttributeName.maxMessageSize, NetworkConfig.Keys.MAX_MESSAGE_SIZE, null, "1024", "4156", "4156" );
-            case maxResourceBodySize:
-                return new ConfigAttributeDesc( AttributeName.maxResourceBodySize, NetworkConfig.Keys.MAX_MESSAGE_SIZE, null, "8192", "16000", "16000" );
+//            case maxResourceBodySize:
+//                return new ConfigAttributeDesc( AttributeName.maxResourceBodySize, NetworkConfig.Keys.MAX_MESSAGE_SIZE, null, "8192", "16000", "16000" );
             case blockwiseStatusLifetime:
-                return new ConfigAttributeDesc( AttributeName.blockwiseStatusLifetime, NetworkConfig.Keys.BLOCKWISE_STATUS_LIFETIME, null, "300000", "150000", "150000" );
+                return new ConfigAttributeDesc( AttributeName.blockwiseStatusLifetime, NetworkConfig.Keys.BLOCKWISE_STATUS_LIFETIME, null, "600000", "150000", "150000" );
             case notificationCheckIntervalTime:
                 return new ConfigAttributeDesc(
                     AttributeName.notificationCheckIntervalTime,
@@ -269,7 +269,7 @@ public class ServerConfigTest
                     NetworkConfig.Keys.DEDUPLICATOR,
                     null,
                     NetworkConfig.Keys.DEDUPLICATOR_MARK_AND_SWEEP,
-                    "CROP_ROTATION",
+                    "DEDUPLICATOR_CROP_ROTATION",
                     NetworkConfig.Keys.DEDUPLICATOR_CROP_ROTATION );
 //            case responseMatching:
 //                return new ConfigAttributeDesc( AttributeName.responseMatching, NetworkConfig.Keys.RESPONSE_MATCHING, null, "STRICT", "RELAXED", "RELAXED" );
@@ -277,14 +277,16 @@ public class ServerConfigTest
                 return new ConfigAttributeDesc( AttributeName.markAndSweepInterval, NetworkConfig.Keys.MARK_AND_SWEEP_INTERVAL, null, "10000", "22000", "22000" );
             case cropRotationPeriod:
                 return new ConfigAttributeDesc( AttributeName.cropRotationPeriod, NetworkConfig.Keys.CROP_ROTATION_PERIOD, null, "2000", "7800", "7800" );
-            case logHealthStatus:
-                return new ConfigAttributeDesc( AttributeName.logHealthStatus, null, "false", null, "true", null );
+//            case logHealthStatus:
+//                return new ConfigAttributeDesc( AttributeName.logHealthStatus, null, "false", null, "true", null );
 //            case secureSessionTimeout:
 //                return new ConfigAttributeDesc( AttributeName.secureSessionTimeout, NetworkConfig.Keys.SECURE_SESSION_TIMEOUT, null, "86400", "15689", "15689" );
 //            case dtlsAutoResumeTimeout:
 //                return new ConfigAttributeDesc( AttributeName.dtlsAutoResumeTimeout, NetworkConfig.Keys.DTLS_AUTO_RESUME_TIMEOUT, null, "30000", "15123", "15123" );
+            case healthStatusPrintLevel:
+                return new ConfigAttributeDesc( AttributeName.healthStatusPrintLevel, NetworkConfig.Keys.HEALTH_STATUS_PRINT_LEVEL, null, "FINEST", "FINE", "FINE" );
             case healthStatusInterval:
-                return new ConfigAttributeDesc( AttributeName.healthStatusInterval, NetworkConfig.Keys.HEALTH_STATUS_INTERVAL, null, "0", "100", "100" );
+                return new ConfigAttributeDesc( AttributeName.healthStatusInterval, NetworkConfig.Keys.HEALTH_STATUS_INTERVAL, null, "60", "100", "100" );
             default:
                 throw new Exception( "cannot create AttributeDesc: name unknown" );
         }
