@@ -245,7 +245,7 @@ public class ServerConfigTest
                     "PeakhopperRto",
                     "PeakhopperRto" );
             case protocolStageThreadCount:
-                return new ConfigAttributeDesc( AttributeName.protocolStageThreadCount, NetworkConfig.Keys.PROTOCOL_STAGE_THREAD_COUNT, null, "4", "12", "12" );
+                return new ConfigAttributeDesc( AttributeName.protocolStageThreadCount, NetworkConfig.Keys.PROTOCOL_STAGE_THREAD_COUNT, null, Integer.toString( Runtime.getRuntime().availableProcessors()), "12", "12" );
             case networkStageReceiverThreadCount:
                 return new ConfigAttributeDesc( AttributeName.networkStageReceiverThreadCount, NetworkConfig.Keys.NETWORK_STAGE_RECEIVER_THREAD_COUNT, null, "1", "12", "12" );
             case networkStageSenderThreadCount:
