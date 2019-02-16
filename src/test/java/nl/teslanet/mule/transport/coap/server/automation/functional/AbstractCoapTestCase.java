@@ -11,37 +11,36 @@
  * Contributors:
  *    (teslanet.nl) Rogier Cobben - initial creation
  ******************************************************************************/
-package nl.teslanet.mule.transport.coap.server.automation.runner;
+package nl.teslanet.mule.transport.coap.server.automation.functional;
 
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.mule.tools.devkit.ctf.mockup.ConnectorTestContext;
+import org.junit.After;
+import org.junit.Before;
+import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
 
 import nl.teslanet.mule.transport.coap.server.CoapServerConnector;
 
 
-//@RunWith(Suite.class)
-//@SuiteClasses
-//({ 
-//    ResourceExistsTest.class,
-//    AddResourceTest.class,
-//    RemoveResourceTest.class,
-//    ResourceChangedTest.class 
-//})
-public class FunctionalTestSuite
+/**
+ * @author rogier
+ *
+ */
+public class AbstractCoapTestCase extends AbstractTestCase< CoapServerConnector >
 {
-
-    @BeforeClass
-    public static void initialiseSuite()
+    public AbstractCoapTestCase()
     {
-        ConnectorTestContext.initialize( CoapServerConnector.class );
+        super( CoapServerConnector.class );
     }
 
-    @AfterClass
-    public static void shutdownSuite()
+    @Before
+    public void setup()
     {
-        ConnectorTestContext.shutDown();
+        // nop
+    }
+
+    @After
+    public void tearDown()
+    {
+        // nop
     }
 
 }

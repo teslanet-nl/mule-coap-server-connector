@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+   xmlns:coap-server="http://www.mulesoft.org/schema/mule/coap-server"
+   xmlns:spring="http://www.springframework.org/schema/beans"
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+   xsi:schemaLocation="
+   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd 
+   http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/3.9/mule.xsd 
+   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd 
+   http://www.mulesoft.org/schema/mule/coap-server http://www.teslanet.nl/schema/mule/coap-server/1.0/mule-coap-server.xsd 
+   http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/3.9/mule-validation.xsd
+   ">
+   
+   <description>
+      /*******************************************************************************
+      * Copyright (c) 2017, 2018, 2019 (teslanet.nl) Rogier Cobben.
+      * 
+      * All rights reserved. This program and the accompanying materials
+      * are made available under the terms of the Eclipse Public License - v 2.0 
+      * which accompanies this distribution.
+      * 
+      * The Eclipse Public License is available at
+      *    http://www.eclipse.org/legal/epl-v20.html
+      * 
+      * Contributors:
+      *    (teslanet.nl) Rogier Cobben - initial creation
+      ******************************************************************************/
+      Mule CoAP connector test application
+   </description>
+   
+   <spring:beans>
+      <spring:bean id="storage" class="java.util.HashMap"/>
+   </spring:beans>
+
+   <coap-server:config name="config" exchangeLifetime="1" logMessages="true">
+      <coap-server:resources>
+         <coap-server:resource name="service">
+            <coap-server:resources>
+               <coap-server:resource name="add_resource">
+                  <coap-server:resources>
+                     <coap-server:resource name="all_methods" post="true"/>
+                     <coap-server:resource name="get_only" post="true"/>
+                     <coap-server:resource name="post_only" post="true"/>
+                     <coap-server:resource name="put_only" post="true"/>
+                     <coap-server:resource name="delete_only" post="true"/>
+                  </coap-server:resources>
+               </coap-server:resource>
+               <coap-server:resource name="exists" post="true"/>
+               <coap-server:resource name="resource1" get="true" post="true" put="true"
+                  delete="true" observable="true"/>
+               <coap-server:resource name="resource-to-remove" get="true" post="true" put="true"
+                  delete="true" observable="true"/>
+            </coap-server:resources>
+         </coap-server:resource>
+      </coap-server:resources>
+   </coap-server:config>
+
+   <flow name="listen_add_resource">
+      <coap-server:listen uri="/service/add_resource/*" config-ref="config"/>
+
+      <set-variable variableName="method" value="#[ message.inboundProperties['coap.request.code']]"
+         doc:name="set method"/>
+      <set-variable variableName="uri" value="#[ message.inboundProperties['coap.request.uri']]"
+         doc:name="set method"/>
+      <!-- TODO: prepending '/' not needed in the future  -->
+      <set-variable variableName="resource_path"
+         value="#[ '/' + message.inboundProperties['coap.opt.location_path']]"
+         doc:name="set resource_path"/>
+
+      <choice doc:name="by method">
+         <when expression="#[ flowVars.uri == '/service/add_resource/all_methods' ]">
+            <set-variable variableName="get" value="true"/>
+            <set-variable variableName="post" value="true"/>
+            <set-variable variableName="put" value="true"/>
+            <set-variable variableName="delete" value="true"/>
+            <flow-ref name="add_resource"/>
+         </when>
+         <when expression="#[ flowVars.uri == '/service/add_resource/get_only' ]">
+            <set-variable variableName="get" value="true"/>
+            <set-variable variableName="post" value="false"/>
+            <set-variable variableName="put" value="false"/>
+            <set-variable variableName="delete" value="false"/>
+            <flow-ref name="add_resource"/>
+         </when>
+         <when expression="#[ flowVars.uri == '/service/add_resource/post_only' ]">
+            <set-variable variableName="get" value="false"/>
+            <set-variable variableName="post" value="true"/>
+            <set-variable variableName="put" value="false"/>
+            <set-variable variableName="delete" value="false"/>
+            <flow-ref name="add_resource"/>
+         </when>
+         <when expression="#[ flowVars.uri == '/service/add_resource/put_only' ]">
+            <set-variable variableName="get" value="false"/>
+            <set-variable variableName="post" value="false"/>
+            <set-variable variableName="put" value="true"/>
+            <set-variable variableName="delete" value="false"/>
+            <flow-ref name="add_resource"/>
+         </when>
+         <when expression="#[ flowVars.uri == '/service/add_resource/delete_only' ]">
+            <set-variable variableName="get" value="false"/>
+            <set-variable variableName="post" value="false"/>
+            <set-variable variableName="put" value="false"/>
+            <set-variable variableName="delete" value="true"/>
+            <flow-ref name="add_resource"/>
+         </when>
+         <otherwise>
+            <set-payload value="not expected" doc:name="Set Payload"/>
+            <set-property propertyName="coap.response.code" value="BAD_REQUEST"/>
+         </otherwise>
+      </choice>
+   </flow>
+
+   <sub-flow name="add_resource">
+      <byte-array-to-string-transformer/>
+      <invoke object-ref="storage" method="put"
+         methodArguments="#[ flowVars.resource_path ], #[payload]"/>
+      <coap-server:add-resource config-ref="config" uri="#[flowVars.resource_path]"
+         get="#[flowVars.get]" put="#[flowVars.put]" post="#[flowVars.post]"
+         delete="#[flowVars.delete]" doc:name="add resource"/>
+      <set-property propertyName="coap.opt.location_path" value="#[ flowVars.resource_path ]"/>
+      <set-property propertyName="coap.response.code" value="CREATED"/>
+   </sub-flow>
+
+   <flow name="listen_exists">
+      <!-- TODO: uri should be uriPattern -->
+      <coap-server:listen uri="/service/exists" config-ref="config"/>
+      <byte-array-to-string-transformer/>
+      <!--TODO: uri attribute should be uriPattern -->
+      <coap-server:resource-exists config-ref="config" uri="#[ message.inboundProperties['coap.opt.uri_query'] ]"/>
+   </flow>
+
+   <flow name="listen_service_resource">
+      <coap-server:listen uri="/service/*" config-ref="config"/>
+
+      <set-variable variableName="method" value="#[ message.inboundProperties['coap.request.code']]"
+         doc:name="set method"/>
+      <set-variable variableName="uri" value="#[ message.inboundProperties['coap.request.uri']]"
+         doc:name="set method"/>
+
+
+      <choice doc:name="by method">
+         <when expression="#[ flowVars.method == 'GET']">
+            <invoke object-ref="storage" method="get" methodArguments="#[ flowVars.uri ]"/>
+
+         </when>
+         <when expression="#[ flowVars.method == 'PUT']">
+            <byte-array-to-string-transformer/>
+            <invoke object-ref="storage" method="put"
+               methodArguments="#[ flowVars.uri ], #[payload]"/>
+            <coap-server:resource-changed config-ref="config" uri="#[ flowVars.uri ]"
+               doc:name="resource changed"/>
+            <message-properties-transformer overwrite="true" doc:name="responsecode = changed">
+               <add-message-property key="coap.response.code" value="CHANGED"/>
+            </message-properties-transformer>
+         </when>
+         <when expression="#[ flowVars.method == 'POST']">
+            <byte-array-to-string-transformer/>
+            <invoke object-ref="storage" method="put"
+               methodArguments="#[ flowVars.uri ], #[payload]"/>
+            <coap-server:resource-changed config-ref="config" uri="#[ flowVars.uri ]"
+               doc:name="resource changed"/>
+            <message-properties-transformer overwrite="true" doc:name="responsecode = changed">
+               <add-message-property key="coap.response.code" value="CHANGED"/>
+            </message-properties-transformer>
+         </when>
+         <when expression="#[ flowVars.method == 'DELETE']">
+            <invoke object-ref="storage" method="get" methodArguments="#[ flowVars.uri ]"/>
+            <coap-server:remove-resource config-ref="config" uriPattern="#[ flowVars.uri ]"/>
+            <message-properties-transformer overwrite="true" doc:name="responsecode = deleted">
+               <add-message-property key="coap.response.code" value="DELETED"/>
+            </message-properties-transformer>
+         </when>
+         <otherwise>
+            <set-payload value="not expected" doc:name="Set Payload"/>
+            <message-properties-transformer overwrite="true" doc:name="responsecode = BAD_REQUEST">
+               <add-message-property key="coap.response.code" value="BAD_REQUEST"/>
+            </message-properties-transformer>
+         </otherwise>
+      </choice>
+   </flow>
+
+</mule>

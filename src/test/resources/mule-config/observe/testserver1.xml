@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:coap-server="http://www.mulesoft.org/schema/mule/coap-server"
+	xmlns:spring="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+
+	xsi:schemaLocation="
+   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd 
+   http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/3.9/mule.xsd 
+   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd 
+   http://www.mulesoft.org/schema/mule/coap-server http://www.teslanet.nl/schema/mule/coap-server/1.0/mule-coap-server.xsd 
+   http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/3.9/mule-validation.xsd
+   ">
+	<description>
+		/*******************************************************************************
+		* Copyright (c) 2017, 2018, 2019 (teslanet.nl) Rogier Cobben.
+		* 
+		* All rights reserved. This program and the accompanying materials
+		* are made available under the terms of the Eclipse Public License - v 2.0 
+		* which accompanies this distribution.
+		* 
+		* The Eclipse Public License is available at
+		*    http://www.eclipse.org/legal/epl-v20.html
+		* 
+		* Contributors:
+		*    (teslanet.nl) Rogier Cobben - initial creation
+		******************************************************************************/
+		Mule CoAP connector test application
+	</description>
+
+	<spring:beans>
+		<spring:bean  id="storage" class="java.util.HashMap"/>
+	</spring:beans>
+	
+	<coap-server:config name="config" exchangeLifetime="1" notificationCheckIntervalCount="5"
+		notificationCheckIntervalTime="650" 
+		logMessages="true">
+		<coap-server:resources>
+			<coap-server:resource name="service" post="true">
+				<coap-server:resources>
+					<coap-server:resource name="observe_me" get="true"
+						put="true" observable="true" />
+				</coap-server:resources>
+			</coap-server:resource>
+		</coap-server:resources>
+	</coap-server:config>
+	
+	<flow name="listen_service">
+		<coap-server:listen uri="/service" config-ref="config" />
+
+		<set-variable variableName="method"
+			value="#[ message.inboundProperties['coap.request.code']]" doc:name="set method" />
+			<!-- TODO: prepending '/' not needed in the future  -->
+		<set-variable variableName="resource_path"
+			value="#[ '/' + message.inboundProperties['coap.opt.location_path']]" doc:name="set resource_path" />
+			
+		<choice doc:name="by method">
+
+			<when expression="#[ flowVars.method == 'POST' ]">
+				<byte-array-to-string-transformer/>				
+				<invoke object-ref="storage" method="put" methodArguments="#[ flowVars.resource_path ], #[payload]"/>
+				<coap-server:add-resource
+					config-ref="config" 
+					uri="#[flowVars.resource_path]"
+					get="true"
+					put="true" 
+					observable="true" 
+					doc:name="add resource" />
+				<set-property propertyName="coap.opt.location_path" value="#[flowVars.resource_path ]"/>
+				<set-property propertyName="coap.response.code" value="CREATED"/>
+				
+			</when>
+			<otherwise>
+				<set-payload value="not expected" doc:name="Set Payload" />
+            	<set-property propertyName="coap.response.code" value="BAD_REQUEST"/>
+			</otherwise>
+		</choice>
+	</flow>
+	
+	
+	<flow name="listen_resource">
+		<coap-server:listen uri="/service/*" config-ref="config" />
+
+		<set-variable variableName="method"
+			value="#[ message.inboundProperties['coap.request.code']]" doc:name="set method" />
+		<set-variable variableName="uri"
+			value="#[ message.inboundProperties['coap.request.uri']]" doc:name="set method" />
+		
+		
+		<choice doc:name="by method">
+			<when expression="#[ flowVars.method == 'GET']">
+				<invoke object-ref="storage" method="get" methodArguments="#[ flowVars.uri ]"/>
+		
+			</when>
+			<when expression="#[ flowVars.method == 'PUT']">
+				<byte-array-to-string-transformer/>				
+				<invoke object-ref="storage" method="put" methodArguments="#[ flowVars.uri ], #[payload]"/>
+				<coap-server:resource-changed
+					config-ref="config" uri="#[ flowVars.uri ]"
+					doc:name="resourc changed" />
+				<message-properties-transformer
+					overwrite="true" doc:name="responsecode = changed">
+					<add-message-property key="coap.response.code"
+						value="CHANGED" />
+				</message-properties-transformer>
+			</when>
+			<otherwise>
+				<set-payload value="not expected" doc:name="Set Payload" />
+				<message-properties-transformer
+					overwrite="true" doc:name="responsecode = BAD_REQUEST">
+					<add-message-property key="coap.response.code"
+						value="BAD_REQUEST" /> 
+				</message-properties-transformer>
+			</otherwise>
+		</choice>
+	</flow>
+
+</mule>
