@@ -14,7 +14,10 @@
 package nl.teslanet.mule.transport.coap.server.test.modules;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -25,7 +28,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import nl.teslanet.mule.transport.coap.server.CoapServerConnector;
 import nl.teslanet.mule.transport.coap.server.Listener;
 import nl.teslanet.mule.transport.coap.server.ResourceRegistry;
 import nl.teslanet.mule.transport.coap.server.ServedResource;
@@ -38,18 +40,15 @@ public class ResourceRegistryTest
 {
     @Rule
     public ExpectedException exception= ExpectedException.none();
-	private CoapServerConnector connector= null;
 
     @Before
     public void setUp() throws Exception
     {
-        connector= new CoapServerConnector();
     }
 
     @After
     public void tearDown() throws Exception
     {
-    	if ( connector != null ) connector= null; 
     }
 
     @Test
@@ -87,8 +86,8 @@ public class ResourceRegistryTest
 
         exception.expect( NullPointerException.class );
         exception.expectMessage( "Child must have a name" );
-        
-        ServedResource resource= new ServedResource(connector, resourceConfig);
+
+        ServedResource resource= new ServedResource( resourceConfig );
         registry.add( null, resource );
     }
 
@@ -109,28 +108,28 @@ public class ResourceRegistryTest
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name1 );
-        ServedResource resource1= new ServedResource(connector, resourceConfig);
+        ServedResource resource1= new ServedResource( resourceConfig );
         registry.add( null, resource1 );
         assertNotNull( registry );
         assertEquals( "registry does not contain resource1", uri1, registry.getResource( uri1 ).getURI() );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name2 );
-        ServedResource resource2= new ServedResource(connector, resourceConfig);
+        ServedResource resource2= new ServedResource( resourceConfig );
         registry.add( resource1, resource2 );
         assertNotNull( registry );
         assertEquals( "registry does not contain resource2", uri2, registry.getResource( uri2 ).getURI() );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name3 );
-        ServedResource resource3= new ServedResource(connector, resourceConfig);
+        ServedResource resource3= new ServedResource( resourceConfig );
         registry.add( resource2, resource3 );
         assertNotNull( registry );
         assertEquals( "registry does not contain resource3", uri3, registry.getResource( uri3 ).getURI() );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name4 );
-        ServedResource resource4= new ServedResource(connector, resourceConfig);
+        ServedResource resource4= new ServedResource( resourceConfig );
         registry.add( resource1, resource4 );
         assertNotNull( registry );
         assertEquals( "registry does not contain resource4", uri4, registry.getResource( uri4 ).getURI() );
@@ -153,22 +152,22 @@ public class ResourceRegistryTest
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name1 );
-        ServedResource resource1= new ServedResource(connector, resourceConfig);
+        ServedResource resource1= new ServedResource( resourceConfig );
         registry.add( null, resource1 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name2 );
-        ServedResource resource2= new ServedResource(connector, resourceConfig);
+        ServedResource resource2= new ServedResource( resourceConfig );
         registry.add( resource1, resource2 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name3 );
-        ServedResource resource3= new ServedResource(connector, resourceConfig);
+        ServedResource resource3= new ServedResource( resourceConfig );
         registry.add( resource2, resource3 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name4 );
-        ServedResource resource4= new ServedResource(connector, resourceConfig);
+        ServedResource resource4= new ServedResource( resourceConfig );
         registry.add( resource1, resource4 );
 
         assertEquals( "registry does not contain resource1", uri1, registry.getResource( uri1 ).getURI() );
@@ -176,7 +175,7 @@ public class ResourceRegistryTest
         assertEquals( "registry does not contain resource3", uri3, registry.getResource( uri3 ).getURI() );
         assertEquals( "registry does not contain resource4", uri4, registry.getResource( uri4 ).getURI() );
 
-        registry.remove( resource3);
+        registry.remove( resource3 );
 
         assertEquals( "registry does not contain resource1", uri1, registry.getResource( uri1 ).getURI() );
         assertEquals( "registry does not contain resource2", uri2, registry.getResource( uri2 ).getURI() );
@@ -201,22 +200,22 @@ public class ResourceRegistryTest
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name1 );
-        ServedResource resource1= new ServedResource(connector, resourceConfig);
+        ServedResource resource1= new ServedResource( resourceConfig );
         registry.add( null, resource1 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name2 );
-        ServedResource resource2= new ServedResource(connector, resourceConfig);
+        ServedResource resource2= new ServedResource( resourceConfig );
         registry.add( resource1, resource2 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name3 );
-        ServedResource resource3= new ServedResource(connector, resourceConfig);
+        ServedResource resource3= new ServedResource( resourceConfig );
         registry.add( resource2, resource3 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name4 );
-        ServedResource resource4= new ServedResource(connector, resourceConfig);
+        ServedResource resource4= new ServedResource( resourceConfig );
         registry.add( resource1, resource4 );
 
         assertEquals( "registry does not contain resource1", uri1, registry.getResource( uri1 ).getURI() );
@@ -279,22 +278,22 @@ public class ResourceRegistryTest
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name1 );
-        ServedResource resource1= new ServedResource(connector, resourceConfig);
+        ServedResource resource1= new ServedResource( resourceConfig );
         registry.add( null, resource1 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name2 );
-        ServedResource resource2= new ServedResource(connector, resourceConfig);
+        ServedResource resource2= new ServedResource( resourceConfig );
         registry.add( resource1, resource2 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name3 );
-        ServedResource resource3= new ServedResource(connector, resourceConfig);
+        ServedResource resource3= new ServedResource( resourceConfig );
         registry.add( resource2, resource3 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name4 );
-        ServedResource resource4= new ServedResource(connector, resourceConfig);
+        ServedResource resource4= new ServedResource( resourceConfig );
         registry.add( resource1, resource4 );
 
         Listener listener;
@@ -335,22 +334,22 @@ public class ResourceRegistryTest
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name1 );
-        ServedResource resource1= new ServedResource(connector, resourceConfig);
+        ServedResource resource1= new ServedResource( resourceConfig );
         registry.add( null, resource1 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name2 );
-        ServedResource resource2= new ServedResource(connector, resourceConfig);
+        ServedResource resource2= new ServedResource( resourceConfig );
         registry.add( resource1, resource2 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name3 );
-        ServedResource resource3= new ServedResource(connector, resourceConfig);
+        ServedResource resource3= new ServedResource( resourceConfig );
         registry.add( resource2, resource3 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name4 );
-        ServedResource resource4= new ServedResource(connector, resourceConfig);
+        ServedResource resource4= new ServedResource( resourceConfig );
         registry.add( resource1, resource4 );
 
         Listener listener;
@@ -386,22 +385,22 @@ public class ResourceRegistryTest
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name1 );
-        ServedResource resource1= new ServedResource(connector, resourceConfig);
+        ServedResource resource1= new ServedResource( resourceConfig );
         registry.add( null, resource1 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name2 );
-        ServedResource resource2= new ServedResource(connector, resourceConfig);
+        ServedResource resource2= new ServedResource( resourceConfig );
         registry.add( resource1, resource2 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name3 );
-        ServedResource resource3= new ServedResource(connector, resourceConfig);
+        ServedResource resource3= new ServedResource( resourceConfig );
         registry.add( resource2, resource3 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name4 );
-        ServedResource resource4= new ServedResource(connector, resourceConfig);
+        ServedResource resource4= new ServedResource( resourceConfig );
         registry.add( resource1, resource4 );
 
         Listener listener;
@@ -440,22 +439,22 @@ public class ResourceRegistryTest
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name1 );
-        ServedResource resource1= new ServedResource(connector, resourceConfig);
+        ServedResource resource1= new ServedResource( resourceConfig );
         registry.add( null, resource1 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name2 );
-        ServedResource resource2= new ServedResource(connector, resourceConfig);
+        ServedResource resource2= new ServedResource( resourceConfig );
         registry.add( resource1, resource2 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name3 );
-        ServedResource resource3= new ServedResource(connector, resourceConfig);
+        ServedResource resource3= new ServedResource( resourceConfig );
         registry.add( resource2, resource3 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name4 );
-        ServedResource resource4= new ServedResource(connector, resourceConfig);
+        ServedResource resource4= new ServedResource( resourceConfig );
         registry.add( resource1, resource4 );
 
         Listener listener;
@@ -481,25 +480,25 @@ public class ResourceRegistryTest
         ResourceRegistry registry= new ResourceRegistry( root );
         ResourceConfig resourceConfig;
         String name1= "resource1";
-//        String uri1= "/resource1";
+        //        String uri1= "/resource1";
         String name2= "resource2";
-//        String uri2= "/resource1/resource2";
+        //        String uri2= "/resource1/resource2";
         String name3= "resource3";
         String uri4= "/resource1/resource4";
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name1 );
-        ServedResource resource1= new ServedResource(connector, resourceConfig);
+        ServedResource resource1= new ServedResource( resourceConfig );
         registry.add( null, resource1 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name2 );
-        ServedResource resource2= new ServedResource(connector, resourceConfig);
+        ServedResource resource2= new ServedResource( resourceConfig );
         registry.add( resource1, resource2 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name3 );
-        ServedResource resource3= new ServedResource(connector, resourceConfig);
+        ServedResource resource3= new ServedResource( resourceConfig );
         registry.add( resource2, resource3 );
 
         exception.expect( ResourceUriException.class );
@@ -527,22 +526,22 @@ public class ResourceRegistryTest
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name1 );
-        ServedResource resource1= new ServedResource(connector, resourceConfig);
+        ServedResource resource1= new ServedResource( resourceConfig );
         registry.add( null, resource1 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name2 );
-        ServedResource resource2= new ServedResource(connector, resourceConfig);
+        ServedResource resource2= new ServedResource( resourceConfig );
         registry.add( resource1, resource2 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name3 );
-        ServedResource resource3= new ServedResource(connector, resourceConfig);
+        ServedResource resource3= new ServedResource( resourceConfig );
         registry.add( resource2, resource3 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name4 );
-        ServedResource resource4= new ServedResource(connector, resourceConfig);
+        ServedResource resource4= new ServedResource( resourceConfig );
         registry.add( resource1, resource4 );
 
         assertNotNull( registry );
@@ -572,22 +571,22 @@ public class ResourceRegistryTest
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name1 );
-        ServedResource resource1= new ServedResource(connector, resourceConfig);
+        ServedResource resource1= new ServedResource( resourceConfig );
         registry.add( null, resource1 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name2 );
-        ServedResource resource2= new ServedResource(connector, resourceConfig);
+        ServedResource resource2= new ServedResource( resourceConfig );
         registry.add( resource1, resource2 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name3 );
-        ServedResource resource3= new ServedResource(connector, resourceConfig);
+        ServedResource resource3= new ServedResource( resourceConfig );
         registry.add( resource2, resource3 );
 
         resourceConfig= new ResourceConfig();
         resourceConfig.setName( name4 );
-        ServedResource resource4= new ServedResource(connector, resourceConfig);
+        ServedResource resource4= new ServedResource( resourceConfig );
         registry.add( resource1, resource4 );
 
         List< ServedResource > resources;

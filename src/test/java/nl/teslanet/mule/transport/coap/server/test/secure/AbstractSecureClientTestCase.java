@@ -7,8 +7,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.security.KeyStore;
+import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +21,8 @@ import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.Request;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.scandium.DTLSConnector;
+import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import org.eclipse.californium.scandium.dtls.pskstore.InMemoryPskStore;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -116,28 +120,25 @@ public abstract class AbstractSecureClientTestCase extends FunctionalMunitSuite
         InMemoryPskStore pskStore= new InMemoryPskStore();
 
         //dtls builder
-//        Builder dtlsBuilder= new DtlsConnectorConfig.Builder();
+        DtlsConnectorConfig.Builder dtlsBuilder= new DtlsConnectorConfig.Builder( new InetSocketAddress( 0 ));
 
-//        dtlsBuilder.setPskStore( pskStore );
-//        dtlsBuilder.setIdentity( (PrivateKey) keyStore.getKey( "client", "endPass".toCharArray() ), keyStore.getCertificateChain( "client" ), CertificateType.X_509 );
-//        dtlsBuilder.setTrustStore( trustedCertificates );
+        dtlsBuilder.setPskStore( pskStore );
+        dtlsBuilder.setIdentity( (PrivateKey) keyStore.getKey( "client", "endPass".toCharArray() ), keyStore.getCertificateChain( "client" ), true );
+        dtlsBuilder.setTrustStore( trustedCertificates );
 //        dtlsBuilder.setEnableAddressReuse( false );
 //        dtlsBuilder.setConnectionThreadCount( 1 );
 
         //connector
 
-//        DTLSConnector dtlsConnector= new DTLSConnector( dtlsBuilder.build() );
+        DTLSConnector dtlsConnector= new DTLSConnector( dtlsBuilder.build() );
 
         //endpoint
 
-//        CoapEndpoint.Builder endpointBuilder= new CoapEndpoint.Builder();
-//        endpointBuilder.setConnector( dtlsConnector );
         NetworkConfig config= NetworkConfig.createStandardWithoutFile();
         config.setInt( NetworkConfig.Keys.ACK_TIMEOUT, 20000 );
         config.setLong( NetworkConfig.Keys.EXCHANGE_LIFETIME, 30000L );
-        //config.setLong(NetworkConfig.Keys.DTLS_AUTO_RESUME_TIMEOUT, 30000L );
-//        endpointBuilder.setNetworkConfig( config );
-//        endpoint= endpointBuilder.build();
+//        config.setLong(NetworkConfig.Keys.DTLS_AUTO_RESUME_TIMEOUT, 30000L );
+        endpoint= new CoapEndpoint( dtlsConnector, config );
         endpoint.start();
     }
 
@@ -207,8 +208,8 @@ public abstract class AbstractSecureClientTestCase extends FunctionalMunitSuite
         {
             spyActivated= false;
             client.useLateNegotiation();
+            client.setURI( uri.resolve( getPath( call ) ).toString() );
             Request request= new Request( call );
-            request.setURI( uri.resolve( getPath( call ) ) );
             switch ( call )
             {
                 case DELETE:
@@ -238,8 +239,8 @@ public abstract class AbstractSecureClientTestCase extends FunctionalMunitSuite
 
         for ( Code call : outboundCalls )
         {
+            client.setURI( uri.resolve( getPath( call ) ).toString() );
             Request request= new Request( call );
-            request.setURI( uri.resolve( getPath( call ) ) );
             switch ( call )
             {
                 case DELETE:

@@ -40,7 +40,7 @@
 	keyStoreLocation="certs/keyStore.jks" 
 	keyStorePassword="endPass" 
 	privateKeyAlias="serverNONEXISTENT"
-	privateKeyPassword="endPass"
+	
 	trustStoreLocation="certs/trustStore.jks" 
 	trustStorePassword="rootPass"
 	trustedRootCertificateAlias="root"

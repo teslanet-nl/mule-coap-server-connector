@@ -24,7 +24,6 @@ import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.eclipse.californium.core.coap.Response;
 import org.eclipse.californium.core.server.resources.CoapExchange;
-import org.eclipse.californium.core.server.resources.Resource;
 import org.mule.DefaultMuleEvent;
 import org.mule.DefaultMuleMessage;
 import org.mule.MessageExchangePattern;
@@ -48,16 +47,13 @@ public class ServedResource extends CoapResource
     /** The logger. */
     protected final Logger LOGGER= Logger.getLogger( ServedResource.class.getCanonicalName() );
 
-    private CoapServerConnector connector;
-
     private ResourceConfig config;
 
     private SourceCallback callback= null;
 
-    public ServedResource( CoapServerConnector coapServerConnector, ResourceConfig resourceConfig )
+    public ServedResource( ResourceConfig resourceConfig )
     {
         super( resourceConfig.getName() );
-        connector= coapServerConnector;
         config= resourceConfig;
         if ( config.isObservable() )
         {
@@ -241,7 +237,6 @@ public class ServedResource extends CoapResource
     }
 
     private Object processMuleFlow( Object requestPayload, int requestContentFormat, Map< String, Object > inboundProperties, Map< String, Object > outboundProperties )
-
     {
         MuleEvent responseEvent= null;
         Object response= null;
@@ -270,33 +265,30 @@ public class ServedResource extends CoapResource
         }
         catch ( MuleException ex )
         {
-            // handle over to Flow's exception handling
+            //handle over to Flow's exception handling
             responseEvent= processor.getFlowConstruct().getExceptionListener().handleException( ex, muleEvent );
-            // exception.getEvent().getFlowConstruct().getExceptionListener().handleException(exception,
-            // exception.getEvent());
-            // connector.getContext().getExceptionListener().handleException( new
-            // MessagingException( muleEvent, ex ));
         }
-
-        if ( ( responseEvent != null ) )
+        if ( responseEvent != null && responseEvent.getMessage() != null && responseEvent.getMessage().getExceptionPayload() == null )
         {
+            //build response
             MuleMessage responseMessage= responseEvent.getMessage();
-            if ( responseMessage != null )
+            response= responseMessage.getPayload();
+            for ( String propName : responseEvent.getMessage().getOutboundPropertyNames() )
             {
-                response= responseMessage.getPayload();
-                for ( String propName : responseEvent.getMessage().getOutboundPropertyNames() )
-                {
-                    outboundProperties.put( propName, responseEvent.getMessage().getOutboundProperty( propName ) );
-                } ;
-
-                if ( !outboundProperties.containsKey( PropertyNames.COAP_OPT_CONTENTFORMAT ) )
-                {
-                    String mimeType= responseMessage.getDataType().getMimeType();
-                    outboundProperties.put( PropertyNames.COAP_OPT_CONTENTFORMAT, MediaTypeRegistry.parse( mimeType ) );
-                }
+                outboundProperties.put( propName, responseEvent.getMessage().getOutboundProperty( propName ) );
             } ;
+            if ( !outboundProperties.containsKey( PropertyNames.COAP_OPT_CONTENTFORMAT ) )
+            {
+                String mimeType= responseMessage.getDataType().getMimeType();
+                outboundProperties.put( PropertyNames.COAP_OPT_CONTENTFORMAT, MediaTypeRegistry.parse( mimeType ) );
+            }
         }
-
+        else
+        {
+            //unhandled exception
+            outboundProperties.put( PropertyNames.COAP_RESPONSE_CODE, "INTERNAL_SERVER_ERROR" );
+            response= new String( "EXCEPTION IN PROCESSING FLOW" );
+        }
         return response;
     };
 
@@ -305,15 +297,15 @@ public class ServedResource extends CoapResource
      */
     public ServedResource getParent()
     {
-//        Resource parent= super.getParent();
-//        if ( connector.isRootResource( parent ) )
-//        {
-//            return null;
-//        }
-//        else
-//        {
-            return (ServedResource) super.getParent();
-//        }
+        //        Resource parent= super.getParent();
+        //        if ( connector.isRootResource( parent ) )
+        //        {
+        //            return null;
+        //        }
+        //        else
+        //        {
+        return (ServedResource) super.getParent();
+        //        }
     }
 
     /**
