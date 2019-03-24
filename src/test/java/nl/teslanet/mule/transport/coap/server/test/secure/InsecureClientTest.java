@@ -53,7 +53,7 @@ public class InsecureClientTest extends FunctionalMunitSuite
     @Override
     protected String getConfigResources()
     {
-        return "mule-config/secure/testserver1.xml";
+        return "mule-config/secure/testserver10.xml";
     };
 
     @Override
@@ -92,7 +92,7 @@ public class InsecureClientTest extends FunctionalMunitSuite
     @Before
     public void setUp() throws Exception
     {
-        uri= new URI( "coap", null, "127.0.0.1", 5684, null, null, null );
+        uri= new URI( "coap", null, "127.0.0.1", 5685, null, null, null );
     }
 
     @After

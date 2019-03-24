@@ -130,12 +130,15 @@ public class ObserveTest extends FunctionalMunitSuite
         assertEquals( "handler errors count ", 0, handlerErrors.get() );
         assertEquals( "wrong count of observations", contents.size(), observations.size() );
 
+        int obsOffset= 0;
         for ( int i= 0; i < observations.size(); i++ )
         {
             response= observations.get( i );
+            if ( i == 0 ) obsOffset= ( response.getOptions().getObserve().intValue() );
             assertNotNull( "observation nr: " + i + " is empty", response );
             assertTrue( "observation nr: " + i + " indicates failure", response.isSuccess() );
             assertEquals( "observation nr: " + i + " has wrong content", contents.get( i ), response.getResponseText() );
+            assertEquals( "observation nr: " + i + " has wrong observe option", obsOffset + i, response.getOptions().getObserve().intValue() );
         }
 
         relation.reactiveCancel();
@@ -181,12 +184,15 @@ public class ObserveTest extends FunctionalMunitSuite
         assertEquals( "handler errors count ", 0, handlerErrors.get() );
         assertEquals( "wrong count of observations", contents.size(), observations.size() );
 
+        int obsOffset= 0;
         for ( int i= 0; i < observations.size(); i++ )
         {
             response= observations.get( i );
+            if ( i == 0 ) obsOffset= ( response.getOptions().getObserve().intValue() );
             assertNotNull( "observation nr: " + i + " is empty", response );
             assertTrue( "observation nr: " + i + " indicates failure", response.isSuccess() );
             assertEquals( "observation nr: " + i + " has wrong content", contents.get( i ), response.getResponseText() );
+            assertEquals( "observation nr: " + i + " has wrong observe option", obsOffset + i, response.getOptions().getObserve().intValue() );
         }
 
         relation.reactiveCancel();

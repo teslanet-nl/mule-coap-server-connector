@@ -166,8 +166,8 @@ public abstract class AbstractOutboundPropertyTestcase extends FunctionalMunitSu
     abstract protected Object getExpectedOptionValue() throws Exception;
 
     /**
-     * Override to specify whether the option is an ByteArray
-     * @return {@code true} when option is a ByteArray
+     * Override to specify whether the option is an Collection of ByteArray
+     * @return {@code true} when option is a Collection ByteArray
      */
     protected boolean optionValueIsCollectionOfByteArray()
     {
@@ -205,7 +205,7 @@ public abstract class AbstractOutboundPropertyTestcase extends FunctionalMunitSu
 
         CoapResponse response= client.advanced( request );
 
-        assertNotNull( "get gave no response", response );
+        assertNotNull( "no response received", response );
         assertTrue( "response indicates failure", response.isSuccess() );
 
         if ( optionValueIsCollectionOfByteArray() )

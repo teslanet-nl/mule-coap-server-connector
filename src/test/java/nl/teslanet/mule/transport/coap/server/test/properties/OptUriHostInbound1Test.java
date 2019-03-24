@@ -18,7 +18,8 @@ import org.eclipse.californium.core.coap.OptionSet;
 
 
 //TODO configuration option isProxy and automatic  5.05 (Proxying Not Supported (when false)) 
-public class OptUriHost1Test extends AbstractInboundPropertyTestcase
+//TODO add outbound test
+public class OptUriHostInbound1Test extends AbstractInboundPropertyTestcase
 {
 
     @Override

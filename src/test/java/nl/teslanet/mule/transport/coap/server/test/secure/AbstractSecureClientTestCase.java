@@ -43,7 +43,7 @@ import nl.teslanet.mule.transport.coap.server.test.utils.Data;
 //TODO review
 public abstract class AbstractSecureClientTestCase extends FunctionalMunitSuite
 {
-    private static URI uri= null;
+    private URI uri= null;
 
     private CoapClient client= null;
 
@@ -98,7 +98,6 @@ public abstract class AbstractSecureClientTestCase extends FunctionalMunitSuite
         paths.put( Code.POST, "/service/post_me" );
         paths.put( Code.DELETE, "/service/delete_me" );
 
-        uri= new URI( "coaps", "127.0.0.1", null, null, null );
 
         //keyStore
         KeyStore keyStore= KeyStore.getInstance( "JKS" );
@@ -142,6 +141,15 @@ public abstract class AbstractSecureClientTestCase extends FunctionalMunitSuite
         endpoint.start();
     }
 
+    /**
+     * Overide to use a test specific port
+     * @return the port number
+     */
+    protected int getPort()
+    {
+        return 5684;
+    }
+
     @AfterClass
     static public void tearDownClass()
     {
@@ -152,6 +160,7 @@ public abstract class AbstractSecureClientTestCase extends FunctionalMunitSuite
     @Before
     public void setUp() throws Exception
     {
+        uri= new URI( "coaps", null, "127.0.0.1", getPort(), null, null, null );
         client= new CoapClient();
         client.setTimeout( 200000L );
         client.setEndpoint( endpoint );
@@ -203,6 +212,8 @@ public abstract class AbstractSecureClientTestCase extends FunctionalMunitSuite
     {
         spyRequestMessage();
         expectException();
+        URI uri= new URI( "coaps", null, "127.0.0.1", getPort(), null, null, null );
+
 
         for ( Code call : inboundCalls )
         {

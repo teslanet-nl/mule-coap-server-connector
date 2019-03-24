@@ -18,6 +18,7 @@ import org.eclipse.californium.core.coap.Option;
 import org.eclipse.californium.core.coap.OptionSet;
 import org.junit.Before;
 
+//TODO outbound
 
 /**
  * Test inbound other option

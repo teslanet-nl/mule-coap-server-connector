@@ -18,6 +18,8 @@ import org.eclipse.californium.core.coap.OptionSet;
 
 //import nl.teslanet.mule.transport.coap.commons.options.InvalidETagException;
 
+//TODO add outbound test
+//TODO uriquery test?
 
 public class OptUriPathInbound1Test extends AbstractInboundPropertyTestcase
 {

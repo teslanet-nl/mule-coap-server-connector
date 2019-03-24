@@ -19,6 +19,12 @@ public class SecureClientTest extends AbstractSecureClientTestCase
     @Override
     protected String getConfigResources()
     {
-        return "mule-config/secure/testserver1.xml";
+        return "mule-config/secure/testserver11.xml";
     };
+    
+    @Override
+    protected int getPort()
+    {
+        return 5686;
+    }
 }
