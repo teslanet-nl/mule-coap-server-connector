@@ -272,6 +272,7 @@ public class ServedResource extends CoapResource
                 throw new RuntimeException( "failed to process request: " + exchange.advanced().getRequest().getURI(), e );
             }
         }
+        //TODO review, this masks Runtime exception
         catch ( InvalidOptionValueException e1 )
         {
             //cannot process request when option not valid, 
