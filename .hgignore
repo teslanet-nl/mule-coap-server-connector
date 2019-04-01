@@ -9,3 +9,5 @@ syntax: regexp
 \.directory$
 syntax: regexp
 ^\.mule$
+syntax: regexp
+^bin$
