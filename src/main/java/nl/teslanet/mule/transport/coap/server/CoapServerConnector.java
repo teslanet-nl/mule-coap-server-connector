@@ -119,7 +119,7 @@ public class CoapServerConnector
         try
         {
             addEndPoint( server, config );
-            addResources( server, getResources() );
+            addResources( getResources() );
         }
         catch ( Exception e )
         {
@@ -248,11 +248,11 @@ public class CoapServerConnector
      * @param server
      * @param resourceConfigs
      */
-    private void addResources( CoapServer server, List< ResourceConfig > resourceConfigs )
+    private void addResources( List< ResourceConfig > resourceConfigs )
     {
         for ( ResourceConfig resourceConfig : resourceConfigs )
         {
-            ServedResource toServe= new ServedResource( this, resourceConfig );
+            ServedResource toServe= new ServedResource( resourceConfig );
             registry.add( null, toServe );
             addChildren( toServe );
         }
@@ -266,7 +266,7 @@ public class CoapServerConnector
     {
         for ( ResourceConfig childResourceConfig : parent.getConfiguredResource().getResourceCollection() )
         {
-            ServedResource childToServe= new ServedResource( this, childResourceConfig );
+            ServedResource childToServe= new ServedResource( childResourceConfig );
 
             registry.add( parent, childToServe );
             addChildren( childToServe );
@@ -405,7 +405,7 @@ public class CoapServerConnector
         resourceConfig.setSz( sz );
         resourceConfig.setCt( ct );
 
-        ServedResource toServe= new ServedResource( this, resourceConfig );
+        ServedResource toServe= new ServedResource( resourceConfig );
         parent= registry.getResource( parentUri );
         registry.add( parent, toServe );
 

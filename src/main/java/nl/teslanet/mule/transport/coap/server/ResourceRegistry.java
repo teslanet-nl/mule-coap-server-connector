@@ -23,6 +23,7 @@ import nl.teslanet.mule.transport.coap.commons.Defs;
 import nl.teslanet.mule.transport.coap.server.error.ResourceUriException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,13 +39,17 @@ public class ResourceRegistry
 
     public ResourceRegistry( Resource root )
     {
+        if ( root == null )
+        {
+            throw new NullPointerException( "Cannot construct a ResourceRegistry without root resource" );
+        }
         this.root= root;
         //TODO maybe list, depending on validation of duplication of resourcenames
         servedResources= new ConcurrentHashMap< String, ServedResource >();
         listeners= new CopyOnWriteArrayList< Listener >();
     }
 
-    public void add( ServedResource parent, ServedResource resource ) 
+    public void add( ServedResource parent, ServedResource resource )
     {
         //TODO responsibility of registry?
         if ( parent == null )
@@ -59,7 +64,7 @@ public class ResourceRegistry
         setResourceCallBack( resource );
     }
 
-    public void add( Listener listener ) 
+    public void add( Listener listener )
     {
         listeners.add( listener );
         setResourceCallBack();
@@ -67,20 +72,26 @@ public class ResourceRegistry
 
     public void remove( ServedResource resource )
     {
+        Collection< Resource > children= resource.getChildren();
+        for ( Resource child : children )
+        {
+            remove((ServedResource) child);
+        }
+
         servedResources.remove( resource.getURI() );
         resource.delete();
     }
 
-    private void setResourceCallBack() 
+    private void setResourceCallBack()
     {
         for ( Entry< String, ServedResource > e : servedResources.entrySet() )
         {
-            setResourceCallBack( e.getValue());
+            setResourceCallBack( e.getValue() );
         }
 
     }
 
-    private void setResourceCallBack( ServedResource toServe ) 
+    private void setResourceCallBack( ServedResource toServe )
     {
         Listener bestListener= null;
         int maxMatchlevel= 0;
@@ -96,7 +107,7 @@ public class ResourceRegistry
         if ( bestListener != null ) toServe.setCallback( bestListener.getCallback() );
     }
 
-    public ServedResource getResource( String uri ) throws ResourceUriException 
+    public ServedResource getResource( String uri ) throws ResourceUriException
     {
         if ( uri.length() == 0 )
         {
