@@ -297,15 +297,7 @@ public class ServedResource extends CoapResource
      */
     public ServedResource getParent()
     {
-        //        Resource parent= super.getParent();
-        //        if ( connector.isRootResource( parent ) )
-        //        {
-        //            return null;
-        //        }
-        //        else
-        //        {
         return (ServedResource) super.getParent();
-        //        }
     }
 
     /**

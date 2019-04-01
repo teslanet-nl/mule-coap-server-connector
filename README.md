@@ -1,4 +1,4 @@
-# Mule CoAP connector - CoapServer
+# Mule CoAP Server Connector
 ![Mule-Coap logo](icons/coap-logo.svg)
 
 Mule CoAP connector is an Anypoint Connector implementation of the [RFC7252 - Constrained Application Protocol](http://tools.ietf.org/html/rfc7252). 
@@ -9,8 +9,8 @@ The connector uses Californium, a Java CoAP implementation. More information abo
 * [http://www.eclipse.org/californium/](http://www.eclipse.org/californium/)
 * [http://coap.technology/](http://coap.technology/).
 
-This component - the CoapServer Connector - is one of three parts of the Mule CoAP package.  
-The other two being the CoapClient Connector and the Mule CoAP Commons component . 
+This component - the Mule CoAP Server Connector - is one of three parts of the Mule CoAP package.  
+The other two being the Mule CoAP Client Connector and the Mule CoAP Commons component . 
 
 The CoapServer Connector adds CoAP server capability to [Mule enterprise service bus](https://www.mulesoft.com/).
 With it Mule applications can implement services that can be accessed by clients using the CoAP protocol. 
@@ -33,16 +33,16 @@ The complete Mule CoAP Connector documentation can be found on [Teslanet.nl](htt
 
 ## Installation
 
-Released versions can easilly installed into Anypoint Studio 6 as Eclipse Plugin. 
+Easiest way to install releases into Anypoint Studio 6 is by installing the Eclipse Plugin using the update site.. 
 The Mule CoAP Connector update site url is:
 
 ```
 http://www.teslanet.nl/mule-coap-connector/update/
 ```
 
-To use Development versions download or clone the source code and build the connector in Anypoint Studio:
+Installation of release or development versions from source, is done by dowloading sources or cloning git-repository from Github:
 
-* Import source into [Anypoint Studio](https://www.mulesoft.com/platform/studio)
+* Import source into [Anypoint Studio 6](https://www.mulesoft.com/platform/studio)
 * Select the imported project
 * Build and install: Context Menu -> Anypoint Connector / Install or Update
 
@@ -53,8 +53,8 @@ See the Userguide on [Teslanet.nl](http://www.teslanet.nl/mule-coap-client-conne
 ### Using in Maven Projects
 
 Mule CoAP artefact releases will be published to [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cmule-coap-server).
-The CloapServer connector can be used in your project by adding following dependency
-to your `pom.xml` (without the dots):
+To use Mule CoAP Server Connector in maven projects add following dependency
+to your `pom.xml`.
 
 ```xml
   
