@@ -14,15 +14,6 @@
 package nl.teslanet.mule.transport.coap.server.test.secure;
 
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.isA;
-import static org.junit.internal.matchers.ThrowableCauseMatcher.hasCause;
-import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
-
-import org.mule.api.ConnectionException;
-import org.mule.api.lifecycle.LifecycleException;
-
-import nl.teslanet.mule.transport.coap.server.error.EndpointConstructionException;
 import nl.teslanet.mule.transport.coap.server.test.utils.AbstractMuleStartTestCase;
 
 
